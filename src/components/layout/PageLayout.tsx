@@ -4,6 +4,9 @@ import NavigationBar from '../navigation/NavigationBar';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { useHotkeys } from '@mantine/hooks';
 import clsx from 'clsx';
+import SessionCard from '../session/SessionCard';
+import dayjs from 'dayjs';
+import SessionSideMenu from '../session/SessionSideMenu';
 
 interface PageLayoutProps {
   children: React.ReactNode;
@@ -56,8 +59,8 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
         leaveTo='transform w-0 opacity-0'
         className='overflow-hidden'
       >
-        <div className='flex h-screen overflow-y-auto border-l bg-white px-2 py-1'>
-          <h1 className='text-xl font-semibold'>Øktoversikt</h1>
+        <div className='flex h-screen overflow-y-auto border-l border-black/10 bg-white px-2 pb-2 pt-1'>
+          <SessionSideMenu />
         </div>
       </Transition>
     </div>

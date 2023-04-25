@@ -1,11 +1,9 @@
-import { Tab, Transition } from '@headlessui/react';
-import { useState } from 'react';
-import NavigationBar from '../navigation/NavigationBar';
+import { Transition } from '@headlessui/react';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { useHotkeys } from '@mantine/hooks';
 import clsx from 'clsx';
-import SessionCard from '../session/SessionCard';
-import dayjs from 'dayjs';
+import { useState } from 'react';
+import NavigationBar from '../navigation/NavigationBar';
 import SessionSideMenu from '../session/SessionSideMenu';
 
 interface PageLayoutProps {
@@ -17,6 +15,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
 
   useHotkeys([
     ['ctrl+space', () => setShowSideMenu((isShowing) => !isShowing)],
+    ['escape', () => setShowSideMenu(false)],
   ]);
 
   return (

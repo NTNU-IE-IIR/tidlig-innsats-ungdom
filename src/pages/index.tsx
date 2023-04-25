@@ -24,9 +24,13 @@ const Home: NextPage = () => {
           <Link href=''>Angst</Link>
         </div>
 
+        <h1 className='my-4 text-center text-2xl font-bold'>
+          Velg eller søk på tema og innhold
+        </h1>
+
         <div className='flex items-center justify-center'>
           <div className='relative'>
-            <MagnifyingGlassIcon className='absolute left-1.5 top-1/2 h-4 w-4 -translate-y-1/2 pointer-events-none' />
+            <MagnifyingGlassIcon className='pointer-events-none absolute left-1.5 top-1/2 h-4 w-4 -translate-y-1/2' />
             <input
               type='text'
               ref={searchBarRef}
@@ -35,7 +39,7 @@ const Home: NextPage = () => {
             />
 
             {/* Key combination pills */}
-            <div className='absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-px text-[10px] font-semibold pointer-events-none'>
+            <div className='pointer-events-none absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-px text-[10px] font-semibold'>
               <span className='rounded-sm border border-zinc-950 px-0.5'>
                 CTRL
               </span>

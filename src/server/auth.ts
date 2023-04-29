@@ -1,6 +1,9 @@
-import { UserAccountRole } from '@/db/schema';
+import { db } from '@/db';
+import { UserAccountRole, userAccountSession } from '@/db/schema';
 import { findByEmail } from '@/db/services/userAccount';
 import bcrypt from 'bcrypt';
+import { randomUUID } from 'crypto';
+import dayjs from 'dayjs';
 import { type GetServerSidePropsContext } from 'next';
 import {
   getServerSession,
@@ -9,7 +12,6 @@ import {
 } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import DrizzleAdapter from './drizzleAdapter';
-import { db } from '@/db';
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -46,20 +48,26 @@ export const authOptions: NextAuthOptions = {
     error: '/auth/error',
   },
   callbacks: {
-    async jwt({ token, account, profile }) {
-      // Persist the OAuth access_token and or the user id to the token right after signin
-      console.log('jwt callback', token, account, profile);
+    jwt({ token, account }) {
       if (account) {
         token.id = account.id;
       }
       return token;
     },
     session({ session, token, user }) {
-      console.log('session callback', session, token, user);
       if (session.user) {
         session.user.id = token.sub ?? user.id;
       }
       return session;
+    },
+    async signIn({ user }) {
+      await db.insert(userAccountSession).values({
+        userAccountId: user.id,
+        sessionToken: randomUUID(),
+        expiresAt: dayjs().add(30, 'days').toDate(),
+      });
+
+      return true;
     },
   },
   session: {

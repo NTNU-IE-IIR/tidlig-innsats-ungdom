@@ -1,8 +1,8 @@
 import { InferModel } from 'drizzle-orm';
 import {
+  AnyPgColumn,
   bigint,
   bigserial,
-  boolean,
   jsonb,
   pgEnum,
   pgTable,
@@ -99,6 +99,9 @@ export type ProviderAccount = InferModel<typeof providerAccount>;
 export const theme = pgTable('theme', {
   id: bigserial('theme_id', { mode: 'number' }).primaryKey(),
   name: text('name').notNull(),
+  parentId: bigint('fk_parent_theme_id', { mode: 'number' }).references(
+    (): AnyPgColumn => theme.id
+  ),
   createdAt: timestamp('created_at', { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -108,23 +111,6 @@ export const theme = pgTable('theme', {
 });
 
 export type Theme = InferModel<typeof theme>;
-
-export const themeChild = pgTable(
-  'theme_child',
-  {
-    parentId: bigint('fk_parent_theme_id', { mode: 'number' }).references(
-      () => theme.id
-    ),
-    childId: bigint('fk_child_theme_id', { mode: 'number' }).references(
-      () => theme.id
-    ),
-  },
-  (themeChild) => ({
-    themeChildPkey: primaryKey(themeChild.childId, themeChild.parentId),
-  })
-);
-
-export type ThemeChild = InferModel<typeof themeChild>;
 
 export enum MediaType {
   FORM = 'FORM',
@@ -169,3 +155,13 @@ export const themeMedia = pgTable(
 );
 
 export type ThemeMedia = InferModel<typeof themeMedia>;
+
+/**
+ * Table for persisting application settings, such as if users can register.
+ */
+export const applicationSettings = pgTable('global_application_settings', {
+  name: text('name').primaryKey(),
+  value: jsonb('value').notNull(),
+});
+
+export type ApplicationSettings = InferModel<typeof applicationSettings>;

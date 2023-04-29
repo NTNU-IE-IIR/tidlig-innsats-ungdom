@@ -1,4 +1,5 @@
 import Card from '@/components/container/Card';
+import Alert from '@/components/feedback/Alert';
 import Button from '@/components/input/Button';
 import {
   RegisterUserAccountInput,
@@ -10,6 +11,8 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 
 const Register: NextPage = () => {
+  const { data: registrationEnabled } =
+    api.appSettings.registrationEnabled.useQuery();
   const {
     mutateAsync: registerAccount,
     isLoading,
@@ -37,7 +40,6 @@ const Register: NextPage = () => {
       <main className='m-auto flex h-screen max-w-sm flex-col justify-center'>
         <h1 className='text-center text-xl font-bold'>Tidlig innsats ungdom</h1>
         <span className='text-center font-medium'>Registrer konto</span>
-
         <Card>
           <form
             onSubmit={form.onSubmit((values) => onFormSubmit(values))}
@@ -64,15 +66,20 @@ const Register: NextPage = () => {
             >
               <p className='text-sm font-medium'>Registrer konto</p>
             </Button>
+
+            {!registrationEnabled && (
+              <Alert intent='warning' className='mt-1'>
+                Registrering av nye brukerkontoer er for øyeblikket slått av.
+                Kontakt en administrator for å få opprettet en konto.
+              </Alert>
+            )}
           </form>
         </Card>
 
         {isError && (
-          <div className='mt-2 rounded-md border border-red-500 bg-red-200 px-2 py-1'>
-            <p className='text-sm text-red-800'>
-              Oisann! Det skjedde noe feil under registrering av kontoen.
-            </p>
-          </div>
+          <Alert intent='error' className='mt-2'>
+            Oisann! Det skjedde noe feil under registrering av kontoen.
+          </Alert>
         )}
       </main>
     </>

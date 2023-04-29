@@ -1,6 +1,6 @@
 import { db } from '@/db';
 import { theme } from '@/db/schema';
-import { and, ilike } from 'drizzle-orm';
+import { SQL, and, eq, ilike, isNull } from 'drizzle-orm';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
@@ -9,15 +9,23 @@ export const themeRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string().optional(),
+        parentId: z.number().optional(),
       })
     )
     .query(async ({ input }) => {
+      const conditions = [
+        input.name !== undefined && ilike(theme.name, `%${input.name}%`),
+        input.parentId !== undefined
+          ? eq(theme.parentId, input.parentId)
+          : isNull(theme.parentId),
+      ].filter(Boolean) as SQL[];
+
       return await db
         .select({
           id: theme.id,
           name: theme.name,
         })
         .from(theme)
-        .where(and(ilike(theme.name, `%${input.name}%`)));
+        .where(and(...conditions));
     }),
 });

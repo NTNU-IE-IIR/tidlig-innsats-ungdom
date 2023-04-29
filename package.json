@@ -23,6 +23,7 @@
     "@trpc/react-query": "^10.21.1",
     "@trpc/server": "^10.21.1",
     "bcrypt": "^5.1.0",
+    "class-variance-authority": "^0.6.0",
     "clsx": "^1.2.1",
     "dayjs": "^1.11.7",
     "dotenv": "^16.0.3",

@@ -1,16 +1,24 @@
 import Card from '@/components/container/Card';
 import PageLayout from '@/components/layout/PageLayout';
+import { api } from '@/utils/api';
 import { HomeIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { useHotkeys } from '@mantine/hooks';
+import { SquaresPlusIcon } from '@heroicons/react/24/solid';
+import { useDebouncedValue, useHotkeys } from '@mantine/hooks';
 import { type NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 const Home: NextPage = () => {
   const searchBarRef = useRef<HTMLInputElement>(null);
+  const [searchInput, setSearchInput] = useState('');
+  const [debouncedSearchInput] = useDebouncedValue(searchInput, 500);
 
   useHotkeys([['ctrl+k', () => searchBarRef.current?.focus()]]);
+
+  const { data: themes } = api.theme.listThemes.useQuery({
+    name: debouncedSearchInput,
+  });
 
   return (
     <>
@@ -34,6 +42,8 @@ const Home: NextPage = () => {
             <input
               type='text'
               ref={searchBarRef}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
               className='w-80 rounded-md border border-zinc-950 bg-transparent py-1 pl-6 pr-16 outline-none ring-zinc-950 placeholder:text-zinc-950 focus:ring-1'
               placeholder='Søk...'
             />
@@ -51,13 +61,29 @@ const Home: NextPage = () => {
           </div>
         </div>
 
-        <div className='mt-4 grid grid-cols-3 gap-2 px-4'>
-          {[...Array(6)].map((_, i) => (
+        <div className='relative mt-4 grid grid-cols-3 gap-2 px-4'>
+          {!themes ||
+            (themes.length === 0 && (
+              <Link
+                href='/manage'
+                className='col-span-3 mx-auto my-32 flex max-w-xs flex-col items-center text-center text-zinc-700 transition-colors hover:text-zinc-800'
+              >
+                <SquaresPlusIcon className='h-24 w-24' />
+                <p className='text-sm font-semibold'>
+                  {debouncedSearchInput.length > 0 &&
+                    'Kunne ikke finne innhold for søket ditt.'}
+                  <br />
+                  Klikk for å legge til nytt innhold.
+                </p>
+              </Link>
+            ))}
+
+          {themes?.map((theme) => (
             <Card
-              key={i}
+              key={theme.id}
               className='flex aspect-[1.5/1] cursor-pointer flex-col items-center justify-center transition-all hover:scale-[1.025]'
             >
-              <h3 className='text-xl font-bold'>Tema {i + 1}</h3>
+              <h3 className='text-xl font-bold'>{theme.name}</h3>
               <p className='text-sm'>Beskrivelse</p>
             </Card>
           ))}

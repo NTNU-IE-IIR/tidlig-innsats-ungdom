@@ -1,24 +1,40 @@
 import Card from '@/components/container/Card';
 import PageLayout from '@/components/layout/PageLayout';
-import { api } from '@/utils/api';
+import { RouterOutputs, api } from '@/utils/api';
 import { HomeIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { SquaresPlusIcon } from '@heroicons/react/24/solid';
 import { useDebouncedValue, useHotkeys } from '@mantine/hooks';
 import { type NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useRef, useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
+
+type Theme = RouterOutputs['theme']['listThemes'][number];
 
 const Home: NextPage = () => {
   const searchBarRef = useRef<HTMLInputElement>(null);
   const [searchInput, setSearchInput] = useState('');
   const [debouncedSearchInput] = useDebouncedValue(searchInput, 500);
+  const [themeDrill, setThemeDrill] = useState<Theme[]>([]);
 
   useHotkeys([['ctrl+k', () => searchBarRef.current?.focus()]]);
 
   const { data: themes } = api.theme.listThemes.useQuery({
     name: debouncedSearchInput,
+    parentId: themeDrill[themeDrill.length - 1]?.id,
   });
+
+  const appendTheme = (theme: Theme) => {
+    setThemeDrill((prev) => [...prev, theme]);
+  };
+
+  const navigateHome = () => {
+    setThemeDrill([]);
+  };
+
+  const navigateBackTo = (theme: Theme, i: number) => {
+    setThemeDrill((prev) => prev.slice(0, i).concat(theme));
+  };
 
   return (
     <>
@@ -27,9 +43,17 @@ const Home: NextPage = () => {
       </Head>
       <PageLayout>
         <div className='flex items-center justify-center gap-1 py-2 font-semibold'>
-          <HomeIcon className='h-5 w-5' />
-          <span>/</span>
-          <Link href=''>Angst</Link>
+          <button onClick={navigateHome}>
+            <HomeIcon className='h-5 w-5' />
+          </button>
+          {themeDrill.map((theme, i) => (
+            <Fragment key={theme.id}>
+              <span>/</span>
+              <button onClick={() => navigateBackTo(theme, i)}>
+                {theme.name}
+              </button>
+            </Fragment>
+          ))}
         </div>
 
         <h1 className='my-4 text-center text-2xl font-bold'>
@@ -44,17 +68,17 @@ const Home: NextPage = () => {
               ref={searchBarRef}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className='w-80 rounded-md border border-zinc-950 bg-transparent py-1 pl-6 pr-16 outline-none ring-zinc-950 placeholder:text-zinc-950 focus:ring-1'
+              className='w-80 rounded-md border border-black/20 bg-zinc-50 py-1 pl-6 pr-16 shadow outline-none transition-colors placeholder:text-zinc-950 focus:border-zinc-600'
               placeholder='Søk...'
             />
 
             {/* Key combination pills */}
             <div className='pointer-events-none absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-px text-[10px] font-semibold'>
-              <span className='rounded-sm border border-zinc-950 px-0.5'>
+              <span className='rounded-md border border-zinc-400 bg-zinc-200 px-1'>
                 CTRL
               </span>
               <span>+</span>
-              <span className='rounded-sm border border-zinc-950 px-0.5'>
+              <span className='rounded-md border border-zinc-400 bg-zinc-200 px-1'>
                 K
               </span>
             </div>
@@ -66,12 +90,13 @@ const Home: NextPage = () => {
             (themes.length === 0 && (
               <Link
                 href='/manage'
-                className='col-span-3 mx-auto my-32 flex max-w-xs flex-col items-center text-center text-zinc-700 transition-colors hover:text-zinc-800'
+                className='col-span-3 mx-auto my-32 flex max-w-xs flex-col items-center text-center text-zinc-500 transition-colors hover:text-zinc-600'
               >
                 <SquaresPlusIcon className='h-24 w-24' />
                 <p className='text-sm font-semibold'>
-                  {debouncedSearchInput.length > 0 &&
-                    'Kunne ikke finne innhold for søket ditt.'}
+                  {debouncedSearchInput.length > 0
+                    ? 'Kunne ikke finne innhold for søket ditt.'
+                    : 'Her var det tomt.'}
                   <br />
                   Klikk for å legge til nytt innhold.
                 </p>
@@ -80,6 +105,7 @@ const Home: NextPage = () => {
 
           {themes?.map((theme) => (
             <Card
+              onClick={() => appendTheme(theme)}
               key={theme.id}
               className='flex aspect-[1.5/1] cursor-pointer flex-col items-center justify-center transition-all hover:scale-[1.025]'
             >

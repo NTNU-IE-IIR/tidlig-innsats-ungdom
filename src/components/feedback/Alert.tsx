@@ -10,10 +10,10 @@ import clsx from 'clsx';
 const alert = cva(['border rounded-md px-2 py-1 flex gap-2 items-center'], {
   variants: {
     intent: {
-      info: 'bg-sky-100 border-sky-500 text-sky-800',
-      success: 'bg-emerald-100 border-emerald-500 text-emerald-800',
-      warning: 'bg-yellow-50 border-yellow-600 text-yellow-800',
-      error: 'bg-red-100 border-red-500 text-red-800',
+      info: ['bg-sky-100', 'border-sky-500', 'text-sky-800'],
+      success: ['bg-emerald-100', 'border-emerald-500', 'text-emerald-800'],
+      warning: ['bg-yellow-50', 'border-yellow-600', 'text-yellow-800'],
+      error: ['bg-red-100', 'border-red-500', 'text-red-800'],
     },
   },
 });

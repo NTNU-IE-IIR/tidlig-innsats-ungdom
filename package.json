@@ -27,6 +27,7 @@
     "@lexical/utils": "^0.10.0",
     "@mantine/form": "^6.0.8",
     "@mantine/hooks": "^6.0.8",
+    "@popperjs/core": "^2.11.7",
     "@tanstack/react-query": "^4.29.5",
     "@trpc/client": "^10.21.1",
     "@trpc/next": "^10.21.1",
@@ -44,6 +45,7 @@
     "pg": "^8.10.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-popper": "^2.3.0",
     "superjson": "1.12.2",
     "yjs": "^13.6.0",
     "zod": "^3.21.4"

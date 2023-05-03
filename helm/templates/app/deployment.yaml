@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "app.name" . }}
+  labels:
+    {{ include "chart.labels" . }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "app.name" . }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ include "app.name" . }}
+    spec:
+      initContainers:
+      - name: "init-{{ include "app.name" . }}"
+        image: "ghcr.io/NTNU-IE-IIR/rfftiu-migrations:{{ .Values.version }}"
+        imagePullPolicy: IfNotPresent
+        envFrom:
+          - secretRef:
+              name: {{ include "postgres.name" . }}
+        env:
+          - name: POSTGRES_DB
+            value: {{ include "postgres.database" . }}
+          - name: POSTGRES_HOST
+            value: {{ include "postgres.name" . }}
+          - name: POSTGRES_PORT
+            value: {{ include "postgres.port" . | quote }}
+
+      containers:
+      - name: {{ include "app.name" . }}
+        image: "ghcr.io/NTNU-IE-IIR/rfftiu-app:{{ .Values.version }}"
+        imagePullPolicy: IfNotPresent
+        ports: 
+        - containerPort: {{ include "app.port" . }}
+        livenessProbe:
+          httpGet:
+            path: /
+            port: {{ include "app.port" . }}
+        readinessProbe:
+          httpGet:
+            path: /
+            port: {{ include "app.port" . }}
+        envFrom:
+          - secretRef:
+              name: {{ include "app.name" . }}
+          - secretRef:
+              name: {{ include "postgres.name" . }}
+        env:
+          - name: POSTGRES_DB
+            value: {{ include "postgres.database" . }}
+          - name: POSTGRES_HOST
+            value: {{ include "postgres.name" . }}
+          - name: POSTGRES_PORT
+            value: {{ include "postgres.port" . | quote }}
+          - name: S3_ENDPOINT
+            value: {{ .Values.s3.endpoint }}
+          - name: S3_BUCKET_NAME
+            value: {{ .Values.s3.bucket }}

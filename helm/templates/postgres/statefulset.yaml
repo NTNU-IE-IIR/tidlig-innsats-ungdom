@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "postgres.name" . }}
+  labels:
+    {{ include "chart.labels" . }}
+spec:
+  serviceName: {{ include "postgres.name" . }}
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "postgres.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "postgres.name" . }}
+    spec:
+      containers:
+      - name: {{ include "postgres.name" . }}
+        image: "postgres:alpine"
+        imagePullPolicy: IfNotPresent
+        ports:
+          - name: postgres
+            containerPort: {{ include "postgres.port" . }}
+            protocol: TCP
+        envFrom:
+          - secretRef:
+              name: {{ include "postgres.name" . }}
+        env:
+          - name: POSTGRES_DB
+            value: {{ include "postgres.database" . }}
+        volumeMounts:
+          - name: {{ include "postgres.name" . }}-data
+            mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: {{ include "postgres.name" . }}-data
+        persistentVolumeClaim:
+          claimName: {{ include "postgres.name" . }}-data

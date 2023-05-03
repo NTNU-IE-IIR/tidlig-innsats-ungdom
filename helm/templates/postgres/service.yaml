@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "postgres.name" . }}
+  labels:
+    {{ include "chart.labels" . }}
+spec:
+  selector:
+    app: {{ include "postgres.name" . }}
+  ports:
+  - port: {{ include "postgres.port" . }}
+    targetPort: {{ include "postgres.port" . }}
+    protocol: TCP

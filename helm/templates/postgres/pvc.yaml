@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "postgres.name" . }}-data
+spec:
+  accessModes: 
+  - ReadWriteOnce
+  resources: 
+    requests: 
+      storage: 3Gi

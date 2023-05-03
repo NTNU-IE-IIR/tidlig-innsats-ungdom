@@ -16,6 +16,7 @@ const NavigationBar = () => {
       <nav className='-mb-0.5 flex items-center self-end'>
         <NavigationLink href='/'>Temautforsker</NavigationLink>
         <NavigationLink href='/manage'>Tema administrasjon</NavigationLink>
+        <NavigationLink href='/settings'>Innstillinger</NavigationLink>
       </nav>
 
       <Menu as='div' className='relative'>

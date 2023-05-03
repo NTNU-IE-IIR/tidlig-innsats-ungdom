@@ -1,0 +1,66 @@
+name: Continuous Delivery
+
+# manual until we disclose whether we can use the GitHub Container Registry
+on:
+  workflow_dispatch:
+
+jobs:
+  publish-init:
+    name: Publish init container artifact
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Dockerfile.init
+          push: true
+          tags: |
+            ghcr.io/NTNU-IE-IIR/rfftiu-init:latest
+            ghcr.io/NTNU-IE-IIR/rfftiu-init:${{ github.ref_name }}
+
+  publish-app:
+    name: Publish app container artifact
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: |
+            ghcr.io/NTNU-IE-IIR/rfftiu-app:latest
+            ghcr.io/NTNU-IE-IIR/rfftiu-app:${{ github.ref_name }}

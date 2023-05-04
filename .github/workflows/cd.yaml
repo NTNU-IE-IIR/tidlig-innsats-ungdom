@@ -33,7 +33,7 @@ jobs:
           push: true
           tags: |
             ghcr.io/NTNU-IE-IIR/rfftiu-init:latest
-            ghcr.io/NTNU-IE-IIR/rfftiu-init:${{ github.ref_name }}
+            ghcr.io/NTNU-IE-IIR/rfftiu-init:${{ github.sha }}
 
   publish-app:
     name: Publish app container artifact
@@ -63,8 +63,7 @@ jobs:
           push: true
           tags: |
             ghcr.io/NTNU-IE-IIR/rfftiu-app:latest
-            ghcr.io/NTNU-IE-IIR/rfftiu-app:${{ github.ref_name }}
-
+            ghcr.io/NTNU-IE-IIR/rfftiu-app:${{ github.sha }}
 
   deploy-production:
     name: Deploy to production
@@ -81,19 +80,19 @@ jobs:
           method: service-account
           k8s-url: ${{ vars.K8S_API_URL }}
           k8s-secret: ${{ secrets.K8S_SECRET }}
-      
+
       - uses: azure/setup-helm@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-  
+
       - run: |
-          helm upgrade ${{ vars.K8S_NAMESPACE }} ./.helm \
+          helm upgrade ${{ vars.K8S_NAMESPACE }} ./helm \
             --kube-insecure-skip-tls-verify \
             --install \
             --namespace ${{ vars.K8S_NAMESPACE }} \
             --set hostname=${{ vars.HOSTNAME }} \
             --set clusterIssuer=${{ vars.K8S_CLUSTER_ISSUER }} \
-            --set version=${{ github.ref_name }} \
+            --set version=${{ github.sha }} \
             --set s3.endpoint=${{ vars.S3_ENDPOINT }} \
             --set s3.bucket=${{ vars.S3_BUCKET }} \
             --set s3.accessKey=${{ secrets.S3_ACCESS_KEY }} \

@@ -64,3 +64,38 @@ jobs:
           tags: |
             ghcr.io/NTNU-IE-IIR/rfftiu-app:latest
             ghcr.io/NTNU-IE-IIR/rfftiu-app:${{ github.ref_name }}
+
+
+  deploy-production:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    needs: [publish-init, publish-app]
+    environment: production
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: azure/setup-kubectl@v3
+
+      - uses: azure/k8s-set-context@v3
+        with:
+          method: service-account
+          k8s-url: ${{ vars.K8S_API_URL }}
+          k8s-secret: ${{ secrets.K8S_SECRET }}
+      
+      - uses: azure/setup-helm@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+  
+      - run: |
+          helm upgrade ${{ vars.K8S_NAMESPACE }} ./.helm \
+            --kube-insecure-skip-tls-verify \
+            --install \
+            --namespace ${{ vars.K8S_NAMESPACE }} \
+            --set hostname=${{ vars.HOSTNAME }} \
+            --set clusterIssuer=${{ vars.K8S_CLUSTER_ISSUER }} \
+            --set version=${{ github.ref_name }} \
+            --set s3.endpoint=${{ vars.S3_ENDPOINT }} \
+            --set s3.bucket=${{ vars.S3_BUCKET }} \
+            --set s3.accessKey=${{ secrets.S3_ACCESS_KEY }} \
+            --set s3.secretAccessKey=${{ secrets.S3_SECRET_ACCESS_KEY }}
+        shell: bash

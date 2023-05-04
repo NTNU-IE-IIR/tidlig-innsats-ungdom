@@ -16,7 +16,7 @@ spec:
     spec:
       initContainers:
       - name: "init-{{ include "app.name" . }}"
-        image: "ghcr.io/NTNU-IE-IIR/rfftiu-migrations:{{ .Values.version }}"
+        image: "ghcr.io/NTNU-IE-IIR/tidlig-innsats-ungdom-init:{{ .Values.version }}"
         imagePullPolicy: IfNotPresent
         envFrom:
           - secretRef:
@@ -31,7 +31,7 @@ spec:
 
       containers:
       - name: {{ include "app.name" . }}
-        image: "ghcr.io/NTNU-IE-IIR/rfftiu-app:{{ .Values.version }}"
+        image: "ghcr.io/NTNU-IE-IIR/tidlig-innsats-ungdom-app:{{ .Values.version }}"
         imagePullPolicy: IfNotPresent
         ports: 
         - containerPort: {{ include "app.port" . }}

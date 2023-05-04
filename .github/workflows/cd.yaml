@@ -33,8 +33,8 @@ jobs:
           file: Dockerfile.init
           push: true
           tags: |
-            ghcr.io/NTNU-IE-IIR/rfftiu-init:latest
-            ghcr.io/NTNU-IE-IIR/rfftiu-init:${{ github.sha }}
+            ghcr.io/NTNU-IE-IIR/tidlig-innsats-ungdom-init:latest
+            ghcr.io/NTNU-IE-IIR/tidlig-innsats-ungdom-init:${{ github.sha }}
 
   publish-app:
     name: Publish app container artifact
@@ -64,8 +64,8 @@ jobs:
           file: Dockerfile
           push: true
           tags: |
-            ghcr.io/NTNU-IE-IIR/rfftiu-app:latest
-            ghcr.io/NTNU-IE-IIR/rfftiu-app:${{ github.sha }}
+            ghcr.io/NTNU-IE-IIR/tidlig-innsats-ungdom-app:latest
+            ghcr.io/NTNU-IE-IIR/tidlig-innsats-ungdom-app:${{ github.sha }}
 
   deploy-production:
     name: Deploy to production

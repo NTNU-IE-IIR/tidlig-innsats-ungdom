@@ -29,4 +29,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/migrations /app/migrations
 
 WORKDIR /app
 
+LABEL org.opencontainers.image.source="https://github.com/NTNU-IE-IIR/tidlig-innsats-ungdom"
+LABEL org.opencontainers.image.description="RFFTIU init container"
+
 CMD ["node", "dist/migrate.js"]

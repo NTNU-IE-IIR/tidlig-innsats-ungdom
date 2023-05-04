@@ -34,4 +34,7 @@ USER nextjs
 EXPOSE 3000
 ENV PORT 3000
 
+LABEL org.opencontainers.image.source="https://github.com/NTNU-IE-IIR/tidlig-innsats-ungdom"
+LABEL org.opencontainers.image.description="RFFTIU app container"
+
 CMD ["node", "server.js"]

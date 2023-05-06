@@ -1,6 +1,6 @@
-import { db } from '@/db';
-import { UserAccountRole, userAccountSession } from '@/db/schema';
-import { findByEmail } from '@/db/services/userAccount';
+import { db } from '@/server/db';
+import { UserAccountRole, userAccountSession } from '@/server/db/schema';
+import { findByEmail } from '@/server/db/services/userAccount';
 import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import dayjs from 'dayjs';

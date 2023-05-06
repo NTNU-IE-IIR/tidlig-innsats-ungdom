@@ -1,5 +1,5 @@
-import { db } from '@/db';
-import { providerAccount, userAccount, userAccountSession } from '@/db/schema';
+import { db } from '@/server/db';
+import { providerAccount, userAccount, userAccountSession } from '@/server/db/schema';
 import { and, eq } from 'drizzle-orm';
 import { Adapter } from 'next-auth/adapters';
 

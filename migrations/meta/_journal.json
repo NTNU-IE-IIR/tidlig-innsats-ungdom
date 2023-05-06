@@ -5,20 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1681761564199,
-      "tag": "0000_fine_speedball"
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1682792568199,
-      "tag": "0001_wild_jetstream"
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1682793592620,
-      "tag": "0002_clever_mikhail_rasputin"
+      "when": 1683406966025,
+      "tag": "0000_salty_namora"
     }
   ]
 }

@@ -1,25 +1,43 @@
+/**
+ * The core portion of the database schema, including authentication and tenancy.
+ */
 import { InferModel } from 'drizzle-orm';
 import {
-  AnyPgColumn,
   bigint,
-  bigserial,
   jsonb,
   pgEnum,
   pgTable,
-  primaryKey,
   text,
   timestamp,
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
 
+/**
+ * Table for persisting application settings, such as if users can register.
+ * This is meant to be generic enough to encapsulate any application setting as a JSON column.
+ * Should not be used for settings that are user-specific.
+ */
+export const applicationSettings = pgTable('global_application_settings', {
+  name: text('name').primaryKey(),
+  value: jsonb('value').notNull(),
+});
+
+/**
+ * The type of the application settings table.
+ */
+export type ApplicationSettings = InferModel<typeof applicationSettings>;
+
+/**
+ * Global user account roles.
+ */
 export enum UserAccountRole {
-  ADMIN = 'ADMIN',
+  GLOBAL_ADMIN = 'GLOBAL_ADMIN',
   USER = 'USER',
 }
 
 export const userAccountRole = pgEnum('user_account_role', [
-  UserAccountRole.ADMIN,
+  UserAccountRole.GLOBAL_ADMIN,
   UserAccountRole.USER,
 ]);
 
@@ -48,8 +66,9 @@ export const userAccount = pgTable(
   })
 );
 
-export type UserAccount = InferModel<typeof userAccount>;
-
+/**
+ * Table for user account sessions.
+ */
 export const userAccountSession = pgTable(
   'user_account_session',
   {
@@ -69,6 +88,10 @@ export const userAccountSession = pgTable(
 
 export type UserAccountSession = InferModel<typeof userAccountSession>;
 
+/**
+ * Table for user account providers.
+ * This is the accounts they have linked to their user account.
+ */
 export const providerAccount = pgTable(
   'provider_account',
   {
@@ -96,72 +119,33 @@ export const providerAccount = pgTable(
 
 export type ProviderAccount = InferModel<typeof providerAccount>;
 
-export const theme = pgTable('theme', {
-  id: bigserial('theme_id', { mode: 'number' }).primaryKey(),
+export const tenant = pgTable('tenant', {
+  id: uuid('tenant_id').primaryKey().defaultRandom(),
   name: text('name').notNull(),
-  parentId: bigint('fk_parent_theme_id', { mode: 'number' }).references(
-    (): AnyPgColumn => theme.id
-  ),
-  createdAt: timestamp('created_at', { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  createdBy: uuid('fk_created_by_account_id')
-    .notNull()
-    .references(() => userAccount.id),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });
 
-export type Theme = InferModel<typeof theme>;
-
-export enum MediaType {
-  FORM = 'FORM',
-  RICH_TEXT = 'RICH_TEXT',
-}
-
-export const mediaType = pgEnum('media_type', [
-  MediaType.FORM,
-  MediaType.RICH_TEXT,
-]);
-
-export const media = pgTable('media', {
-  id: bigserial('media_id', { mode: 'number' }).primaryKey(),
-  content: jsonb('content').notNull(),
-  createdBy: uuid('fk_created_by_account_id')
-    .notNull()
-    .references(() => userAccount.id),
-  createdAt: timestamp('created_at', { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  type: mediaType('media_type').notNull(),
-});
-
-export type Media = InferModel<typeof media>;
-
-export const themeMedia = pgTable(
-  'theme_media',
-  {
-    themeId: bigint('fk_theme_id', { mode: 'number' }).references(
-      () => theme.id
-    ),
-    mediaId: bigint('fk_media_id', { mode: 'number' }).references(
-      () => media.id
-    ),
-  },
-  (themeMedia) => ({
-    themeMediaPkey: primaryKey(themeMedia.themeId, themeMedia.mediaId),
-  })
-);
-
-export type ThemeMedia = InferModel<typeof themeMedia>;
+export type Tenant = InferModel<typeof tenant>;
 
 /**
- * Table for persisting application settings, such as if users can register.
+ * Join table between a tenant and a user account.
+ * This is used to determine which user accounts have access to which tenants.
  */
-export const applicationSettings = pgTable('global_application_settings', {
-  name: text('name').primaryKey(),
-  value: jsonb('value').notNull(),
-});
-
-export type ApplicationSettings = InferModel<typeof applicationSettings>;
+export const tenantUserAccount = pgTable(
+  'user_account_tenant',
+  {
+    tenantId: uuid('fk_tenant_id')
+      .notNull()
+      .references(() => tenant.id),
+    userAccountId: uuid('fk_user_account_id').references(() => userAccount.id),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
+  },
+  (tenantUserAccount) => ({
+    uniqueTenantUserAccount: uniqueIndex('tenant_user_account_uq_idx').on(
+      tenantUserAccount.tenantId,
+      tenantUserAccount.userAccountId
+    ),
+  })
+);

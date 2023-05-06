@@ -19,7 +19,7 @@ export const userAccountRouter = createTRPCRouter({
         email: input.email,
         password: hashedPassword,
         fullName: input.fullName,
-        role: UserAccountRole.ADMIN,
+        role: UserAccountRole.GLOBAL_ADMIN,
       });
     }),
 });

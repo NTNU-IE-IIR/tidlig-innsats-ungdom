@@ -1,6 +1,6 @@
-import { db } from '@/db';
-import { UserAccountRole, userAccount } from '@/db/schema';
-import { findByEmail } from '@/db/services/userAccount';
+import { db } from '@/server/db';
+import { UserAccountRole, userAccount } from '@/server/db/schema';
+import { findByEmail } from '@/server/db/services/userAccount';
 import { registerUserAccountSchema } from '@/schemas/userAccountSchemas';
 import bcrypt from 'bcrypt';
 import { createTRPCRouter, publicProcedure } from '../trpc';

@@ -7,9 +7,9 @@
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
-    "db:build": "rimraf dist && tsup src/db/migrate.ts --publicDir migrations",
+    "db:build": "rimraf dist && tsup src/server/db/migrate.ts --publicDir migrations",
     "db:generate": "drizzle-kit generate:pg",
-    "db:migrate": "tsx src/db/migrate.ts"
+    "db:migrate": "tsx src/server/db/migrate.ts"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.14",

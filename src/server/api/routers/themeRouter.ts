@@ -1,5 +1,5 @@
-import { db } from '@/db';
-import { theme } from '@/db/schema';
+import { db } from '@/server/db';
+import { theme } from '@/server/db/schema';
 import { SQL, and, eq, ilike, isNull } from 'drizzle-orm';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';

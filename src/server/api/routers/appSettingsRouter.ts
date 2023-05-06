@@ -1,6 +1,6 @@
-import { db } from '@/db';
+import { db } from '@/server/db';
 import { createTRPCRouter, publicProcedure } from '../trpc';
-import { applicationSettings, userAccount } from '@/db/schema';
+import { applicationSettings, userAccount } from '@/server/db/schema';
 import { eq, sql } from 'drizzle-orm';
 
 export const appSettingsRouter = createTRPCRouter({

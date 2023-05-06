@@ -28,7 +28,7 @@ export const createTRPCContext = async ({
 import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
-import { UserAccountRole } from '@/db/schema';
+import { UserAccountRole } from '@/server/db/schema';
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,

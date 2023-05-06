@@ -7,6 +7,30 @@ services:
     ports:
       - 5432:5432
 
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - ./.minio:/data
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config host add myminio http://minio:9000 minio minio123;
+      /usr/bin/mc mb myminio/rfftiu-data;
+      exit 0;
+      "
+
   init: 
     build:
       context: .
@@ -24,6 +48,7 @@ services:
     env_file: .env
     environment:
       POSTGRES_HOST: db
+      NEXTAUTH_URL: http://localhost:8080
     depends_on:
       init:
         condition: service_completed_successfully

@@ -20,6 +20,8 @@ spec:
         imagePullPolicy: IfNotPresent
         envFrom:
           - secretRef:
+              name: {{ include "app.name" . }}
+          - secretRef:
               name: {{ include "postgres.name" . }}
         env:
           - name: POSTGRES_DB
@@ -28,6 +30,10 @@ spec:
             value: {{ include "postgres.name" . }}
           - name: POSTGRES_PORT
             value: {{ include "postgres.port" . | quote }}
+          - name: S3_ENDPOINT
+            value: {{ .Values.s3.endpoint }}
+          - name: S3_BUCKET_NAME
+            value: {{ .Values.s3.bucket }}
 
       containers:
       - name: {{ include "app.name" . }}

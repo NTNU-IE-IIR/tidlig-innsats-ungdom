@@ -52,9 +52,14 @@ const Login = ({
           >
             <input type='hidden' name='csrfToken' defaultValue={csrfToken} />
 
-            <TextField name='email' label='E-post addresse' />
+            <TextField name='email' label='E-post' />
 
-            <TextField name='password' label='Passord' className='mt-2' />
+            <TextField
+              name='password'
+              type='password'
+              label='Passord'
+              className='mt-2'
+            />
 
             <Link
               href='/auth/forgot-password'

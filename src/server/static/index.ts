@@ -6,7 +6,7 @@ const minioClient = new Client({
   port: 9000,
   useSSL: false,
   accessKey: env.S3_ACCESS_KEY,
-  secretKey: env.S3_SECRET_KEY,
+  secretKey: env.S3_SECRET_ACCESS_KEY,
 });
 
 /**

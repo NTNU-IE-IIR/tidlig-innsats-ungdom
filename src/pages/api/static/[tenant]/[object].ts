@@ -11,7 +11,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const key = [tenant, object].join('/');
 
-  s3.getObject(env.S3_BUCKET, key, (err, data) => {
+  s3.getObject(env.S3_BUCKET_NAME, key, (err, data) => {
     if (err) return res.status(404).send('Could not find object');
 
     data.pipe(res);

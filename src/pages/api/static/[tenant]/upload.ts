@@ -8,7 +8,7 @@ const uploadStream = (tenantId: string) => {
   const pass = new PassThrough();
   const key = [tenantId, 'test'].join('/');
 
-  s3.putObject(env.S3_BUCKET, key, pass, (err, data) => {
+  s3.putObject(env.S3_BUCKET_NAME, key, pass, (err, data) => {
     console.log(err, data);
   });
 

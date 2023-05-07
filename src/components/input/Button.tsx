@@ -39,7 +39,7 @@ const Button: React.FC<ButtonProps> = ({
               cy='12'
               r='10'
               stroke='currentColor'
-              stroke-width='4'
+              strokeWidth='4'
             />
             <path
               className='opacity-75'
@@ -50,7 +50,7 @@ const Button: React.FC<ButtonProps> = ({
         </div>
       )}
 
-      <div className={clsx(isLoading && 'invisible')}>{children}</div>
+      <div className={clsx('flex items-center gap-1', isLoading && 'invisible')}>{children}</div>
     </button>
   );
 };

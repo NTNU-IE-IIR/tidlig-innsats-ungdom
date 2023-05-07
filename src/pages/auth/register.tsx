@@ -10,7 +10,9 @@ import {
 import { api } from '@/utils/api';
 import { useForm, zodResolver } from '@mantine/form';
 import { NextPage } from 'next';
+import { signIn } from 'next-auth/react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 
 const Register: NextPage = () => {
   const { data: registrationEnabled, isLoading: loadingRegistrationEnabled } =
@@ -30,8 +32,26 @@ const Register: NextPage = () => {
     },
   });
 
-  const onFormSubmit = (values: RegisterUserAccountInput) => {
-    registerAccount(values);
+  const router = useRouter();
+
+  const onFormSubmit = async (values: RegisterUserAccountInput) => {
+    try {
+      const account = await registerAccount(values);
+
+      const routerTarget =
+        account.role === 'GLOBAL_ADMIN' ? '/setup/wizard' : '/';
+
+      const result = await signIn('credentials', {
+        email: form.values.email,
+        password: form.values.password,
+        callbackUrl: routerTarget,
+        redirect: false,
+      });
+
+      if (result?.ok) router.push(routerTarget);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

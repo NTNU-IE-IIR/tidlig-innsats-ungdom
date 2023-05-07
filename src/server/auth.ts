@@ -37,6 +37,12 @@ declare module 'next-auth' {
   }
 }
 
+declare module 'next-auth/jwt' {
+  interface JWT {
+    role: UserAccountRole;
+  }
+}
+
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *
@@ -48,15 +54,21 @@ export const authOptions: NextAuthOptions = {
     error: '/auth/error',
   },
   callbacks: {
-    jwt({ token, account }) {
+    jwt({ token, account, user }) {
       if (account) {
         token.id = account.userId;
       }
+
+      if (user) {
+        token.role = user.role;
+      }
+
       return token;
     },
     session({ session, token, user }) {
       if (session.user) {
         session.user.id = token.sub ?? user.id;
+        session.user.role = token.role ?? user.role;
       }
       return session;
     },

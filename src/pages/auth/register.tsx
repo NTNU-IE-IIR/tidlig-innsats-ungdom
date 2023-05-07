@@ -1,6 +1,8 @@
 import Card from '@/components/container/Card';
 import Alert from '@/components/feedback/Alert';
+import ErrorLabel from '@/components/feedback/ErrorLabel';
 import Button from '@/components/input/Button';
+import TextField from '@/components/input/TextField';
 import {
   RegisterUserAccountInput,
   registerUserAccountSchema,
@@ -11,7 +13,7 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 
 const Register: NextPage = () => {
-  const { data: registrationEnabled } =
+  const { data: registrationEnabled, isLoading: loadingRegistrationEnabled } =
     api.appSettings.registrationEnabled.useQuery();
   const {
     mutateAsync: registerAccount,
@@ -24,6 +26,7 @@ const Register: NextPage = () => {
       email: '',
       fullName: '',
       password: '',
+      passwordConfirmation: '',
     },
   });
 
@@ -43,22 +46,35 @@ const Register: NextPage = () => {
         <Card>
           <form
             onSubmit={form.onSubmit((values) => onFormSubmit(values))}
-            className='flex flex-col gap-1 py-2'
+            className='flex flex-col py-2'
           >
-            <label htmlFor='fu'>Fullt navn</label>
-            <input {...form.getInputProps('fullName')} />
+            <TextField label='Fullt navn' {...form.getInputProps('fullName')} />
+            <ErrorLabel>{form.errors.fullName}</ErrorLabel>
 
-            <label htmlFor=''>E-post</label>
-            <input {...form.getInputProps('email')} />
-
-            <label htmlFor=''>Passord</label>
-            <input type='password' {...form.getInputProps('password')} />
-
-            <label htmlFor=''>Bekreft passord</label>
-            <input
-              type='password'
-              {...form.getInputProps('passwordConfirmation')}
+            <TextField
+              className='mt-3'
+              label='E-post'
+              {...form.getInputProps('email', { withError: true })}
             />
+            <ErrorLabel>{form.errors.email}</ErrorLabel>
+
+            <TextField
+              className='mt-3'
+              type='password'
+              label='Passord'
+              {...form.getInputProps('password', { withError: true })}
+            />
+            <ErrorLabel>{form.errors.password}</ErrorLabel>
+
+            <TextField
+              className='mt-3'
+              type='password'
+              label='Bekreft passord'
+              {...form.getInputProps('passwordConfirmation', {
+                withError: true,
+              })}
+            />
+            <ErrorLabel>{form.errors.passwordConfirmation}</ErrorLabel>
 
             <Button
               isLoading={isLoading}
@@ -67,7 +83,7 @@ const Register: NextPage = () => {
               <p className='text-sm font-medium'>Registrer konto</p>
             </Button>
 
-            {!registrationEnabled && (
+            {!loadingRegistrationEnabled && !registrationEnabled && (
               <Alert intent='warning' className='mt-1'>
                 Registrering av nye brukerkontoer er for øyeblikket slått av.
                 Kontakt en administrator for å få opprettet en konto.

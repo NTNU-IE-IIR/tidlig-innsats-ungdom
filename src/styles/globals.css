@@ -7,3 +7,17 @@
 html {
   @apply bg-zinc-200 text-zinc-900;
 }
+
+@keyframes horizontal-track {
+  from {
+    left: -10%;
+  }
+
+  to {
+    left: 100%;
+  }
+}
+
+.animate-horizontal-track {
+  animation: horizontal-track 1s linear infinite;
+}

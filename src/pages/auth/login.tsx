@@ -1,5 +1,6 @@
 import Card from '@/components/container/Card';
 import Button from '@/components/input/Button';
+import TextField from '@/components/input/TextField';
 import { api } from '@/utils/api';
 import {
   ChevronRightIcon,
@@ -51,11 +52,16 @@ const Login = ({
           >
             <input type='hidden' name='csrfToken' defaultValue={csrfToken} />
 
-            <label htmlFor='email'>E-post adresse</label>
-            <input type='text' name='email' />
+            <TextField name='email' label='E-post addresse' />
 
-            <label htmlFor='password'>Passord</label>
-            <input type='password' name='password' />
+            <TextField name='password' label='Passord' className='mt-2' />
+
+            <Link
+              href='/auth/forgot-password'
+              className='self-end text-xs font-semibold text-emerald-700'
+            >
+              Glemt passord?
+            </Link>
 
             <Button className='mt-2 w-full self-center py-1.5'>
               <p className='text-sm font-medium'>Logg inn</p>

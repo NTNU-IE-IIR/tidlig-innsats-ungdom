@@ -71,7 +71,6 @@ type BlockType = keyof typeof BLOCK_TYPE_NAME_MAP;
 
 const ToolbarPlugin = () => {
   const [editor] = useLexicalComposerContext();
-  const [activeEditor, setActiveEditor] = useState(editor);
 
   const [blockType, setBlockType] = useState<BlockType>('paragraph');
 
@@ -101,7 +100,7 @@ const ToolbarPlugin = () => {
     }
 
     const elementKey = element.getKey();
-    const elementDOM = activeEditor.getElementByKey(elementKey);
+    const elementDOM = editor.getElementByKey(elementKey);
 
     if (elementDOM === null) return;
 
@@ -119,35 +118,31 @@ const ToolbarPlugin = () => {
         setBlockType(type as keyof typeof BLOCK_TYPE_NAME_MAP);
       }
     }
-  }, [activeEditor]);
+  }, [editor]);
 
   /**
    * Switch map for block types, used to switch between block types.
    */
-  const BLOCK_TYPE_SWITCH_MAP: Record<
-    BlockType,
-    (selection: ReturnType<typeof $getSelection>) => void
-  > = useMemo(
+  const BLOCK_TYPE_SWITCH_MAP = useMemo<
+    Record<BlockType, (selection: ReturnType<typeof $getSelection>) => void>
+  >(
     () => ({
       bullet: (_selection) => {
         if (blockType !== 'bullet') {
-          return activeEditor.dispatchCommand(
+          return editor.dispatchCommand(
             INSERT_UNORDERED_LIST_COMMAND,
             undefined
           );
         }
 
-        activeEditor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+        editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
       },
       check: (_selection) => {
         if (blockType !== 'check') {
-          return activeEditor.dispatchCommand(
-            INSERT_CHECK_LIST_COMMAND,
-            undefined
-          );
+          return editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined);
         }
 
-        activeEditor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+        editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
       },
       code: (_selection) => {},
       h1: (selection) => {
@@ -182,13 +177,10 @@ const ToolbarPlugin = () => {
       },
       number: (_selection) => {
         if (blockType !== 'number') {
-          return activeEditor.dispatchCommand(
-            INSERT_ORDERED_LIST_COMMAND,
-            undefined
-          );
+          return editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
         }
 
-        activeEditor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+        editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
       },
       paragraph: (selection) => {
         if ($isRangeSelection(selection)) {
@@ -208,7 +200,7 @@ const ToolbarPlugin = () => {
    * Whenever the block type changes, we update the editor and execute the given command for the block type.
    */
   useEffect(() => {
-    activeEditor.update(() => {
+    editor.update(() => {
       const selection = $getSelection();
       BLOCK_TYPE_SWITCH_MAP[blockType](selection);
     });
@@ -218,13 +210,13 @@ const ToolbarPlugin = () => {
     mergeRegister(
       // whenever the state of the editor changes, we update the toolbar
       // this makes the toolbar UI reflect changes in the editor. (e.g. selection changed, formatting changed etc.)
-      activeEditor.registerUpdateListener(({ editorState }) => {
+      editor.registerUpdateListener(({ editorState }) => {
         editorState.read(() => {
           updateToolbar();
         });
       }),
       // forward the editors state of CAN_UNDO to react state, allowing re-rendering of the toolbar
-      activeEditor.registerCommand(
+      editor.registerCommand(
         CAN_UNDO_COMMAND,
         (payload) => {
           setCanUndo(payload);
@@ -233,7 +225,7 @@ const ToolbarPlugin = () => {
         COMMAND_PRIORITY_CRITICAL
       ),
       // forward the editors state of CAN_REDO to react state, allowing re-rendering of the toolbar
-      activeEditor.registerCommand(
+      editor.registerCommand(
         CAN_REDO_COMMAND,
         (payload) => {
           setCanRedo(payload);
@@ -242,19 +234,19 @@ const ToolbarPlugin = () => {
         COMMAND_PRIORITY_CRITICAL
       )
     );
-  }, [activeEditor, editor]);
+  }, [editor]);
 
   return (
     <div className='flex gap-1 rounded-t-md border-b border-zinc-200 bg-zinc-100 p-1 shadow'>
       <ToolbarActionButton
         disabled={!canUndo}
-        onClick={() => activeEditor.dispatchCommand(UNDO_COMMAND, undefined)}
+        onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}
         icon={ArrowUturnLeftIcon}
       />
 
       <ToolbarActionButton
         disabled={!canRedo}
-        onClick={() => activeEditor.dispatchCommand(REDO_COMMAND, undefined)}
+        onClick={() => editor.dispatchCommand(REDO_COMMAND, undefined)}
         icon={ArrowUturnRightIcon}
       />
 

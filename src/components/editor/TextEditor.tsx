@@ -7,8 +7,8 @@ import {
   LexicalComposer,
 } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
-import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
@@ -16,8 +16,10 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { useMemo } from 'react';
-import { theme } from './theme';
+import { ImageNode } from './nodes/ImageNode';
+import ImagePastePlugin from './plugins/ImagePastePlugin';
 import ToolbarPlugin from './plugins/ToolbarPlugin';
+import { theme } from './theme';
 
 interface TextEditorProps {
   name: string;
@@ -32,7 +34,6 @@ const Placeholder: React.FC = () => {
 };
 
 const TextEditor: React.FC<TextEditorProps> = ({ name }) => {
-  
   const initialConfig = useMemo<InitialConfigType>(
     () => ({
       namespace: name,
@@ -49,6 +50,7 @@ const TextEditor: React.FC<TextEditorProps> = ({ name }) => {
         TableRowNode,
         AutoLinkNode,
         LinkNode,
+        ImageNode,
       ],
       theme,
     }),
@@ -70,6 +72,7 @@ const TextEditor: React.FC<TextEditorProps> = ({ name }) => {
           <ListPlugin />
           <LinkPlugin />
           <HistoryPlugin />
+          <ImagePastePlugin />
           <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
         </div>
       </div>

@@ -1,9 +1,14 @@
 import { env } from '@/env.mjs';
+import { authOptions } from '@/server/auth';
 import { s3 } from '@/server/static';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { getServerSession } from 'next-auth';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { tenant, object } = req.query;
+  const session = await getServerSession(req, res, authOptions);
+
+  if (!session) return res.status(401).send('Unauthorized');
 
   if (typeof tenant !== 'string' || typeof object !== 'string') {
     return res.status(400).send('Invalid tenant or object');

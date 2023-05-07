@@ -3,6 +3,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { PassThrough } from 'stream';
 import { IncomingForm } from 'formidable';
 import { env } from '@/env.mjs';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/server/auth';
 
 const uploadStream = (tenantId: string) => {
   const pass = new PassThrough();
@@ -19,6 +21,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') return res.status(405).send('Method not allowed');
 
   const { tenant } = req.query;
+  const session = await getServerSession(req, res, authOptions);
+
+  if (!session) return res.status(401).send('Unauthorized');
 
   if (!tenant || typeof tenant !== 'string')
     return res.status(400).send('Missing tenant');

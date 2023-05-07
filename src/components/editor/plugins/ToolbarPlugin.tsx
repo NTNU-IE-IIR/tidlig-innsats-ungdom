@@ -32,7 +32,10 @@ import {
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
   COMMAND_PRIORITY_CRITICAL,
+  GridSelection,
+  NodeSelection,
   REDO_COMMAND,
+  RangeSelection,
   UNDO_COMMAND,
 } from 'lexical';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -65,6 +68,15 @@ const BLOCK_TYPE_ICON_MAP: Record<BlockType, () => React.ReactNode> = {
   number: () => <span className='text-xs'>123</span>,
   paragraph: () => <Bars3BottomLeftIcon className='h-5 w-5' />,
   quote: () => <span className='text-lg'>&quot;</span>,
+};
+
+const createHeadingNode = (
+  selection: RangeSelection | NodeSelection | GridSelection | null,
+  level: 1 | 2 | 3 | 4 | 5 | 6
+) => {
+  if ($isRangeSelection(selection)) {
+    $setBlocksType(selection, () => $createHeadingNode(`h${level}`));
+  }
 };
 
 type BlockType = keyof typeof BLOCK_TYPE_NAME_MAP;
@@ -145,36 +157,12 @@ const ToolbarPlugin = () => {
         editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
       },
       code: (_selection) => {},
-      h1: (selection) => {
-        if ($isRangeSelection(selection)) {
-          $setBlocksType(selection, () => $createHeadingNode('h1'));
-        }
-      },
-      h2: (selection) => {
-        if ($isRangeSelection(selection)) {
-          $setBlocksType(selection, () => $createHeadingNode('h2'));
-        }
-      },
-      h3: (selection) => {
-        if ($isRangeSelection(selection)) {
-          $setBlocksType(selection, () => $createHeadingNode('h3'));
-        }
-      },
-      h4: (selection) => {
-        if ($isRangeSelection(selection)) {
-          $setBlocksType(selection, () => $createHeadingNode('h4'));
-        }
-      },
-      h5: (selection) => {
-        if ($isRangeSelection(selection)) {
-          $setBlocksType(selection, () => $createHeadingNode('h5'));
-        }
-      },
-      h6: (selection) => {
-        if ($isRangeSelection(selection)) {
-          $setBlocksType(selection, () => $createHeadingNode('h6'));
-        }
-      },
+      h1: (selection) => createHeadingNode(selection, 1),
+      h2: (selection) => createHeadingNode(selection, 2),
+      h3: (selection) => createHeadingNode(selection, 3),
+      h4: (selection) => createHeadingNode(selection, 4),
+      h5: (selection) => createHeadingNode(selection, 5),
+      h6: (selection) => createHeadingNode(selection, 6),
       number: (_selection) => {
         if (blockType !== 'number') {
           return editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);

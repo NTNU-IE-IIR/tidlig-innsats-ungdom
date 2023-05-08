@@ -55,6 +55,8 @@ spec:
           - secretRef:
               name: {{ include "postgres.name" . }}
         env:
+          - name: NEXTAUTH_URL
+            value: {{ printf "https://%s/" .Values.hostname }}
           - name: POSTGRES_DB
             value: {{ include "postgres.database" . }}
           - name: POSTGRES_HOST

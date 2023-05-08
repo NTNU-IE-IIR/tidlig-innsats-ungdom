@@ -13,6 +13,7 @@ import {
   publicProcedure,
   roleProtectedProcedure,
 } from '../trpc';
+import { isUserRegistrationEnabled } from '@/server/db/services/appSettings';
 
 export const appSettingsRouter = createTRPCRouter({
   uninitialized: publicProcedure.query(async () => {
@@ -58,14 +59,6 @@ export const appSettingsRouter = createTRPCRouter({
         .onConflictDoNothing();
     }),
   registrationEnabled: publicProcedure.query(async () => {
-    const results = await db
-      .select({ value: applicationSettings.value })
-      .from(applicationSettings)
-      .where(eq(applicationSettings.name, 'USER_REGISTRATION_ENABLED'))
-      .limit(1);
-
-    if (results.length === 0) return true;
-
-    return results[0]?.value === true;
+    return await isUserRegistrationEnabled();
   }),
 });

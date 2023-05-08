@@ -4,13 +4,24 @@ import { UserAccountRole, userAccount } from '@/server/db/schema';
 import { hasRegisteredUserAccounts } from '@/server/db/services/userAccount';
 import bcrypt from 'bcrypt';
 import { createTRPCRouter, publicProcedure } from '../trpc';
+import { isUserRegistrationEnabled } from '@/server/db/services/appSettings';
+import { TRPCError } from '@trpc/server';
 
 export const userAccountRouter = createTRPCRouter({
   register: publicProcedure
     .input(registerUserAccountSchema)
     .mutation(async ({ input }) => {
       if (await hasRegisteredUserAccounts({ email: input.email })) {
-        throw new Error('Email address already registered');
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Email address already registered',
+        });
+      }
+
+      if (!(await isUserRegistrationEnabled())) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+        });
       }
 
       const hashedPassword = await bcrypt.hash(input.password, 10);

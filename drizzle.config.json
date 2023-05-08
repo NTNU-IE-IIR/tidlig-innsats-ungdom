@@ -1,0 +1,9 @@
+{
+  "out": "./migrations",
+  "schema": "./src/server/db/schema/index.ts",
+  "host": "localhost",
+  "port": "5173",
+  "user": "tiu",
+  "password": "tiu",
+  "database": "tiu"
+}

@@ -21,6 +21,7 @@ import {
   IconArrowBackUp,
   IconArrowForwardUp,
   IconBlockquote,
+  IconBold,
   IconCode,
   IconH1,
   IconH2,
@@ -28,9 +29,12 @@ import {
   IconH4,
   IconH5,
   IconH6,
+  IconItalic,
   IconList,
   IconListCheck,
   IconListNumbers,
+  IconStrikethrough,
+  IconUnderline,
 } from '@tabler/icons-react';
 import clsx from 'clsx';
 import {
@@ -41,6 +45,7 @@ import {
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
   COMMAND_PRIORITY_CRITICAL,
+  FORMAT_TEXT_COMMAND,
   GridSelection,
   NodeSelection,
   REDO_COMMAND,
@@ -98,6 +103,11 @@ const ToolbarPlugin = () => {
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
 
+  const [isBold, setIsBold] = useState(false);
+  const [isItalic, setIsItalic] = useState(false);
+  const [isUnderline, setIsUnderline] = useState(false);
+  const [isStrikethrough, setIsStrikethrough] = useState(false);
+
   /**
    * Updates the toolbar.
    * Currently detects which block type is active and updates the toolbar accordingly.
@@ -106,6 +116,11 @@ const ToolbarPlugin = () => {
     const selection = $getSelection();
 
     if (!$isRangeSelection(selection)) return;
+
+    setIsBold(selection.hasFormat('bold'));
+    setIsItalic(selection.hasFormat('italic'));
+    setIsUnderline(selection.hasFormat('underline'));
+    setIsStrikethrough(selection.hasFormat('strikethrough'));
 
     const anchorNode = selection.anchor.getNode();
     let element =
@@ -234,7 +249,7 @@ const ToolbarPlugin = () => {
   }, [editor]);
 
   return (
-    <div className='flex gap-1 rounded-t-md border-b border-zinc-200 bg-zinc-100 p-1 shadow'>
+    <div className='flex gap-1 rounded-t-md border-b border-zinc-200 bg-zinc-50 p-1 shadow'>
       <ToolbarActionButton
         disabled={!canUndo}
         onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}
@@ -246,6 +261,8 @@ const ToolbarPlugin = () => {
         onClick={() => editor.dispatchCommand(REDO_COMMAND, undefined)}
         icon={IconArrowForwardUp}
       />
+
+      <VerticalRule />
 
       <Select
         value={blockType}
@@ -262,6 +279,34 @@ const ToolbarPlugin = () => {
           </div>
         )}
         onChange={setBlockType}
+      />
+
+      <VerticalRule />
+
+      <ToolbarToggleButton
+        active={isBold}
+        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')}
+        icon={IconBold}
+      />
+
+      <ToolbarToggleButton
+        active={isItalic}
+        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic')}
+        icon={IconItalic}
+      />
+
+      <ToolbarToggleButton
+        active={isUnderline}
+        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline')}
+        icon={IconUnderline}
+      />
+
+      <ToolbarToggleButton
+        active={isStrikethrough}
+        onClick={() =>
+          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')
+        }
+        icon={IconStrikethrough}
       />
     </div>
   );
@@ -292,5 +337,33 @@ const ToolbarActionButton: React.FC<ToolbarActionButtonProps> = ({
     </button>
   );
 };
+
+interface ToolbarToggleButtonProps {
+  active: boolean;
+  onClick: () => void;
+  icon: Icon;
+}
+
+const ToolbarToggleButton: React.FC<ToolbarToggleButtonProps> = ({
+  active,
+  onClick,
+  icon: Icon,
+}) => {
+  return (
+    <button
+      onClick={onClick}
+      className={clsx(
+        'rounded-md border border-zinc-300 p-1 transition-colors',
+        active && 'border-zinc-400 bg-zinc-200'
+      )}
+    >
+      <Icon className='h-5 w-5' />
+    </button>
+  );
+};
+
+const VerticalRule: React.FC = () => (
+  <div className='mx-1 border-r border-zinc-300' />
+);
 
 export default ToolbarPlugin;

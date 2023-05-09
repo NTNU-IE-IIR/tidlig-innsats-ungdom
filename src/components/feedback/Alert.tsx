@@ -1,9 +1,9 @@
 import {
-  CheckIcon,
-  ExclamationTriangleIcon,
-  InformationCircleIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
+  IconAlertTriangle,
+  IconCheck,
+  IconInfoCircle,
+  IconX,
+} from '@tabler/icons-react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import clsx from 'clsx';
 
@@ -27,13 +27,13 @@ const Alert: React.FC<AlertProps> = ({ intent, children, className }) => {
   return (
     <div className={clsx(alert({ intent }), className)}>
       {intent === 'info' && (
-        <InformationCircleIcon className='h-7 w-7 flex-shrink-0' />
+        <IconInfoCircle className='h-6 w-6 flex-shrink-0' />
       )}
-      {intent === 'success' && <CheckIcon className='h-7 w-7 flex-shrink-0' />}
+      {intent === 'success' && <IconCheck className='h-6 w-6 flex-shrink-0' />}
       {intent === 'warning' && (
-        <ExclamationTriangleIcon className='h-7 w-7 flex-shrink-0' />
+        <IconAlertTriangle className='h-6 w-6 flex-shrink-0' />
       )}
-      {intent === 'error' && <XMarkIcon className='h-7 w-7 flex-shrink-0' />}
+      {intent === 'error' && <IconX className='h-6 w-6 flex-shrink-0' />}
 
       <span className='text-sm'>{children}</span>
     </div>

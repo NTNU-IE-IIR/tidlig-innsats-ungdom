@@ -1,13 +1,5 @@
 import Select from '@/components/input/Select';
 import {
-  ArrowUturnLeftIcon,
-  ArrowUturnRightIcon,
-  Bars3BottomLeftIcon,
-  CheckIcon,
-  CodeBracketIcon,
-  ListBulletIcon,
-} from '@heroicons/react/24/outline';
-import {
   $isListNode,
   INSERT_CHECK_LIST_COMMAND,
   INSERT_ORDERED_LIST_COMMAND,
@@ -23,6 +15,23 @@ import {
   $getNearestNodeOfType,
   mergeRegister,
 } from '@lexical/utils';
+import {
+  Icon,
+  IconAbc,
+  IconArrowBackUp,
+  IconArrowForwardUp,
+  IconBlockquote,
+  IconCode,
+  IconH1,
+  IconH2,
+  IconH3,
+  IconH4,
+  IconH5,
+  IconH6,
+  IconList,
+  IconListCheck,
+  IconListNumbers,
+} from '@tabler/icons-react';
 import clsx from 'clsx';
 import {
   $createParagraphNode,
@@ -56,18 +65,18 @@ const BLOCK_TYPE_NAME_MAP = {
 };
 
 const BLOCK_TYPE_ICON_MAP: Record<BlockType, () => React.ReactNode> = {
-  bullet: () => <ListBulletIcon className='h-5 w-5' />,
-  check: () => <CheckIcon className='h-5 w-5' />,
-  code: () => <CodeBracketIcon className='h-5 w-5' />,
-  h1: () => <span className='text-sm'>H1</span>,
-  h2: () => <span className='text-sm'>H2</span>,
-  h3: () => <span className='text-sm'>H3</span>,
-  h4: () => <span className='text-sm'>H4</span>,
-  h5: () => <span className='text-sm'>H5</span>,
-  h6: () => <span className='text-sm'>H6</span>,
-  number: () => <span className='text-xs'>123</span>,
-  paragraph: () => <Bars3BottomLeftIcon className='h-5 w-5' />,
-  quote: () => <span className='text-lg'>&quot;</span>,
+  bullet: () => <IconList className='h-5 w-5' />,
+  check: () => <IconListCheck className='h-5 w-5' />,
+  code: () => <IconCode className='h-5 w-5' />,
+  h1: () => <IconH1 className='h-5 w-5' />,
+  h2: () => <IconH2 className='h-5 w-5' />,
+  h3: () => <IconH3 className='h-5 w-5' />,
+  h4: () => <IconH4 className='h-5 w-5' />,
+  h5: () => <IconH5 className='h-5 w-5' />,
+  h6: () => <IconH6 className='h-5 w-5' />,
+  number: () => <IconListNumbers className='h-5 w-5' />,
+  paragraph: () => <IconAbc className='h-5 w-5' />,
+  quote: () => <IconBlockquote className='h-5 w-5' />,
 };
 
 const createHeadingNode = (
@@ -229,13 +238,13 @@ const ToolbarPlugin = () => {
       <ToolbarActionButton
         disabled={!canUndo}
         onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}
-        icon={ArrowUturnLeftIcon}
+        icon={IconArrowBackUp}
       />
 
       <ToolbarActionButton
         disabled={!canRedo}
         onClick={() => editor.dispatchCommand(REDO_COMMAND, undefined)}
-        icon={ArrowUturnRightIcon}
+        icon={IconArrowForwardUp}
       />
 
       <Select
@@ -261,7 +270,7 @@ const ToolbarPlugin = () => {
 interface ToolbarActionButtonProps {
   disabled: boolean;
   onClick: () => void;
-  icon: typeof ArrowUturnLeftIcon;
+  icon: Icon;
 }
 
 const ToolbarActionButton: React.FC<ToolbarActionButtonProps> = ({

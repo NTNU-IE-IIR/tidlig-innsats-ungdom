@@ -1,9 +1,5 @@
 import { Menu } from '@headlessui/react';
-import {
-  ArrowLeftOnRectangleIcon,
-  ChevronDownIcon,
-  UserIcon,
-} from '@heroicons/react/24/outline';
+import { IconChevronDown, IconLogout, IconUser } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
@@ -27,7 +23,7 @@ const NavigationBar = () => {
             {data?.user.name?.split(' ')[0]}
           </span>
 
-          <ChevronDownIcon className='h-4 w-4 transform transition-transform ui-open:rotate-180' />
+          <IconChevronDown className='h-4 w-4 transform transition-transform ui-open:rotate-180' />
         </Menu.Button>
 
         <Menu.Items className='absolute right-1 top-full mt-1 divide-y rounded-md border border-black/10 bg-white shadow'>
@@ -35,7 +31,7 @@ const NavigationBar = () => {
             as='button'
             className='flex w-full items-center gap-1 rounded-t-md px-2 py-1 transition-colors hover:bg-zinc-100'
           >
-            <UserIcon className='h-4 w-4' />
+            <IconUser className='h-4 w-4' />
             <span className='text-sm font-medium'>Profil</span>
           </Menu.Item>
           <Menu.Item
@@ -43,7 +39,7 @@ const NavigationBar = () => {
             onClick={() => signOut()}
             className='flex w-full items-center gap-1 rounded-b-md px-2 py-1 transition-colors hover:bg-zinc-100 hover:text-red-600'
           >
-            <ArrowLeftOnRectangleIcon className='h-4 w-4' />
+            <IconLogout className='h-4 w-4' />
             <span className='text-sm font-medium'>Logg ut</span>
           </Menu.Item>
         </Menu.Items>

@@ -1,5 +1,5 @@
 import { Switch as HeadlessSwitch } from '@headlessui/react';
-import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid';
+import { IconCheck, IconX } from '@tabler/icons-react';
 
 interface SwitchProps {
   checked?: boolean;
@@ -8,7 +8,7 @@ interface SwitchProps {
 }
 
 const Switch: React.FC<SwitchProps> = ({ checked, onChange, label }) => {
-  const Icon = checked ? CheckIcon : XMarkIcon;
+  const Icon = checked ? IconCheck : IconX;
 
   return (
     <HeadlessSwitch

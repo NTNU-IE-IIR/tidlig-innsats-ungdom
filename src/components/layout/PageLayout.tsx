@@ -1,6 +1,6 @@
 import { Transition } from '@headlessui/react';
-import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { useHotkeys } from '@mantine/hooks';
+import { IconChevronLeft } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { useState } from 'react';
 import NavigationBar from '../navigation/NavigationBar';
@@ -37,7 +37,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
         className='mt-2 flex items-center self-start'
         onClick={() => setShowSideMenu((isShowing) => !isShowing)}
       >
-        <ChevronLeftIcon
+        <IconChevronLeft
           className={clsx(
             'h-5 w-5 transform transition-transform',
             showSideMenu && 'rotate-180'

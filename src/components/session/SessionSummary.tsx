@@ -1,6 +1,6 @@
+import { IconChevronRight } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import Button from '../input/Button';
-import { ChevronRightIcon } from '@heroicons/react/24/outline';
 
 interface SessionSummaryProps {
   sessionId: number;
@@ -77,7 +77,7 @@ const SessionSummary: React.FC<SessionSummaryProps> = ({ sessionId }) => {
             </div>
           </div>
 
-          <ChevronRightIcon className='h-5 w-5' />
+          <IconChevronRight className='h-5 w-5' />
 
           {i !== 0 && (
             <div className='absolute bottom-full left-4 h-full w-0.5 -translate-x-1/2 bg-zinc-400' />

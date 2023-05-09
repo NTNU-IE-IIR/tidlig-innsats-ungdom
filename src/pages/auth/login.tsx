@@ -1,11 +1,8 @@
 import Card from '@/components/container/Card';
+import Alert from '@/components/feedback/Alert';
 import Button from '@/components/input/Button';
 import TextField from '@/components/input/TextField';
 import { api } from '@/utils/api';
-import {
-  ChevronRightIcon,
-  InformationCircleIcon,
-} from '@heroicons/react/24/outline';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { getCsrfToken } from 'next-auth/react';
 import Head from 'next/head';
@@ -75,18 +72,11 @@ const Login = ({
         </Card>
 
         {isUninitialized && (
-          <Link
-            href='/auth/register'
-            className='mt-2 flex max-w-md items-center gap-2 rounded-md border border-sky-600 bg-sky-200/30 p-1 text-sky-900'
-          >
-            <InformationCircleIcon className='h-6 w-6' />
-
-            <p className='flex-1 text-sm'>
+          <Link href='/auth/register' className='mt-2'>
+            <Alert intent='info'>
               Fant ingen registrerte kontoer, klikk her for å registrere en
               administrator.
-            </p>
-
-            <ChevronRightIcon className='h-6 w-6' />
+            </Alert>
           </Link>
         )}
       </main>

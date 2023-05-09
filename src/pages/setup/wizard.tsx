@@ -4,8 +4,8 @@ import Switch from '@/components/input/Switch';
 import TextField from '@/components/input/TextField';
 import { ConfigureInput, configureSchema } from '@/schemas/appSettingsSchemas';
 import { api } from '@/utils/api';
-import { ChevronRightIcon } from '@heroicons/react/24/solid';
 import { useForm, zodResolver } from '@mantine/form';
+import { IconChevronRight } from '@tabler/icons-react';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -66,7 +66,7 @@ const Wizard: NextPage = () => {
 
             <Button className='mt-4 flex w-fit self-end py-1.5 text-sm'>
               <span>Neste</span>
-              <ChevronRightIcon className='-mr-1 h-4 w-4' />
+              <IconChevronRight className='-mr-1 h-4 w-4' />
             </Button>
           </form>
         </Card>

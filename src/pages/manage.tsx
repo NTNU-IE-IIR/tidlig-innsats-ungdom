@@ -1,5 +1,6 @@
 import Card from '@/components/container/Card';
 import TextEditor from '@/components/editor/TextEditor';
+import Alert from '@/components/feedback/Alert';
 import PageLayout from '@/components/layout/PageLayout';
 import { NextPage } from 'next';
 import Head from 'next/head';
@@ -16,13 +17,18 @@ const ManagePage: NextPage = () => {
         <div className='grid h-96 grid-cols-3 gap-4'>
           <Card className='col-span-2'>
             <h2 className='text-lg font-bold'>Nytt innhold</h2>
-            
+
             <TextEditor name='media' />
           </Card>
           <Card>
             <h2>Knytt til en/flere temaer</h2>
           </Card>
         </div>
+
+        <Alert intent='info' children='Hei' />
+        <Alert intent='success' children='Hei' />
+        <Alert intent='warning' children='Hei' />
+        <Alert intent='error' children='Hei' />
       </PageLayout>
     </>
   );

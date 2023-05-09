@@ -1,9 +1,8 @@
 import Card from '@/components/container/Card';
 import PageLayout from '@/components/layout/PageLayout';
 import { RouterOutputs, api } from '@/utils/api';
-import { HomeIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { SquaresPlusIcon } from '@heroicons/react/24/solid';
 import { useDebouncedValue, useHotkeys } from '@mantine/hooks';
+import { IconCloudPlus, IconHome, IconSearch } from '@tabler/icons-react';
 import { type NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -44,7 +43,7 @@ const Home: NextPage = () => {
       <PageLayout>
         <div className='flex items-center justify-center gap-1 py-2 font-semibold'>
           <button onClick={navigateHome}>
-            <HomeIcon className='h-5 w-5' />
+            <IconHome className='h-5 w-5' />
           </button>
           {themeDrill.map((theme, i) => (
             <Fragment key={theme.id}>
@@ -62,7 +61,7 @@ const Home: NextPage = () => {
 
         <div className='flex items-center justify-center'>
           <div className='relative'>
-            <MagnifyingGlassIcon className='pointer-events-none absolute left-1.5 top-1/2 h-4 w-4 -translate-y-1/2' />
+            <IconSearch className='pointer-events-none absolute left-1.5 top-1/2 h-4 w-4 -translate-y-1/2' />
             <input
               type='text'
               ref={searchBarRef}
@@ -92,7 +91,7 @@ const Home: NextPage = () => {
                 href='/manage'
                 className='col-span-3 mx-auto my-32 flex max-w-xs flex-col items-center text-center text-zinc-500 transition-colors hover:text-zinc-600'
               >
-                <SquaresPlusIcon className='h-24 w-24' />
+                <IconCloudPlus className='h-24 w-24' />
                 <p className='text-sm font-semibold'>
                   {debouncedSearchInput.length > 0
                     ? 'Kunne ikke finne innhold for søket ditt.'

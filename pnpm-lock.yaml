@@ -17,6 +17,7 @@ specifiers:
   '@mantine/hooks': ^6.0.8
   '@popperjs/core': ^2.11.7
   '@tabler/icons-react': ^2.17.0
+  '@tailwindcss/forms': ^0.5.3
   '@tanstack/react-query': ^4.29.5
   '@trpc/client': ^10.21.1
   '@trpc/next': ^10.21.1
@@ -106,6 +107,7 @@ dependencies:
   zod: 3.21.4
 
 devDependencies:
+  '@tailwindcss/forms': 0.5.3_tailwindcss@3.3.1
   '@types/bcrypt': 5.0.0
   '@types/eslint': 8.37.0
   '@types/formidable': 2.0.5
@@ -900,6 +902,15 @@ packages:
   /@tabler/icons/2.17.0:
     resolution: {integrity: sha512-UeJaylOGNRhQKyDlgZfrQ3UPSGlfVQuXcmCsTYeXioKKepibW6VZ3H36Lo1jvBTBkQD2e9m+k2NxwkztOTXwrA==}
     dev: false
+
+  /@tailwindcss/forms/0.5.3_tailwindcss@3.3.1:
+    resolution: {integrity: sha512-y5mb86JUoiUgBjY/o6FJSFZSEttfb3Q5gllE4xoKjAAD+vBrnIhE4dViwUuow3va8mpH4s9jyUbUbrRGoRdc2Q==}
+    peerDependencies:
+      tailwindcss: '>=3.0.0 || >= 3.0.0-alpha.1'
+    dependencies:
+      mini-svg-data-uri: 1.4.4
+      tailwindcss: 3.3.1_postcss@8.4.23
+    dev: true
 
   /@tanstack/query-core/4.29.5:
     resolution: {integrity: sha512-xXIiyQ/4r9KfaJ3k6kejqcaqFXXBTzN2aOJ5H1J6aTJE9hl/nbgAdfF6oiIu0CD5xowejJEJ6bBg8TO7BN4NuQ==}
@@ -3558,6 +3569,11 @@ packages:
   /mimic-fn/2.1.0:
     resolution: {integrity: sha512-OqbOk5oEQeAZ8WXWydlu9HJjz9WVdEIvamMCcXmuqUYjTknH/sqsWvhQ3vgwKFRR1HpjvNBKQ37nbJgYzGqGcg==}
     engines: {node: '>=6'}
+    dev: true
+
+  /mini-svg-data-uri/1.4.4:
+    resolution: {integrity: sha512-r9deDe9p5FJUPZAk3A59wGH7Ii9YrjjWw0jmw/liSbHl2CHiyXj6FcDXDu2K3TjVAXqiJdaw3xxwlZZr9E6nHg==}
+    hasBin: true
     dev: true
 
   /minimalistic-assert/1.0.1:

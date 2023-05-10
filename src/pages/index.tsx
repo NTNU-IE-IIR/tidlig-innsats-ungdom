@@ -67,7 +67,7 @@ const Home: NextPage = () => {
               ref={searchBarRef}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className='w-80 rounded-md border border-black/20 bg-zinc-50 py-1 pl-6 pr-16 shadow outline-none transition-colors placeholder:text-zinc-950 focus:border-zinc-600'
+              className='w-80 rounded-md border border-black/20 bg-zinc-50 py-1 pl-6 pr-16 shadow outline-none transition-colors placeholder:text-zinc-950 focus:border-zinc-600 focus:ring-0'
               placeholder='Søk...'
             />
 

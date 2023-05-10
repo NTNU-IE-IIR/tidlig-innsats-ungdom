@@ -49,7 +49,7 @@ const TextField: React.FC<TextFieldProps> = (props) => {
         value={value}
         placeholder={label}
         onChange={(e) => onChange?.(e.target.value)}
-        className='peer w-full rounded-md bg-transparent px-3 py-2 text-sm placeholder:invisible placeholder:text-sm focus:outline-none'
+        className='peer w-full rounded-md border-0 bg-transparent px-3 py-2 text-sm placeholder:invisible placeholder:text-sm focus:outline-none focus:ring-0'
       />
 
       <legend className='ml-2 h-0 text-sm transition-all peer-placeholder-shown:w-0'>

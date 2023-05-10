@@ -1,7 +1,6 @@
 import { CodeHighlightNode, CodeNode } from '@lexical/code';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { ListItemNode, ListNode } from '@lexical/list';
-import { TRANSFORMERS } from '@lexical/markdown';
 import {
   InitialConfigType,
   LexicalComposer,
@@ -11,39 +10,32 @@ import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
-import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
-import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
-import {
-  EditorState,
-  SerializedEditorState,
-  SerializedLexicalNode,
-} from 'lexical';
+import { SerializedEditorState, SerializedLexicalNode } from 'lexical';
 import { useMemo } from 'react';
 import Placeholder from './Placeholder';
 import { ImageNode } from './nodes/ImageNode';
-import ImagePastePlugin from './plugins/ImagePastePlugin';
-import ToolbarPlugin from './plugins/ToolbarPlugin';
 import { theme } from './theme';
 
-interface TextEditorProps {
+interface TextViewerProps {
   name: string;
-  initialState?: SerializedEditorState<SerializedLexicalNode>;
-  onEditorChange?: (editor: EditorState) => void;
+  content: string | SerializedEditorState<SerializedLexicalNode>;
 }
 
-const TextEditor: React.FC<TextEditorProps> = ({
-  name,
-  initialState,
-  onEditorChange,
-}) => {
+/**
+ * A viewer for the text editor, this variant is not editable and 
+ * is used for displaying the contents of rich text media.
+ */
+const TextViewer: React.FC<TextViewerProps> = ({ name, content }) => {
   const initialConfig = useMemo<InitialConfigType>(
     () => ({
       namespace: name,
-      editorState: (editor) =>
-        initialState ? editor.parseEditorState(initialState) : undefined,
+      editorState: (editor) => {
+        editor.setEditorState(editor.parseEditorState(content));
+      },
+      editable: false,
       onError: (err) => console.error(err),
       nodes: [
         HeadingNode,
@@ -66,26 +58,18 @@ const TextEditor: React.FC<TextEditorProps> = ({
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <div className='rounded-md border border-zinc-200'>
-        <ToolbarPlugin />
-        <div className='relative px-1 py-2'>
-          <RichTextPlugin
-            ErrorBoundary={LexicalErrorBoundary}
-            contentEditable={
-              <ContentEditable className='border-0 focus:outline-none' />
-            }
-            placeholder={<Placeholder />}
-          />
-          <ListPlugin />
-          <LinkPlugin />
-          <HistoryPlugin />
-          <OnChangePlugin onChange={(editor) => onEditorChange?.(editor)} />
-          <ImagePastePlugin />
-          <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
-        </div>
-      </div>
+      <RichTextPlugin
+        ErrorBoundary={LexicalErrorBoundary}
+        contentEditable={
+          <ContentEditable className='border-0 focus:outline-none' />
+        }
+        placeholder={<Placeholder />}
+      />
+      <ListPlugin />
+      <LinkPlugin />
+      <HistoryPlugin />
     </LexicalComposer>
   );
 };
 
-export default TextEditor;
+export default TextViewer;

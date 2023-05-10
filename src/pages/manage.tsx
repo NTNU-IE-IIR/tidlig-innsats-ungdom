@@ -1,14 +1,21 @@
 import Card from '@/components/container/Card';
 import TextEditor from '@/components/editor/TextEditor';
-import Alert from '@/components/feedback/Alert';
+import Button from '@/components/input/Button';
 import PageLayout from '@/components/layout/PageLayout';
 import ThemeListNode from '@/components/theme/ThemeListNode';
 import { api } from '@/utils/api';
+import { EditorState } from 'lexical';
 import { NextPage } from 'next';
 import Head from 'next/head';
+import { useState } from 'react';
 
 const ManagePage: NextPage = () => {
   const { data: themes } = api.theme.listThemeTree.useQuery({});
+  const [editorState, setEditorState] = useState<EditorState>();
+
+  const submit = () => {
+    console.log(editorState?.toJSON());
+  };
 
   return (
     <>
@@ -22,7 +29,11 @@ const ManagePage: NextPage = () => {
           <Card className='col-span-2'>
             <h2 className='text-lg font-bold'>Nytt innhold</h2>
 
-            <TextEditor name='media' />
+            <TextEditor name='media' onEditorChange={setEditorState} />
+
+            <Button className='ml-auto mt-2' onClick={submit}>
+              Lagre
+            </Button>
           </Card>
           <Card>
             <h2>Knytt til en/flere temaer</h2>

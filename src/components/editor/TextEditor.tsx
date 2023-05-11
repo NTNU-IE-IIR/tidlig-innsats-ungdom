@@ -27,15 +27,18 @@ import { ImageNode } from './nodes/ImageNode';
 import ImagePastePlugin from './plugins/ImagePastePlugin';
 import ToolbarPlugin from './plugins/ToolbarPlugin';
 import { theme } from './theme';
+import clsx from 'clsx';
 
 interface TextEditorProps {
   name: string;
+  className?: string;
   initialState?: SerializedEditorState<SerializedLexicalNode>;
   onEditorChange?: (editor: EditorState) => void;
 }
 
 const TextEditor: React.FC<TextEditorProps> = ({
   name,
+  className,
   initialState,
   onEditorChange,
 }) => {
@@ -66,13 +69,18 @@ const TextEditor: React.FC<TextEditorProps> = ({
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <div className='rounded-md border border-zinc-200'>
+      <div
+        className={clsx(
+          'relative rounded-md border border-zinc-200',
+          className
+        )}
+      >
         <ToolbarPlugin />
-        <div className='relative px-1 py-2'>
+        <div className='relative h-full w-full px-1 py-2'>
           <RichTextPlugin
             ErrorBoundary={LexicalErrorBoundary}
             contentEditable={
-              <ContentEditable className='border-0 focus:outline-none' />
+              <ContentEditable className='w-ful h-full border-0 focus:outline-none' />
             }
             placeholder={<Placeholder />}
           />

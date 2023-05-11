@@ -37,7 +37,7 @@ const TextField: React.FC<TextFieldProps> = (props) => {
         'group relative rounded-md border transition-colors',
         error
           ? 'border-red-500'
-          : 'border-zinc-700 focus-within:border-emerald-600',
+          : 'border-zinc-300 focus-within:border-emerald-600',
         className
       )}
     >

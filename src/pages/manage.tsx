@@ -1,6 +1,7 @@
 import Card from '@/components/container/Card';
 import TextEditor from '@/components/editor/TextEditor';
 import Button from '@/components/input/Button';
+import TextField from '@/components/input/TextField';
 import PageLayout from '@/components/layout/PageLayout';
 import ThemeListNode from '@/components/theme/ThemeListNode';
 import { api } from '@/utils/api';
@@ -22,29 +23,30 @@ const ManagePage: NextPage = () => {
       <Head>
         <title>Tidlig innsats ungdom</title>
       </Head>
-      <PageLayout>
-        <p>Tema administrasjon</p>
+      <PageLayout className='grid grid-cols-3 gap-4 px-1'>
+        <section className='col-span-2 flex flex-col'>
+          <h2 className='text-lg font-bold'>Nytt innhold</h2>
+          <Card className='flex-1 flex flex-col gap-2 py-2'>
+            <TextField label='Navn' />
 
-        <div className='grid h-96 grid-cols-3 gap-4'>
-          <Card className='col-span-2'>
-            <h2 className='text-lg font-bold'>Nytt innhold</h2>
+            <TextEditor name='media' onEditorChange={setEditorState} className='flex-1' />
 
-            <TextEditor name='media' onEditorChange={setEditorState} />
-
-            <Button className='ml-auto mt-2' onClick={submit}>
+            <Button className='self-end' onClick={submit}>
               Lagre
             </Button>
           </Card>
-          <Card>
-            <h2>Knytt til en/flere temaer</h2>
+        </section>
 
+        <aside className='flex flex-col'>
+          <h2 className='text-lg font-bold'>Knytt til en/flere tema</h2>
+          <Card className='flex-1'>
             <ul>
               {themes?.map((theme) => (
                 <ThemeListNode key={theme.id} theme={theme} />
               ))}
             </ul>
           </Card>
-        </div>
+        </aside>
       </PageLayout>
     </>
   );

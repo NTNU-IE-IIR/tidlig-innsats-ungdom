@@ -8,9 +8,14 @@ import SessionSideMenu from '../session/SessionSideMenu';
 
 interface PageLayoutProps {
   children: React.ReactNode;
+  /**
+   * Classes applied to the content root element.
+   * This is the parent of the children prop.
+   */
+  className?: string;
 }
 
-const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
+const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
   const [showSideMenu, setShowSideMenu] = useState(false);
 
   useHotkeys([
@@ -19,34 +24,36 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
   ]);
 
   return (
-    <div className='relative flex min-h-screen overflow-hidden'>
-      <div className='mx-auto flex min-h-screen max-w-screen-xl flex-1 flex-col overflow-y-auto py-4'>
-        <NavigationBar />
+    <div className='relative flex h-screen w-screen overflow-hidden'>
+      <div className='relative flex-1 overflow-y-auto'>
+        <div className='mx-auto flex h-fit min-h-screen max-w-screen-xl flex-col gap-2 py-5'>
+          <NavigationBar />
 
-        <main className='flex-1'>{children}</main>
+          <main className={clsx('flex-1', className)}>{children}</main>
 
-        <footer className='self-center'>
-          <span className='text-sm font-semibold uppercase'>
-            tidlig innsats ungdom © {new Date().getFullYear()}
+          <footer className='self-center'>
+            <span className='text-sm font-semibold uppercase'>
+              tidlig innsats ungdom © {new Date().getFullYear()}
+            </span>
+          </footer>
+        </div>
+
+        <button
+          type='button'
+          className='absolute right-0 top-0 mt-0.5 flex items-center self-start'
+          onClick={() => setShowSideMenu((isShowing) => !isShowing)}
+        >
+          <IconChevronLeft
+            className={clsx(
+              'h-5 w-5 transform transition-transform',
+              showSideMenu && 'rotate-180'
+            )}
+          />
+          <span className='pr-2 text-sm font-semibold'>
+            {!showSideMenu ? 'Åpne øktoversikt' : 'Lukk øktoversikt'}
           </span>
-        </footer>
+        </button>
       </div>
-
-      <button
-        type='button'
-        className='mt-2 flex items-center self-start'
-        onClick={() => setShowSideMenu((isShowing) => !isShowing)}
-      >
-        <IconChevronLeft
-          className={clsx(
-            'h-5 w-5 transform transition-transform',
-            showSideMenu && 'rotate-180'
-          )}
-        />
-        <span className='pr-2 text-sm font-semibold'>
-          {!showSideMenu ? 'Åpne øktoversikt' : 'Lukk øktoversikt'}
-        </span>
-      </button>
 
       <Transition
         show={showSideMenu}

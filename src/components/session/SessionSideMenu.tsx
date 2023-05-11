@@ -8,7 +8,7 @@ const SessionSideMenu = () => {
   const [selectedSessionId, setSelectedSessionId] = useState<number | null>();
 
   return (
-    <div className='mb-4 flex min-h-full w-full flex-col gap-2'>
+    <div className='flex min-h-full w-full flex-col gap-2'>
       {!selectedSessionId && (
         <>
           <h1 className='text-xl font-semibold'>Øktoversikt</h1>

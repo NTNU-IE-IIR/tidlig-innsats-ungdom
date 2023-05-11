@@ -67,6 +67,7 @@ export const mediaRouter = createTRPCRouter({
       const result = await db
         .insert(media)
         .values({
+          name: input.name,
           content: input.content,
           createdBy: ctx.session.user.id,
           type: input.type,

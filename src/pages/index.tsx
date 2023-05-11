@@ -6,6 +6,7 @@ import { IconCloudPlus, IconHome, IconSearch } from '@tabler/icons-react';
 import { type NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { Fragment, useRef, useState } from 'react';
 
 type Theme = RouterOutputs['theme']['listThemes'][number];
@@ -23,7 +24,13 @@ const Home: NextPage = () => {
     parentId: themeDrill[themeDrill.length - 1]?.id,
   });
 
+  const router = useRouter();
+
   const appendTheme = (theme: Theme) => {
+    if (theme.discriminator === 'MEDIA') {
+      return router.push(`/media/${theme.id}`);
+    }
+
     setThemeDrill((prev) => [...prev, theme]);
   };
 
@@ -105,7 +112,7 @@ const Home: NextPage = () => {
           {themes?.map((theme) => (
             <Card
               onClick={() => appendTheme(theme)}
-              key={theme.id}
+              key={theme.discriminator + theme.id}
               className='flex aspect-[1.5/1] cursor-pointer flex-col items-center justify-center transition-all hover:scale-[1.025]'
             >
               <h3 className='text-xl font-bold'>{theme.name}</h3>

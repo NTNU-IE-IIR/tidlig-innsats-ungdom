@@ -1,9 +1,9 @@
 import { db } from '@/server/db';
-import { theme } from '@/server/db/schema';
-import { SQL, and, eq, ilike, isNull } from 'drizzle-orm';
+import { media, theme, themeMedia } from '@/server/db/schema';
+import { ThemeNode } from '@/types/themes';
+import { sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
-import { ThemeNode } from '@/types/themes';
 
 export const themeRouter = createTRPCRouter({
   /**
@@ -14,24 +14,42 @@ export const themeRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string().optional(),
-        parentId: z.number().optional(),
+        parentId: z.number().or(z.string().regex(/\d+/gi)).optional(),
       })
     )
     .query(async ({ input }) => {
-      const conditions = [
-        input.name !== undefined && ilike(theme.name, `%${input.name}%`),
-        input.parentId !== undefined
-          ? eq(theme.parentId, input.parentId)
-          : isNull(theme.parentId),
-      ].filter(Boolean) as SQL[];
+      const parentId = input.parentId ?? null;
+      const name = input.name ?? null;
 
-      return await db
-        .select({
-          id: theme.id,
-          name: theme.name,
-        })
-        .from(theme)
-        .where(and(...conditions));
+      const result = await db.execute<{
+        id: number;
+        name: string;
+        discriminator: 'THEME' | 'MEDIA';
+      }>(sql`
+        SELECT 
+          ${theme.id} AS id,
+          ${theme.name} AS name,
+          'THEME' AS discriminator
+        FROM ${theme}
+        WHERE 
+          (
+            (${parentId}::bigint IS NULL AND ${theme.parentId} IS NULL) OR
+            (${theme.parentId} = ${parentId})
+          ) AND 
+          (${theme.name} ILIKE '%' || ${name} || '%')
+        UNION
+        SELECT
+          ${media.id} AS id,
+          ${media.name} AS name,
+          'MEDIA' AS discriminator
+        FROM ${themeMedia}
+        INNER JOIN ${media} ON ${themeMedia.mediaId} = ${media.id}
+        WHERE 
+          (${themeMedia.themeId} = ${parentId}) AND
+          (${media.name} ILIKE '%' || ${name} || '%')
+      `);
+
+      return result.rows;
     }),
 
   /**

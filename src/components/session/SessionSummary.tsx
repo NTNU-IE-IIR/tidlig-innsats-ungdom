@@ -88,7 +88,7 @@ const SessionSummary: React.FC<SessionSummaryProps> = ({ sessionId }) => {
       <h2 className='-mb-2 mt-auto font-semibold'>Notater</h2>
       <textarea className='h-40 resize-none rounded-md border border-zinc-300 bg-zinc-100 p-2 outline-none' />
 
-      <Button>Stopp økt</Button>
+      <Button variant='destructive'>Stopp økt</Button>
     </>
   );
 };

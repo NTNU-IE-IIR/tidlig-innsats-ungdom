@@ -1,6 +1,26 @@
+import { VariantProps, cva } from 'class-variance-authority';
 import clsx from 'clsx';
 
-interface ButtonProps {
+const button = cva(
+  [
+    'relative flex items-center justify-center gap-2 rounded-md  px-2 py-1 text-white outline-none transition-colors focus:ring-2',
+  ],
+  {
+    variants: {
+      variant: {
+        primary:
+          'border-emerald-700 bg-emerald-500 hover:bg-emerald-600 focus:ring-emerald-700',
+        destructive:
+          'border-red-700 bg-red-500 hover:bg-red-600 focus:ring-red-700',
+      },
+    },
+    defaultVariants: {
+      variant: 'primary',
+    },
+  }
+);
+
+interface ButtonProps extends VariantProps<typeof button> {
   className?: string;
   type?: 'button' | 'submit' | 'reset';
   children?: React.ReactNode;
@@ -10,19 +30,17 @@ interface ButtonProps {
 
 const Button: React.FC<ButtonProps> = ({
   className,
-  type,
+  type = 'button',
   children,
   isLoading,
   onClick,
+  variant,
 }) => {
   return (
     <button
       type={type}
       onClick={() => onClick?.()}
-      className={clsx(
-        'relative flex justify-center items-center gap-2 rounded-md border-emerald-700 bg-emerald-500 px-2 py-1 text-white outline-none transition-colors hover:bg-emerald-600 focus:ring-2 focus:ring-emerald-700',
-        className
-      )}
+      className={clsx(button({ variant }), className)}
     >
       {/* Loading spinner */}
       {isLoading && (
@@ -50,7 +68,11 @@ const Button: React.FC<ButtonProps> = ({
         </div>
       )}
 
-      <div className={clsx('flex items-center gap-1', isLoading && 'invisible')}>{children}</div>
+      <div
+        className={clsx('flex items-center gap-1', isLoading && 'invisible')}
+      >
+        {children}
+      </div>
     </button>
   );
 };

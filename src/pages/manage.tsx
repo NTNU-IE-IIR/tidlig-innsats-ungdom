@@ -26,10 +26,14 @@ const ManagePage: NextPage = () => {
       <PageLayout className='grid grid-cols-3 gap-4 px-1'>
         <section className='col-span-2 flex flex-col'>
           <h2 className='text-lg font-bold'>Nytt innhold</h2>
-          <Card className='flex-1 flex flex-col gap-2 py-2'>
+          <Card className='flex flex-1 flex-col gap-2 py-2'>
             <TextField label='Navn' />
 
-            <TextEditor name='media' onEditorChange={setEditorState} className='flex-1' />
+            <TextEditor
+              name='media'
+              onEditorChange={setEditorState}
+              className='flex-1'
+            />
 
             <Button className='self-end' onClick={submit}>
               Lagre

@@ -7,6 +7,12 @@
       "version": "5",
       "when": 1683406966025,
       "tag": "0000_salty_namora"
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1683835690188,
+      "tag": "0001_cold_mandroid"
     }
   ]
 }

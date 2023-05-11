@@ -44,6 +44,7 @@ export const mediaType = pgEnum('media_type', [
 
 export const media = pgTable('media', {
   id: bigserial('media_id', { mode: 'number' }).primaryKey(),
+  name: text('name').notNull(),
   content: jsonb('content').notNull(),
   createdBy: uuid('fk_created_by_account_id')
     .notNull()

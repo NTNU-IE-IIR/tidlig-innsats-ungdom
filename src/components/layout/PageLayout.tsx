@@ -1,8 +1,8 @@
+import { useSessionStore } from '@/store/sessionStore';
 import { Transition } from '@headlessui/react';
 import { useHotkeys } from '@mantine/hooks';
 import { IconChevronLeft } from '@tabler/icons-react';
 import clsx from 'clsx';
-import { useState } from 'react';
 import NavigationBar from '../navigation/NavigationBar';
 import SessionSideMenu from '../session/SessionSideMenu';
 
@@ -16,11 +16,11 @@ interface PageLayoutProps {
 }
 
 const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
-  const [showSideMenu, setShowSideMenu] = useState(false);
+  const { showSideMenu, toggleSideMenu, closeSideMenu } = useSessionStore();
 
   useHotkeys([
-    ['ctrl+space', () => setShowSideMenu((isShowing) => !isShowing)],
-    ['escape', () => setShowSideMenu(false)],
+    ['ctrl+space', () => toggleSideMenu()],
+    ['escape', () => closeSideMenu()],
   ]);
 
   return (
@@ -41,7 +41,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
         <button
           type='button'
           className='absolute right-0 top-0 mt-0.5 flex items-center self-start'
-          onClick={() => setShowSideMenu((isShowing) => !isShowing)}
+          onClick={toggleSideMenu}
         >
           <IconChevronLeft
             className={clsx(
@@ -59,11 +59,11 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
         show={showSideMenu}
         enter='transition-all duration-300 ease-out'
         enterFrom='transform w-0 opacity-0'
-        enterTo='transform w-1/5 opacity-100'
+        enterTo='transform w-96 opacity-100'
         leave='transition-all duration-300 ease-out'
-        leaveFrom='transform w-1/5 opacity-100'
+        leaveFrom='transform w-96 opacity-100'
         leaveTo='transform w-0 opacity-0'
-        className='overflow-hidden'
+        className='overflow-hidden w-96'
       >
         <div className='flex h-screen overflow-y-auto border-l border-black/10 bg-white px-2 pb-2 pt-1'>
           <SessionSideMenu />

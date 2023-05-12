@@ -1,6 +1,7 @@
 import { IconChevronRight } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import Button from '../input/Button';
+import { useSessionStore } from '@/store/sessionStore';
 
 interface SessionSummaryProps {
   sessionId: number;
@@ -19,6 +20,8 @@ interface SessionEntry {
 }
 
 const SessionSummary: React.FC<SessionSummaryProps> = ({ sessionId }) => {
+  const { clearViewedSessionId } = useSessionStore();
+
   const entries: SessionEntry[] = [
     {
       id: 1,
@@ -88,7 +91,9 @@ const SessionSummary: React.FC<SessionSummaryProps> = ({ sessionId }) => {
       <h2 className='-mb-2 mt-auto font-semibold'>Notater</h2>
       <textarea className='h-40 resize-none rounded-md border border-zinc-300 bg-zinc-100 p-2 outline-none' />
 
-      <Button variant='destructive'>Stopp økt</Button>
+      <Button variant='destructive' onClick={clearViewedSessionId}>
+        Stopp økt
+      </Button>
     </>
   );
 };

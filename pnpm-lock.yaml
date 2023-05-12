@@ -64,6 +64,7 @@ specifiers:
   typescript: ^5.0.4
   yjs: ^13.6.0
   zod: ^3.21.4
+  zustand: ^4.3.8
 
 dependencies:
   '@headlessui/react': 1.7.14_biqbaboplfbrettd7655fr4n2y
@@ -105,6 +106,7 @@ dependencies:
   superjson: 1.12.2
   yjs: 13.6.0
   zod: 3.21.4
+  zustand: 4.3.8_react@18.2.0
 
 devDependencies:
   '@tailwindcss/forms': 0.5.3_tailwindcss@3.3.1
@@ -5166,3 +5168,19 @@ packages:
 
   /zod/3.21.4:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
+
+  /zustand/4.3.8_react@18.2.0:
+    resolution: {integrity: sha512-4h28KCkHg5ii/wcFFJ5Fp+k1J3gJoasaIbppdgZFO4BPJnsNxL0mQXBSFgOgAdCdBj35aDTPvdAJReTMntFPGg==}
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      immer: '>=9.0'
+      react: '>=16.8'
+    peerDependenciesMeta:
+      immer:
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      react: 18.2.0
+      use-sync-external-store: 1.2.0_react@18.2.0
+    dev: false

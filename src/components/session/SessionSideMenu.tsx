@@ -1,15 +1,16 @@
+import { useSessionStore } from '@/store/sessionStore';
 import dayjs from 'dayjs';
-import { useState } from 'react';
 import Button from '../input/Button';
 import SessionCard from './SessionCard';
 import SessionSummary from './SessionSummary';
 
 const SessionSideMenu = () => {
-  const [selectedSessionId, setSelectedSessionId] = useState<number | null>();
+  const { viewedSessionId, setViewedSessionId, clearViewedSessionId } =
+    useSessionStore();
 
   return (
     <div className='flex min-h-full w-full flex-col gap-2'>
-      {!selectedSessionId && (
+      {!viewedSessionId && (
         <>
           <h1 className='text-xl font-semibold'>Øktoversikt</h1>
           <div className='flex flex-col gap-2'>
@@ -19,7 +20,7 @@ const SessionSideMenu = () => {
                 title={`Økt ${i + 1} ${dayjs().format('dddd')}`}
                 startedAt={dayjs().subtract(1, 'hour').toDate()}
                 endedAt={new Date()}
-                onClick={() => setSelectedSessionId(i + 1)}
+                onClick={() => setViewedSessionId(i + 1)}
               />
             ))}
           </div>
@@ -28,10 +29,10 @@ const SessionSideMenu = () => {
         </>
       )}
 
-      {selectedSessionId && (
+      {viewedSessionId && (
         <SessionSummary
-          sessionId={selectedSessionId}
-          onEnd={() => setSelectedSessionId(null)}
+          sessionId={viewedSessionId}
+          onEnd={clearViewedSessionId}
         />
       )}
     </div>

@@ -46,7 +46,8 @@ export const themeRouter = createTRPCRouter({
         INNER JOIN ${media} ON ${themeMedia.mediaId} = ${media.id}
         WHERE 
           (${themeMedia.themeId} = ${parentId}) AND
-          (${media.name} ILIKE '%' || ${name} || '%')
+          (${media.name} ILIKE '%' || ${name} || '%') AND
+          (${media.published} = TRUE)
       `);
 
       return result.rows;

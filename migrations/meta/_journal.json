@@ -13,6 +13,12 @@
       "version": "5",
       "when": 1683835690188,
       "tag": "0001_cold_mandroid"
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1684005637458,
+      "tag": "0002_tan_whizzer"
     }
   ]
 }

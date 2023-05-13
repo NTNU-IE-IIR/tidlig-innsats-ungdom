@@ -6,6 +6,7 @@ import {
   AnyPgColumn,
   bigint,
   bigserial,
+  boolean,
   jsonb,
   pgEnum,
   pgTable,
@@ -46,6 +47,7 @@ export const media = pgTable('media', {
   id: bigserial('media_id', { mode: 'number' }).primaryKey(),
   name: text('name').notNull(),
   content: jsonb('content').notNull(),
+  published: boolean('published').notNull().default(false),
   createdBy: uuid('fk_created_by_account_id')
     .notNull()
     .references(() => userAccount.id),

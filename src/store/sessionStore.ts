@@ -13,7 +13,7 @@ export interface SessionStore extends z.infer<typeof sessionStoreSchema> {
   closeSideMenu: () => void;
 }
 
-export const useSessionStore = create<SessionStore>((set) => ({
+export const useSessionStore = create<SessionStore>()((set) => ({
   showSideMenu: false,
   viewedSessionId: null,
   setViewedSessionId: (sessionId) => set({ viewedSessionId: sessionId }),

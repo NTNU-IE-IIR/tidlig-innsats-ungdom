@@ -71,16 +71,16 @@ const TextEditor: React.FC<TextEditorProps> = ({
     <LexicalComposer initialConfig={initialConfig}>
       <div
         className={clsx(
-          'relative rounded-md border border-zinc-200',
+          'flex flex-col rounded-md border border-zinc-200',
           className
         )}
       >
         <ToolbarPlugin />
-        <div className='relative h-full w-full px-1 py-2'>
+        <div className='relative flex-1 px-1 py-2'>
           <RichTextPlugin
             ErrorBoundary={LexicalErrorBoundary}
             contentEditable={
-              <ContentEditable className='w-ful h-full border-0 focus:outline-none' />
+              <ContentEditable className='h-full w-full border-0 focus:outline-none' />
             }
             placeholder={<Placeholder />}
           />

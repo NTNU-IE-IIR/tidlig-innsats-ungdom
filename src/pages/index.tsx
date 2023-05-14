@@ -9,24 +9,24 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Fragment, useRef, useState } from 'react';
 
-type Theme = RouterOutputs['theme']['listThemes'][number];
+type Content = RouterOutputs['content']['listContent'][number];
 
 const Home: NextPage = () => {
   const searchBarRef = useRef<HTMLInputElement>(null);
   const [searchInput, setSearchInput] = useState('');
   const [debouncedSearchInput] = useDebouncedValue(searchInput, 500);
-  const [themeDrill, setThemeDrill] = useState<Theme[]>([]);
+  const [themeDrill, setThemeDrill] = useState<Content[]>([]);
 
   useHotkeys([['ctrl+k', () => searchBarRef.current?.focus()]]);
 
-  const { data: themes } = api.theme.listThemes.useQuery({
+  const { data: themes } = api.content.listContent.useQuery({
     name: debouncedSearchInput,
     parentId: themeDrill[themeDrill.length - 1]?.id,
   });
 
   const router = useRouter();
 
-  const appendTheme = (theme: Theme) => {
+  const appendTheme = (theme: Content) => {
     if (theme.discriminator === 'MEDIA') {
       return router.push(`/media/${theme.id}`);
     }
@@ -38,7 +38,7 @@ const Home: NextPage = () => {
     setThemeDrill([]);
   };
 
-  const navigateBackTo = (theme: Theme, i: number) => {
+  const navigateBackTo = (theme: Content, i: number) => {
     setThemeDrill((prev) => prev.slice(0, i).concat(theme));
   };
 

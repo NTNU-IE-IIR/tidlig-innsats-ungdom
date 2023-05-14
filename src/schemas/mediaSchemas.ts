@@ -6,4 +6,13 @@ export const createMediaSchema = z.object({
   content: z.any(),
   themeIds: z.array(z.number().positive()),
   type: z.nativeEnum(MediaType),
+  published: z.boolean(),
 });
+
+export type CreateMediaInput = z.infer<typeof createMediaSchema>;
+
+export const updateMediaSchema = createMediaSchema.extend({
+  id: z.number().positive(),
+});
+
+export type UpdateMediaInput = z.infer<typeof updateMediaSchema>;

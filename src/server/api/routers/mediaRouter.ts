@@ -1,12 +1,6 @@
-import { createMediaSchema } from '@/schemas/mediaSchemas';
+import { createMediaSchema, updateMediaSchema } from '@/schemas/mediaSchemas';
 import { db } from '@/server/db';
-import {
-  MediaType,
-  media,
-  theme,
-  themeMedia,
-  userAccount,
-} from '@/server/db/schema';
+import { media, theme, themeMedia, userAccount } from '@/server/db/schema';
 import { TRPCError } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
@@ -86,5 +80,25 @@ export const mediaRouter = createTRPCRouter({
       }
 
       return result;
+    }),
+
+  /**
+   * Updates an existing media, replacing its content with the new content.
+   */
+  update: protectedProcedure
+    .input(updateMediaSchema)
+    .mutation(async ({ input }) => {
+      const result = await db
+        .update(media)
+        .set({
+          name: input.name,
+          content: input.content,
+          updatedAt: new Date(),
+          type: input.type,
+        })
+        .where(eq(media.id, input.id))
+        .returning();
+
+      return result[0];
     }),
 });

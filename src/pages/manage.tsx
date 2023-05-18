@@ -4,6 +4,7 @@ import Button from '@/components/input/Button';
 import Switch from '@/components/input/Switch';
 import TextField from '@/components/input/TextField';
 import PageLayout from '@/components/layout/PageLayout';
+import Dialog from '@/components/overlay/Dialog';
 import ThemeListNode from '@/components/theme/ThemeListNode';
 import { CreateMediaInput, createMediaSchema } from '@/schemas/mediaSchemas';
 import { MediaType } from '@/server/db/schema';
@@ -19,6 +20,7 @@ const ManagePage: NextPage = () => {
   const { data: themes } = api.theme.listThemeTree.useQuery({});
   const [editorState, setEditorState] = useState<EditorState>();
   const { selectedThemeIds } = useThemeStore();
+  const [showThemeDialog, setShowThemeDialog] = useState(false);
 
   const { mutateAsync: createMedia, isLoading } =
     api.media.create.useMutation();
@@ -84,15 +86,60 @@ const ManagePage: NextPage = () => {
 
           <aside className='flex flex-col'>
             <h2 className='text-lg font-bold'>Knytt til en/flere tema</h2>
-            <Card className='flex-1'>
-              <ul>
+            <Card className='flex flex-1 flex-col'>
+              <ul className='flex-1'>
                 {themes?.map((theme) => (
                   <ThemeListNode key={theme.id} theme={theme} />
                 ))}
               </ul>
+
+              <Button className='mb-1' onClick={() => setShowThemeDialog(true)}>
+                Nytt tema
+              </Button>
             </Card>
           </aside>
         </form>
+
+        <Dialog
+          open={showThemeDialog}
+          onClose={() => setShowThemeDialog(false)}
+          className='relative flex flex-col gap-2 p-2'
+        >
+          {({ close }) => (
+            <>
+              <h1 className='text-lg font-bold'>Nytt tema</h1>
+
+              <TextField label='Navn' />
+              <TextField label='Kort beskrivelse' />
+
+              <h2 className='text-sm font-medium'>Hører under tema:</h2>
+
+              <ul className='flex flex-col gap-2'>
+                <li className='flex items-center justify-between text-sm font-semibold'>
+                  <span>Angst</span>
+                  <Button>Velg</Button>
+                </li>
+                <li className='flex items-center justify-between text-sm font-semibold'>
+                  <span>Depresjon</span>
+                  <Button>Velg</Button>
+                </li>
+                <li className='flex items-center justify-between text-sm font-semibold'>
+                  <span>Spiseforstyrrelser</span>
+                  <Button>Velg</Button>
+                </li>
+              </ul>
+
+              <hr />
+
+              <div className='flex items-center gap-1 self-end'>
+                <Button variant='primary'>Lagre</Button>
+                <Button variant='destructive' onClick={close}>
+                  Avbryt
+                </Button>
+              </div>
+            </>
+          )}
+        </Dialog>
       </PageLayout>
     </>
   );

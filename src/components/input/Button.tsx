@@ -12,6 +12,8 @@ const button = cva(
           'border-emerald-700 bg-emerald-500 hover:bg-emerald-600 focus:ring-emerald-700',
         destructive:
           'border-red-700 bg-red-500 hover:bg-red-600 focus:ring-red-700',
+        neutral:
+          'text-zinc-950 border border-zinc-300 hover:bg-zinc-100 focus:ring-zinc-200',
       },
     },
     defaultVariants: {

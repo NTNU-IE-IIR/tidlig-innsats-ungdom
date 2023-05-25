@@ -5,10 +5,12 @@ import Switch from '@/components/input/Switch';
 import TextField from '@/components/input/TextField';
 import PageLayout from '@/components/layout/PageLayout';
 import Dialog from '@/components/overlay/Dialog';
+import ThemeForm from '@/components/theme/ThemeForm';
 import ThemeListNode from '@/components/theme/ThemeListNode';
 import { CreateMediaInput, createMediaSchema } from '@/schemas/mediaSchemas';
 import { MediaType } from '@/server/db/schema';
 import { useThemeStore } from '@/store/themeStore';
+import { ThemeNode } from '@/types/themes';
 import { api } from '@/utils/api';
 import { useForm, zodResolver } from '@mantine/form';
 import { EditorState } from 'lexical';
@@ -21,6 +23,18 @@ const ManagePage: NextPage = () => {
   const [editorState, setEditorState] = useState<EditorState>();
   const { selectedThemeIds } = useThemeStore();
   const [showThemeDialog, setShowThemeDialog] = useState(false);
+  const [showDeleteThemeDialog, setShowDeleteThemeDialog] = useState(false);
+  const [editingThemeId, setEditingThemeId] = useState<number>();
+
+  const utils = api.useContext();
+
+  const { mutate: deleteTheme } = api.theme.deleteThemeById.useMutation({
+    onSuccess: async () => {
+      await utils.theme.listThemeTree.invalidate();
+      await utils.content.listContent.invalidate();
+      setShowDeleteThemeDialog(false);
+    },
+  });
 
   const { mutateAsync: createMedia, isLoading } =
     api.media.create.useMutation();
@@ -44,6 +58,29 @@ const ManagePage: NextPage = () => {
     });
   };
 
+  const handleNewTheme = () => {
+    setEditingThemeId(undefined);
+    setShowThemeDialog(true);
+  };
+
+  const handleEditTheme = (theme: ThemeNode) => {
+    setEditingThemeId(theme.id);
+    setShowThemeDialog(true);
+  };
+
+  const handleDeleteTheme = (theme: ThemeNode) => {
+    setEditingThemeId(theme.id);
+    setShowDeleteThemeDialog(true);
+  };
+
+  const processThemeDelete = () => {
+    if (!editingThemeId) return;
+
+    deleteTheme({
+      id: editingThemeId,
+    });
+  };
+
   return (
     <>
       <Head>
@@ -58,6 +95,11 @@ const ManagePage: NextPage = () => {
             <h2 className='text-lg font-bold'>Nytt innhold</h2>
             <Card className='flex flex-1 flex-col gap-2 py-2'>
               <TextField label='Navn' {...form.getInputProps('name')} />
+
+              <TextField
+                label='Kort beskrivelse'
+                {...form.getInputProps('shortDescription')}
+              />
 
               <TextEditor
                 name='media'
@@ -89,11 +131,16 @@ const ManagePage: NextPage = () => {
             <Card className='flex flex-1 flex-col'>
               <ul className='flex-1'>
                 {themes?.map((theme) => (
-                  <ThemeListNode key={theme.id} theme={theme} />
+                  <ThemeListNode
+                    key={theme.id}
+                    theme={theme}
+                    onChange={handleEditTheme}
+                    onDelete={handleDeleteTheme}
+                  />
                 ))}
               </ul>
 
-              <Button className='mb-1' onClick={() => setShowThemeDialog(true)}>
+              <Button className='mb-1' onClick={handleNewTheme}>
                 Nytt tema
               </Button>
             </Card>
@@ -101,42 +148,51 @@ const ManagePage: NextPage = () => {
         </form>
 
         <Dialog
+          open={showDeleteThemeDialog}
+          onClose={() => setShowDeleteThemeDialog(false)}
+        >
+          {({ close }) => (
+            <div className='flex flex-col gap-2 p-4'>
+              <h2 className='text-lg font-bold'>Slett tema</h2>
+              <p className='text-sm text-zinc-700'>
+                Er du sikker på at du vil slette temaet?
+              </p>
+
+              <p className='text-sm text-zinc-700'>
+                Dette kan ikke angres, og eventuelle undertema vil også slettes
+                sammen med innholdsreferanser.
+              </p>
+
+              <p className='text-sm text-zinc-700'>
+                Innhold vil derimot <span className='font-semibold'>ikke</span>{' '}
+                slettes.
+              </p>
+
+              <div className='flex justify-end gap-2 text-sm'>
+                <Button variant='neutral' onClick={close}>
+                  Avbryt
+                </Button>
+
+                <Button onClick={processThemeDelete} variant='destructive'>
+                  Slett
+                </Button>
+              </div>
+            </div>
+          )}
+        </Dialog>
+
+        <Dialog
           open={showThemeDialog}
           onClose={() => setShowThemeDialog(false)}
-          className='relative flex flex-col gap-2 p-2'
+          className='relative flex max-w-xl flex-col gap-2 p-0'
         >
           {({ close }) => (
             <>
-              <h1 className='text-lg font-bold'>Nytt tema</h1>
-
-              <TextField label='Navn' />
-              <TextField label='Kort beskrivelse' />
-
-              <h2 className='text-sm font-medium'>Hører under tema:</h2>
-
-              <ul className='flex flex-col gap-2'>
-                <li className='flex items-center justify-between text-sm font-semibold'>
-                  <span>Angst</span>
-                  <Button>Velg</Button>
-                </li>
-                <li className='flex items-center justify-between text-sm font-semibold'>
-                  <span>Depresjon</span>
-                  <Button>Velg</Button>
-                </li>
-                <li className='flex items-center justify-between text-sm font-semibold'>
-                  <span>Spiseforstyrrelser</span>
-                  <Button>Velg</Button>
-                </li>
-              </ul>
-
-              <hr />
-
-              <div className='flex items-center gap-1 self-end'>
-                <Button variant='primary'>Lagre</Button>
-                <Button variant='destructive' onClick={close}>
-                  Avbryt
-                </Button>
-              </div>
+              <ThemeForm
+                themeId={editingThemeId}
+                onSuccess={close}
+                onCancel={close}
+              />
             </>
           )}
         </Dialog>

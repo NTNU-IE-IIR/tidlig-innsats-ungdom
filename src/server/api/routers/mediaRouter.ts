@@ -64,6 +64,7 @@ export const mediaRouter = createTRPCRouter({
           name: input.name,
           content: input.content,
           createdBy: ctx.session.user.id,
+          published: input.published,
           type: input.type,
         })
         .returning({

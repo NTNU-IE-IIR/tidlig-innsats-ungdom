@@ -1,6 +1,7 @@
 import { env } from '@/env.mjs';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
+import * as schema from './schema';
 
 const pool = new Pool({
   host: env.POSTGRES_HOST,
@@ -10,4 +11,4 @@ const pool = new Pool({
   database: env.POSTGRES_DB,
 });
 
-export const db = drizzle(pool, { logger: true });
+export const db = drizzle(pool, { logger: true, schema });

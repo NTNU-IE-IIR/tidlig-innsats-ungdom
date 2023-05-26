@@ -41,7 +41,7 @@ specifiers:
   dayjs: ^1.11.7
   dotenv: ^16.0.3
   drizzle-kit: ^0.18.0
-  drizzle-orm: ^0.23.13
+  drizzle-orm: ^0.26.1
   eslint: ^8.39.0
   eslint-config-next: ^13.3.1
   formidable: ^2.1.1
@@ -93,7 +93,7 @@ dependencies:
   clsx: 1.2.1
   dayjs: 1.11.7
   dotenv: 16.0.3
-  drizzle-orm: 0.23.13_@types+pg@8.6.6+pg@8.10.0
+  drizzle-orm: 0.26.1_@types+pg@8.6.6+pg@8.10.0
   formidable: 2.1.1
   lexical: 0.10.0
   minio: 7.1.0
@@ -1925,8 +1925,8 @@ packages:
       - supports-color
     dev: true
 
-  /drizzle-orm/0.23.13_@types+pg@8.6.6+pg@8.10.0:
-    resolution: {integrity: sha512-lqPqpBwqVXBYpFKB7JaIkbKpEQpefjmvTdOTVHjFIB8YOhs0+3QMjsjTlZKEx6m8xab4ZGS8DUtFcbBEemZe7g==}
+  /drizzle-orm/0.26.1_@types+pg@8.6.6+pg@8.10.0:
+    resolution: {integrity: sha512-PgHPBJ4BUi/xWEjBbaYo4eiVC7hIwPtSEAVO3QuGMzLV+YwD2jPyV2Y7nvP1jHZlA4IV9wLmkcpicBO/255XFg==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'
@@ -1936,6 +1936,7 @@ packages:
       '@types/better-sqlite3': '*'
       '@types/pg': '*'
       '@types/sql.js': '*'
+      '@vercel/postgres': '*'
       better-sqlite3: '>=7'
       bun-types: '*'
       knex: '*'
@@ -1961,6 +1962,8 @@ packages:
       '@types/pg':
         optional: true
       '@types/sql.js':
+        optional: true
+      '@vercel/postgres':
         optional: true
       better-sqlite3:
         optional: true

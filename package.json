@@ -38,7 +38,7 @@
     "clsx": "^1.2.1",
     "dayjs": "^1.11.7",
     "dotenv": "^16.0.3",
-    "drizzle-orm": "^0.23.13",
+    "drizzle-orm": "^0.26.1",
     "formidable": "^2.1.1",
     "lexical": "^0.10.0",
     "minio": "^7.1.0",

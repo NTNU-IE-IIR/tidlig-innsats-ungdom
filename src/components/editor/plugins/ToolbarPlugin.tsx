@@ -1,4 +1,7 @@
+import Button from '@/components/input/Button';
 import Select from '@/components/input/Select';
+import TextField from '@/components/input/TextField';
+import Dialog from '@/components/overlay/Dialog';
 import {
   $isListNode,
   INSERT_CHECK_LIST_COMMAND,
@@ -35,6 +38,7 @@ import {
   IconListNumbers,
   IconStrikethrough,
   IconUnderline,
+  IconUpload,
 } from '@tabler/icons-react';
 import clsx from 'clsx';
 import {
@@ -53,6 +57,7 @@ import {
   UNDO_COMMAND,
 } from 'lexical';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { INSERT_IMAGE_COMMAND, InsertImagePayload } from './ImagePastePlugin';
 
 const BLOCK_TYPE_NAME_MAP = {
   paragraph: 'Normal',
@@ -107,6 +112,8 @@ const ToolbarPlugin = () => {
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
   const [isStrikethrough, setIsStrikethrough] = useState(false);
+
+  const [showInsertImageDialog, setShowInsertImageDialog] = useState(false);
 
   /**
    * Updates the toolbar.
@@ -308,6 +315,27 @@ const ToolbarPlugin = () => {
         }
         icon={IconStrikethrough}
       />
+
+      <VerticalRule />
+
+      <ToolbarActionButton
+        disabled={false}
+        icon={IconUpload}
+        onClick={() => setShowInsertImageDialog(true)}
+        text='Sett inn bilde'
+      />
+
+      <Dialog
+        open={showInsertImageDialog}
+        onClose={() => setShowInsertImageDialog(false)}
+      >
+        <InsertImageDialog
+          onClose={() => setShowInsertImageDialog(false)}
+          onInsert={(payload) =>
+            editor.dispatchCommand(INSERT_IMAGE_COMMAND, payload)
+          }
+        />
+      </Dialog>
     </div>
   );
 };
@@ -316,24 +344,28 @@ interface ToolbarActionButtonProps {
   disabled: boolean;
   onClick: () => void;
   icon: Icon;
+  text?: string;
 }
 
 const ToolbarActionButton: React.FC<ToolbarActionButtonProps> = ({
   disabled,
   onClick,
   icon: Icon,
+  text,
 }) => {
   return (
     <button
+      type='button'
       onClick={onClick}
       disabled={disabled}
       className={clsx(
-        'rounded-md border border-zinc-300 p-1 transition-colors',
+        'flex items-center gap-1 rounded-md border border-zinc-300 p-1 transition-colors',
         disabled && 'text-zinc-500',
         !disabled && 'hover:border-zinc-400 hover:bg-zinc-200'
       )}
     >
       <Icon className='h-5 w-5' />
+      {text && <span className='pr-0.5 text-sm font-medium'>{text}</span>}
     </button>
   );
 };
@@ -365,5 +397,87 @@ const ToolbarToggleButton: React.FC<ToolbarToggleButtonProps> = ({
 const VerticalRule: React.FC = () => (
   <div className='mx-1 border-r border-zinc-300' />
 );
+
+interface InsertImageDialogProps {
+  onInsert: (payload: InsertImagePayload) => void;
+  onClose: () => void;
+}
+
+const InsertImageDialog: React.FC<InsertImageDialogProps> = ({
+  onInsert,
+  onClose,
+}) => {
+  const [src, setSrc] = useState('');
+  const [altText, setAltText] = useState('');
+
+  const loadImage = (files: FileList | null) => {
+    const reader = new FileReader();
+
+    reader.onload = function () {
+      if (typeof reader.result === 'string') {
+        setSrc(reader.result);
+      }
+    };
+
+    if (files !== null) {
+      reader.readAsDataURL(files.item(0)!);
+    }
+  };
+
+  const handleInsert = () => {
+    if (src === '') return;
+
+    onInsert({
+      src,
+      altText,
+    });
+
+    onClose();
+  };
+
+  return (
+    <div className='flex flex-col gap-2 p-4'>
+      <h2 className='text-lg font-bold'>Sett inn bilde</h2>
+
+      <div className='flex flex-col gap-2'>
+        {src !== '' && <img src={src} alt={altText} className='rounded-md' />}
+
+        {src === '' && (
+          <label
+            htmlFor='fileupload'
+            className='flex flex-col items-center justify-center rounded-md border-2 border-dashed border-zinc-300 py-4 text-zinc-600'
+          >
+            <IconUpload className='h-12 w-12' />
+            <span className='text-sm font-medium'>Last opp bilde</span>
+          </label>
+        )}
+
+        <input
+          type='file'
+          id='fileupload'
+          accept='image/*'
+          className='hidden'
+          onChange={(e) => loadImage(e.target.files)}
+        />
+
+        <TextField
+          label='Alternativ tekst'
+          className='mt-1'
+          value={altText}
+          onChange={setAltText}
+        />
+
+        <div className='flex items-center justify-end gap-2'>
+          <Button onClick={onClose} variant='neutral' className='text-sm'>
+            Avbryt
+          </Button>
+          <Button onClick={handleInsert} className='text-sm'>
+            Sett inn
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default ToolbarPlugin;

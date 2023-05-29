@@ -95,7 +95,7 @@ const Home: NextPage = () => {
           {!themes ||
             (themes.length === 0 && (
               <Link
-                href='/manage'
+                href='/media/new'
                 className='col-span-3 mx-auto my-32 flex max-w-xs flex-col items-center text-center text-zinc-500 transition-colors hover:text-zinc-600'
               >
                 <IconCloudPlus className='h-24 w-24' />

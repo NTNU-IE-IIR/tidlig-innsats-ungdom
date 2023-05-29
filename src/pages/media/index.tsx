@@ -3,6 +3,7 @@ import Button from '@/components/input/Button';
 import Switch from '@/components/input/Switch';
 import TextField from '@/components/input/TextField';
 import PageLayout from '@/components/layout/PageLayout';
+import DeleteMediaDialog from '@/components/media/DeleteMediaDialog';
 import Dialog from '@/components/overlay/Dialog';
 import DeleteThemeDialog from '@/components/theme/DeleteThemeDialog';
 import ThemeForm from '@/components/theme/ThemeForm';
@@ -31,6 +32,8 @@ const MediaIndexPage: NextPage = () => {
   const [showThemeDialog, setShowThemeDialog] = useState(false);
   const [showDeleteThemeDialog, setShowDeleteThemeDialog] = useState(false);
   const [editingThemeId, setEditingThemeId] = useState<number>();
+
+  const [deletingMediaId, setDeletingMediaId] = useState<number>();
 
   const handleNewTheme = () => {
     setEditingThemeId(undefined);
@@ -131,7 +134,11 @@ const MediaIndexPage: NextPage = () => {
                       </Button>
                     </Link>
 
-                    <Button className='text-sm' variant='destructive'>
+                    <Button
+                      onClick={() => setDeletingMediaId(media.id)}
+                      className='text-sm'
+                      variant='destructive'
+                    >
                       Slett
                     </Button>
                   </div>
@@ -184,6 +191,15 @@ const MediaIndexPage: NextPage = () => {
             onSuccess={close}
             onCancel={close}
           />
+        )}
+      </Dialog>
+
+      <Dialog
+        open={deletingMediaId !== undefined}
+        onClose={() => setDeletingMediaId(undefined)}
+      >
+        {({ close }) => (
+          <DeleteMediaDialog mediaId={deletingMediaId} onClose={close} />
         )}
       </Dialog>
     </>

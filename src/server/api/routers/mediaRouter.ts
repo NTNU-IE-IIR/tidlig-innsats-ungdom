@@ -141,4 +141,14 @@ export const mediaRouter = createTRPCRouter({
 
       return result[0];
     }),
+
+  /**
+   * Deletes a media by its id.
+   */
+  deleteById: protectedProcedure
+    .input(z.number().positive())
+    .mutation(async ({ input }) => {
+      await db.delete(themeMedia).where(eq(themeMedia.mediaId, input));
+      await db.delete(media).where(eq(media.id, input));
+    }),
 });

@@ -46,7 +46,9 @@ const TextEditor: React.FC<TextEditorProps> = ({
     () => ({
       namespace: name,
       editorState: (editor) => {
-        editor.setEditorState(editor.parseEditorState(initialState ?? '{}'));
+        if (initialState) {
+          editor.setEditorState(editor.parseEditorState(initialState));
+        }
       },
       onError: (err) => console.error(err),
       nodes: [

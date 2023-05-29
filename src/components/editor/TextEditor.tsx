@@ -45,8 +45,9 @@ const TextEditor: React.FC<TextEditorProps> = ({
   const initialConfig = useMemo<InitialConfigType>(
     () => ({
       namespace: name,
-      editorState: (editor) =>
-        initialState ? editor.parseEditorState(initialState) : undefined,
+      editorState: (editor) => {
+        editor.setEditorState(editor.parseEditorState(initialState ?? '{}'));
+      },
       onError: (err) => console.error(err),
       nodes: [
         HeadingNode,
@@ -64,7 +65,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
       ],
       theme,
     }),
-    [name]
+    [name, initialState]
   );
 
   return (

@@ -1,10 +1,12 @@
 import { useThemeStore } from '@/store/themeStore';
 import { ThemeNode } from '@/types/themes';
 import { IconPencil, IconTrash } from '@tabler/icons-react';
-import { useId } from 'react';
+import clsx from 'clsx';
+import { useId, useReducer } from 'react';
 
 export interface ThemeListNodeProps {
   theme: ThemeNode;
+  selectable?: boolean;
   onChange?: (theme: ThemeNode) => void;
   onDelete?: (theme: ThemeNode) => void;
 }
@@ -15,6 +17,7 @@ export interface ThemeListNodeProps {
  */
 const ThemeListNode: React.FC<ThemeListNodeProps> = ({
   theme,
+  selectable = true,
   onChange,
   onDelete,
 }) => {
@@ -31,7 +34,10 @@ const ThemeListNode: React.FC<ThemeListNodeProps> = ({
           type='checkbox'
           checked={isSelected(theme.id)}
           onChange={() => toggleTheme(theme.id)}
-          className='h-3.5 w-3.5 rounded-full text-emerald-500 focus:ring-1 focus:ring-emerald-700 focus:ring-offset-1'
+          className={clsx(
+            'h-3.5 w-3.5 rounded-full text-emerald-500 focus:ring-1 focus:ring-emerald-700 focus:ring-offset-1',
+            !selectable && 'hidden'
+          )}
         />
 
         <label
@@ -67,6 +73,7 @@ const ThemeListNode: React.FC<ThemeListNodeProps> = ({
           <ThemeListNode
             key={child.id}
             theme={child}
+            selectable={selectable}
             onChange={onChange}
             onDelete={onDelete}
           />

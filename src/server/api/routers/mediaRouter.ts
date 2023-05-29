@@ -2,11 +2,43 @@ import { createMediaSchema, updateMediaSchema } from '@/schemas/mediaSchemas';
 import { db } from '@/server/db';
 import { media, theme, themeMedia, userAccount } from '@/server/db/schema';
 import { TRPCError } from '@trpc/server';
-import { eq } from 'drizzle-orm';
+import { SQL, and, eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
 export const mediaRouter = createTRPCRouter({
+  list: protectedProcedure
+    .input(
+      z.object({
+        onlyPublished: z.boolean().optional().default(false),
+        onlyPersonal: z.boolean().optional(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const conditions = [
+        input.onlyPublished && eq(media.published, true),
+        input.onlyPersonal && eq(media.createdBy, ctx.session.user.id),
+      ].filter(Boolean) as SQL[];
+
+      return await db
+        .select({
+          id: media.id,
+          name: media.name,
+          published: media.published,
+          shortDescription: media.shortDescription,
+          createdByName: userAccount.fullName,
+          associations: sql<number>`COUNT(DISTINCT ${themeMedia.themeId})`,
+          createdAt: media.createdAt,
+          updatedAt: media.updatedAt,
+          type: media.type,
+        })
+        .from(media)
+        .leftJoin(userAccount, eq(userAccount.id, media.createdBy))
+        .leftJoin(themeMedia, eq(themeMedia.mediaId, media.id))
+        .where(and(...conditions))
+        .groupBy(media.id, userAccount.id);
+    }),
+
   /**
    * Finds a media by its id.
    */
@@ -16,7 +48,10 @@ export const mediaRouter = createTRPCRouter({
       const results = await db
         .select({
           id: media.id,
+          name: media.name,
+          shortDescription: media.shortDescription,
           content: media.content,
+          published: media.published,
           createdBy: {
             id: userAccount.id,
             name: userAccount.fullName,
@@ -42,7 +77,10 @@ export const mediaRouter = createTRPCRouter({
       const first = results[0]!;
       const result = {
         id: first.id,
+        name: first.name,
+        shortDescription: first.shortDescription,
         content: first.content,
+        published: first.published,
         createdBy: first.createdBy,
         createdAt: first.createdAt,
         updatedAt: first.updatedAt,
@@ -93,6 +131,7 @@ export const mediaRouter = createTRPCRouter({
         .update(media)
         .set({
           name: input.name,
+          shortDescription: input.shortDescription,
           content: input.content,
           updatedAt: new Date(),
           type: input.type,

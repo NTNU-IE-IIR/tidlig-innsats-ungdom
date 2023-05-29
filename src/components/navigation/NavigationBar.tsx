@@ -11,7 +11,7 @@ const NavigationBar = () => {
     <header className='flex items-center justify-between border-b-2 border-zinc-400'>
       <nav className='-mb-0.5 flex items-center self-end'>
         <NavigationLink href='/'>Temautforsker</NavigationLink>
-        <NavigationLink href='/manage'>Tema administrasjon</NavigationLink>
+        <NavigationLink href='/media'>Innholdsadministrasjon</NavigationLink>
         <NavigationLink href='/settings'>Innstillinger</NavigationLink>
       </nav>
 

@@ -9,6 +9,7 @@ export interface ThemeStore extends z.infer<typeof themeStoreSchema> {
   toggleTheme: (themeId: number) => void;
   clearSelection: () => void;
   isSelected: (themeId: number) => boolean;
+  set: (themes: number[]) => void;
 }
 
 export const useThemeStore = create<ThemeStore>()((set, get) => ({
@@ -27,4 +28,5 @@ export const useThemeStore = create<ThemeStore>()((set, get) => ({
       return { selectedThemeIds };
     }),
   isSelected: (themeId) => get().selectedThemeIds.has(themeId),
+  set: (themes) => set({ selectedThemeIds: new Set(themes) }),
 }));

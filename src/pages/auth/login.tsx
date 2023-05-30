@@ -65,7 +65,7 @@ const Login = ({
               Glemt passord?
             </Link>
 
-            <Button className='mt-2 w-full self-center py-1.5'>
+            <Button type='submit' className='mt-2 w-full self-center py-1.5'>
               <p className='text-sm font-medium'>Logg inn</p>
             </Button>
           </form>

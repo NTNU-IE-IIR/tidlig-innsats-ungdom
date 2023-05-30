@@ -10,6 +10,7 @@ import ThemeForm from '@/components/theme/ThemeForm';
 import ThemeListNode from '@/components/theme/ThemeListNode';
 import { ThemeNode } from '@/types/themes';
 import { api } from '@/utils/api';
+import { useDebouncedValue } from '@mantine/hooks';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
@@ -19,10 +20,14 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 const MediaIndexPage: NextPage = () => {
+  const [mediaName, setMediaName] = useState('');
   const [onlyPersonal, setOnlyPersonal] = useState(false);
   const [onlyPublished, setOnlyPublished] = useState(false);
 
+  const [debouncedMediaName] = useDebouncedValue(mediaName, 500);
+
   const { data: medias } = api.media.list.useQuery({
+    name: debouncedMediaName,
     onlyPersonal,
     onlyPublished,
   });
@@ -61,7 +66,11 @@ const MediaIndexPage: NextPage = () => {
 
           <Card className='flex flex-1 flex-col gap-1 py-2'>
             <div className='flex items-center gap-2'>
-              <TextField label='Navn' />
+              <TextField
+                label='Navn'
+                value={mediaName}
+                onChange={setMediaName}
+              />
 
               <div className='flex items-center gap-1'>
                 <Switch checked={onlyPersonal} onChange={setOnlyPersonal} />
@@ -94,6 +103,19 @@ const MediaIndexPage: NextPage = () => {
                   <span className='sr-only'>Handlinger</span>
                 </ColumnHeader>
               </div>
+
+              {medias?.length === 0 && (
+                <p className='col-span-6 py-8 text-center text-sm'>
+                  Fant ikke noe innhold, prøv å justere søket eller
+                  {' '}
+                  <Link
+                    href='/media/new'
+                    className='font-medium hover:underline'
+                  >
+                    opprett nytt.
+                  </Link>
+                </p>
+              )}
 
               {medias?.map((media, idx, array) => (
                 <div

@@ -2,7 +2,7 @@ import { createMediaSchema, updateMediaSchema } from '@/schemas/mediaSchemas';
 import { db } from '@/server/db';
 import { media, theme, themeMedia, userAccount } from '@/server/db/schema';
 import { TRPCError } from '@trpc/server';
-import { SQL, and, eq, sql } from 'drizzle-orm';
+import { SQL, and, eq, ilike, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
@@ -10,12 +10,14 @@ export const mediaRouter = createTRPCRouter({
   list: protectedProcedure
     .input(
       z.object({
+        name: z.string().optional(),
         onlyPublished: z.boolean().optional().default(false),
         onlyPersonal: z.boolean().optional(),
       })
     )
     .query(async ({ input, ctx }) => {
       const conditions = [
+        input.name && ilike(media.name, `%${input.name}%`),
         input.onlyPublished && eq(media.published, true),
         input.onlyPersonal && eq(media.createdBy, ctx.session.user.id),
       ].filter(Boolean) as SQL[];

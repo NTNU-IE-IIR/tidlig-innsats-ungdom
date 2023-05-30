@@ -1,46 +1,38 @@
 import Card from '@/components/container/Card';
 import PageLayout from '@/components/layout/PageLayout';
-import { RouterOutputs, api } from '@/utils/api';
+import Breadcrumbs from '@/components/navigation/Breadcrumbs';
+import { useBrowseStore } from '@/store/browseStore';
+import { api } from '@/utils/api';
 import { useDebouncedValue, useHotkeys } from '@mantine/hooks';
-import { IconCloudPlus, IconHome, IconSearch } from '@tabler/icons-react';
+import { IconCloudPlus, IconSearch } from '@tabler/icons-react';
 import { type NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Fragment, useRef, useState } from 'react';
-
-type Content = RouterOutputs['content']['listContent'][number];
+import { useEffect, useRef, useState } from 'react';
 
 const Home: NextPage = () => {
   const searchBarRef = useRef<HTMLInputElement>(null);
   const [searchInput, setSearchInput] = useState('');
   const [debouncedSearchInput] = useDebouncedValue(searchInput, 500);
-  const [themeDrill, setThemeDrill] = useState<Content[]>([]);
 
   useHotkeys([['ctrl+k', () => searchBarRef.current?.focus()]]);
 
+  const router = useRouter();
+  const { drill, appendContent, navigateBackTo } = useBrowseStore();
+
+  const parent = drill[drill.length - 1];
+
   const { data: themes } = api.content.listContent.useQuery({
     name: debouncedSearchInput,
-    parentId: themeDrill[themeDrill.length - 1]?.id,
+    parentId: parent?.discriminator === 'THEME' ? parent.id : undefined,
   });
 
-  const router = useRouter();
-
-  const appendTheme = (theme: Content) => {
-    if (theme.discriminator === 'MEDIA') {
-      return router.push(`/media/${theme.id}`);
+  useEffect(() => {
+    if (parent?.discriminator === 'MEDIA') {
+      navigateBackTo(drill[drill.length - 2]!, drill.length - 2, router);
     }
-
-    setThemeDrill((prev) => [...prev, theme]);
-  };
-
-  const navigateHome = () => {
-    setThemeDrill([]);
-  };
-
-  const navigateBackTo = (theme: Content, i: number) => {
-    setThemeDrill((prev) => prev.slice(0, i).concat(theme));
-  };
+  }, []);
 
   return (
     <>
@@ -48,19 +40,7 @@ const Home: NextPage = () => {
         <title>Tidlig innsats ungdom</title>
       </Head>
       <PageLayout>
-        <div className='flex items-center justify-center gap-1 py-2 font-semibold'>
-          <button onClick={navigateHome}>
-            <IconHome className='h-5 w-5' />
-          </button>
-          {themeDrill.map((theme, i) => (
-            <Fragment key={theme.id}>
-              <span>/</span>
-              <button onClick={() => navigateBackTo(theme, i)}>
-                {theme.name}
-              </button>
-            </Fragment>
-          ))}
-        </div>
+        <Breadcrumbs />
 
         <h1 className='my-4 text-center text-2xl font-bold'>
           Velg eller søk på tema og innhold
@@ -111,12 +91,12 @@ const Home: NextPage = () => {
 
           {themes?.map((theme) => (
             <Card
-              onClick={() => appendTheme(theme)}
+              onClick={() => appendContent(theme, router)}
               key={theme.discriminator + theme.id}
               className='flex aspect-[1.5/1] cursor-pointer flex-col items-center justify-center transition-all hover:scale-[1.025]'
             >
               <h3 className='text-xl font-bold'>{theme.name}</h3>
-              <p className='text-sm'>Beskrivelse</p>
+              <p className='text-sm'>{theme.shortDescription}</p>
             </Card>
           ))}
         </div>

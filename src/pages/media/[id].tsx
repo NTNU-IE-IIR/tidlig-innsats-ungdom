@@ -1,5 +1,6 @@
 import TextViewer from '@/components/editor/TextViewer';
 import PageLayout from '@/components/layout/PageLayout';
+import Breadcrumbs from '@/components/navigation/Breadcrumbs';
 import { api } from '@/utils/api';
 import { NextPage } from 'next';
 import Head from 'next/head';
@@ -20,6 +21,8 @@ const MediaView: NextPage = () => {
       </Head>
       <PageLayout>
         {isError && <p></p>}
+
+        <Breadcrumbs />
 
         {media && <TextViewer name='media' content={media.content as any} />}
       </PageLayout>

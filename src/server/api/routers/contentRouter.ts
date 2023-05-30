@@ -24,11 +24,13 @@ export const contentRouter = createTRPCRouter({
       const result = await db.execute<{
         id: number;
         name: string;
+        shortDescription: string;
         discriminator: 'THEME' | 'MEDIA';
       }>(sql`
         SELECT 
           ${theme.id} AS id,
           ${theme.name} AS name,
+          ${theme.shortDescription} AS "shortDescription",
           'THEME' AS discriminator
         FROM ${theme}
         WHERE 
@@ -41,6 +43,7 @@ export const contentRouter = createTRPCRouter({
         SELECT
           ${media.id} AS id,
           ${media.name} AS name,
+          ${media.shortDescription} AS "shortDescription",
           'MEDIA' AS discriminator
         FROM ${themeMedia}
         INNER JOIN ${media} ON ${themeMedia.mediaId} = ${media.id}
@@ -48,6 +51,7 @@ export const contentRouter = createTRPCRouter({
           (${themeMedia.themeId} = ${parentId}) AND
           (${media.name} ILIKE '%' || ${name} || '%') AND
           (${media.published} = TRUE)
+        ORDER BY discriminator DESC
       `);
 
       return result.rows;

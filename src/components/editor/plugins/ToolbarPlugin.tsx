@@ -383,6 +383,7 @@ const ToolbarToggleButton: React.FC<ToolbarToggleButtonProps> = ({
 }) => {
   return (
     <button
+      type='button'
       onClick={onClick}
       className={clsx(
         'rounded-md border border-zinc-300 p-1 transition-colors',

@@ -19,6 +19,7 @@ import { ThemeNode } from '@/types/themes';
 import { RouterOutputs, api } from '@/utils/api';
 import { useForm, zodResolver } from '@mantine/form';
 import { EditorState } from 'lexical';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 interface MediaEditorProps {
@@ -44,9 +45,9 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
       },
     });
 
-  const initialThemeIds = existingMedia?.themes.map(
-    (theme) => theme?.id
-  ) as number[];
+  const initialThemeIds = existingMedia?.themes
+    .map((theme) => theme?.id)
+    .filter(Boolean) as number[];
 
   useEffect(() => {
     set(initialThemeIds);
@@ -66,6 +67,8 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
     },
   });
 
+  const router = useRouter();
+
   const submit = async (values: CreateMediaInput | UpdateMediaInput) => {
     if (existingMedia) {
       await updateMedia({
@@ -84,6 +87,8 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
       content: editorState?.toJSON(),
       published: !values.published,
     });
+
+    router.push('/media');
   };
 
   const handleNewTheme = () => {
@@ -150,6 +155,12 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
         <aside className='flex flex-col'>
           <h2 className='text-lg font-bold'>Knytt til en/flere tema</h2>
           <Card className='flex flex-1 flex-col'>
+            {themes?.length === 0 && (
+              <p className='py-8 text-center text-sm font-medium text-zinc-500'>
+                Fant ingen temaer.
+              </p>
+            )}
+
             <ul className='flex-1'>
               {themes?.map((theme) => (
                 <ThemeListNode

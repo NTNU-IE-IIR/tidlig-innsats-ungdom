@@ -2,7 +2,7 @@ import { createMediaSchema, updateMediaSchema } from '@/schemas/mediaSchemas';
 import { db } from '@/server/db';
 import { media, theme, themeMedia, userAccount } from '@/server/db/schema';
 import { TRPCError } from '@trpc/server';
-import { SQL, and, eq, ilike, sql } from 'drizzle-orm';
+import { SQL, and, eq, ilike, notInArray, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
@@ -129,11 +129,28 @@ export const mediaRouter = createTRPCRouter({
   update: protectedProcedure
     .input(updateMediaSchema)
     .mutation(async ({ input }) => {
+      await db
+        .delete(themeMedia)
+        .where(
+          and(
+            eq(themeMedia.mediaId, input.id),
+            notInArray(themeMedia.themeId, input.themeIds)
+          )
+        );
+
+      await db.insert(themeMedia).values(
+        input.themeIds.map((themeId) => ({
+          mediaId: input.id,
+          themeId,
+        }))
+      );
+
       const result = await db
         .update(media)
         .set({
           name: input.name,
           shortDescription: input.shortDescription,
+          published: input.published,
           content: input.content,
           updatedAt: new Date(),
           type: input.type,

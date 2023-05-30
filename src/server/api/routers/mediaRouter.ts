@@ -138,12 +138,15 @@ export const mediaRouter = createTRPCRouter({
           )
         );
 
-      await db.insert(themeMedia).values(
-        input.themeIds.map((themeId) => ({
-          mediaId: input.id,
-          themeId,
-        }))
-      );
+      await db
+        .insert(themeMedia)
+        .values(
+          input.themeIds.map((themeId) => ({
+            mediaId: input.id,
+            themeId,
+          }))
+        )
+        .onConflictDoNothing();
 
       const result = await db
         .update(media)

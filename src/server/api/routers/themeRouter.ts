@@ -1,6 +1,6 @@
 import { createThemeSchema, updateThemeSchema } from '@/schemas/themeSchemas';
 import { db } from '@/server/db';
-import { theme } from '@/server/db/schema';
+import { theme, themeMedia } from '@/server/db/schema';
 import { ThemeNode } from '@/types/themes';
 import { SQL, and, eq, inArray, notInArray, or, sql } from 'drizzle-orm';
 import { z } from 'zod';
@@ -68,24 +68,37 @@ export const themeRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
-      await db.execute(
-        sql`
-          DELETE FROM ${theme} WHERE ${theme.id} IN (WITH RECURSIVE child_themes AS (
-            SELECT 
-              theme_id,
-              fk_parent_theme_id
-            FROM theme
-            WHERE theme_id = ${input.id}
-            UNION
-            SELECT
-              theme.theme_id,
-              theme.fk_parent_theme_id
-            FROM theme
-            INNER JOIN child_themes ON theme.fk_parent_theme_id = child_themes.theme_id 
-          )
-          SELECT theme_id FROM child_themes)
-        `
-      );
+      await db.delete(themeMedia).where(eq(themeMedia.themeId, input.id));
+
+      if (input.bubbleChildren) {
+        await db
+          .update(theme)
+          .set({
+            parentId: null,
+          })
+          .where(eq(theme.parentId, input.id));
+
+        await db.delete(theme).where(eq(theme.id, input.id));
+      } else {
+        await db.execute(
+          sql`
+            DELETE FROM ${theme} WHERE ${theme.id} IN (WITH RECURSIVE child_themes AS (
+              SELECT 
+                theme_id,
+                fk_parent_theme_id
+              FROM theme
+              WHERE theme_id = ${input.id}
+              UNION
+              SELECT
+                theme.theme_id,
+                theme.fk_parent_theme_id
+              FROM theme
+              INNER JOIN child_themes ON theme.fk_parent_theme_id = child_themes.theme_id 
+            )
+            SELECT theme_id FROM child_themes)
+          `
+        );
+      }
     }),
 
   /**

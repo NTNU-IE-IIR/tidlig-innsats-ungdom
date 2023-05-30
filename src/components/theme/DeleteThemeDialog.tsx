@@ -1,5 +1,7 @@
 import { api } from '@/utils/api';
 import Button from '../input/Button';
+import { useState } from 'react';
+import Switch from '../input/Switch';
 
 interface DeleteThemeDialogProps {
   themeId?: number;
@@ -10,6 +12,8 @@ const DeleteThemeDialog: React.FC<DeleteThemeDialogProps> = ({
   themeId,
   onClose,
 }) => {
+  const [deleteChildren, setDeleteChildren] = useState(false);
+
   const utils = api.useContext();
 
   const { mutateAsync: deleteById, isLoading } =
@@ -25,6 +29,7 @@ const DeleteThemeDialog: React.FC<DeleteThemeDialogProps> = ({
     if (themeId) {
       await deleteById({
         id: themeId,
+        bubbleChildren: !deleteChildren,
       });
     }
   };
@@ -37,15 +42,25 @@ const DeleteThemeDialog: React.FC<DeleteThemeDialogProps> = ({
       </p>
 
       <p className='text-sm text-zinc-700'>
-        Dette kan ikke angres, og eventuelle undertema vil også slettes sammen
-        med innholdsreferanser.
+        Dette kan ikke angres og eventuelle tilknytninger vil også slettes.
       </p>
 
       <p className='text-sm text-zinc-700'>
         Innhold vil derimot <span className='font-semibold'>ikke</span> slettes.
       </p>
 
-      <div className='flex justify-end gap-2 text-sm'>
+      <div className='flex items-center justify-end gap-2 text-sm'>
+        <label className='flex items-center gap-1'>
+          <input
+            type='checkbox'
+            className='rounded-md text-emerald-500 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1'
+            checked={deleteChildren}
+            onChange={(e) => setDeleteChildren(e.target.checked)}
+          />
+
+          <span className='select-none'>Slett med undertemaer</span>
+        </label>
+
         <Button variant='neutral' onClick={onClose}>
           Avbryt
         </Button>

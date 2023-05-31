@@ -29,10 +29,11 @@ interface MediaEditorProps {
 const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
   const { data: themes } = api.theme.listThemeTree.useQuery({});
   const [editorState, setEditorState] = useState<EditorState>();
-  const { selectedThemeIds, set } = useThemeStore();
+  const { selectedThemeIds, set, isEqual } = useThemeStore();
   const [showThemeDialog, setShowThemeDialog] = useState(false);
   const [showDeleteThemeDialog, setShowDeleteThemeDialog] = useState(false);
   const [editingThemeId, setEditingThemeId] = useState<number>();
+  const [contentChanged, setContentChanged] = useState(false);
 
   const utils = api.useContext();
 
@@ -66,6 +67,14 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
       published: !existingMedia?.published ?? false,
     },
   });
+
+  const isChanged =
+    !isEqual(initialThemeIds) || contentChanged || form.isDirty();
+
+  const h = (t: boolean) => {
+    console.log(t);
+    setContentChanged(t);
+  };
 
   const router = useRouter();
 
@@ -126,6 +135,7 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
               name={`media` + (existingMedia?.id ?? '')}
               initialState={existingMedia?.content as any}
               onEditorChange={setEditorState}
+              onCanUndo={h}
               className='flex-1'
             />
 
@@ -142,13 +152,22 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
               </label>
             </div>
 
-            <Button
-              type='submit'
-              className='self-end'
-              isLoading={isCreating || isUpdating}
-            >
-              Lagre
-            </Button>
+            <div className='flex items-center justify-end gap-2'>
+              {isChanged && (
+                <p className='text-sm font-medium text-zinc-600'>
+                  Du har ulagrede endringer.
+                </p>
+              )}
+
+              <Button
+                type='submit'
+                className='self-end'
+                isLoading={isCreating || isUpdating}
+                disabled={!isChanged}
+              >
+                Lagre
+              </Button>
+            </div>
           </Card>
         </section>
 

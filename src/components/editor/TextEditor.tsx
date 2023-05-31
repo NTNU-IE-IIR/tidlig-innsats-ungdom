@@ -16,6 +16,7 @@ import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
+import clsx from 'clsx';
 import {
   EditorState,
   SerializedEditorState,
@@ -27,13 +28,13 @@ import { ImageNode } from './nodes/ImageNode';
 import ImagePastePlugin from './plugins/ImagePastePlugin';
 import ToolbarPlugin from './plugins/ToolbarPlugin';
 import { theme } from './theme';
-import clsx from 'clsx';
 
 interface TextEditorProps {
   name: string;
   className?: string;
   initialState?: SerializedEditorState<SerializedLexicalNode>;
   onEditorChange?: (editor: EditorState) => void;
+  onCanUndo?: (canUndo: boolean) => void;
 }
 
 const TextEditor: React.FC<TextEditorProps> = ({
@@ -41,6 +42,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
   className,
   initialState,
   onEditorChange,
+  onCanUndo,
 }) => {
   const initialConfig = useMemo<InitialConfigType>(
     () => ({
@@ -78,7 +80,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
           className
         )}
       >
-        <ToolbarPlugin />
+        <ToolbarPlugin onCanUndo={onCanUndo} />
         <div className='relative flex-1 px-1 py-2'>
           <RichTextPlugin
             ErrorBoundary={LexicalErrorBoundary}

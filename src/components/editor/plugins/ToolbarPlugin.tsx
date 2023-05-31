@@ -100,7 +100,11 @@ const createHeadingNode = (
 
 type BlockType = keyof typeof BLOCK_TYPE_NAME_MAP;
 
-const ToolbarPlugin = () => {
+export interface ToolbarPluginProps {
+  onCanUndo?: (canUndo: boolean) => void;
+}
+
+const ToolbarPlugin: React.FC<ToolbarPluginProps> = ({ onCanUndo }) => {
   const [editor] = useLexicalComposerContext();
 
   const [blockType, setBlockType] = useState<BlockType>('paragraph');
@@ -239,6 +243,7 @@ const ToolbarPlugin = () => {
         CAN_UNDO_COMMAND,
         (payload) => {
           setCanUndo(payload);
+          onCanUndo?.(payload);
           return payload;
         },
         COMMAND_PRIORITY_CRITICAL

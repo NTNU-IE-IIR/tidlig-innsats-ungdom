@@ -50,7 +50,7 @@ export const media = pgTable('media', {
   shortDescription: text('short_description').notNull().default(''),
   // TODO: Give this a type using .$type<>() and preferably a zod schema
   // the direction this'll take is dependant on the result of a discussion with the user
-  content: jsonb('content').notNull(),
+  content: jsonb('content'),
   published: boolean('published').notNull().default(false),
   createdBy: uuid('fk_created_by_account_id')
     .notNull()

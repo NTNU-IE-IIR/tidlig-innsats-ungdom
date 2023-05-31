@@ -129,24 +129,25 @@ export const mediaRouter = createTRPCRouter({
   update: protectedProcedure
     .input(updateMediaSchema)
     .mutation(async ({ input }) => {
-      await db
-        .delete(themeMedia)
-        .where(
-          and(
-            eq(themeMedia.mediaId, input.id),
-            notInArray(themeMedia.themeId, input.themeIds)
-          )
-        );
+      const conditions = [
+        eq(themeMedia.mediaId, input.id),
+        input.themeIds.length !== 0 &&
+          notInArray(themeMedia.themeId, input.themeIds),
+      ].filter(Boolean) as SQL[];
 
-      await db
-        .insert(themeMedia)
-        .values(
-          input.themeIds.map((themeId) => ({
-            mediaId: input.id,
-            themeId,
-          }))
-        )
-        .onConflictDoNothing();
+      await db.delete(themeMedia).where(and(...conditions));
+
+      if (input.themeIds.length !== 0) {
+        await db
+          .insert(themeMedia)
+          .values(
+            input.themeIds.map((themeId) => ({
+              mediaId: input.id,
+              themeId,
+            }))
+          )
+          .onConflictDoNothing();
+      }
 
       const result = await db
         .update(media)

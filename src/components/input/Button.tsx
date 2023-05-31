@@ -15,6 +15,9 @@ const button = cva(
         neutral:
           'text-zinc-950 border border-zinc-300 hover:bg-zinc-100 focus:ring-zinc-200',
       },
+      disabled: {
+        true: 'bg-opacity-50 hover:bg-opacity-70 cursor-not-allowed',
+      },
     },
     defaultVariants: {
       variant: 'primary',
@@ -37,12 +40,14 @@ const Button: React.FC<ButtonProps> = ({
   isLoading,
   onClick,
   variant,
+  disabled,
 }) => {
   return (
     <button
       type={type}
       onClick={() => onClick?.()}
-      className={clsx(button({ variant }), className)}
+      disabled={disabled ?? undefined}
+      className={clsx(button({ variant, disabled }), className)}
     >
       {/* Loading spinner */}
       {isLoading && (

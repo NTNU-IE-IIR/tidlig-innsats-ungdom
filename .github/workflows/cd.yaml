@@ -95,8 +95,8 @@ jobs:
             --set hostname=${{ vars.HOSTNAME }} \
             --set clusterIssuer=${{ vars.K8S_CLUSTER_ISSUER }} \
             --set version=${{ github.sha }} \
-            --set s3.endpoint=${{ vars.S3_ENDPOINT }} \
-            --set s3.bucket=${{ vars.S3_BUCKET }} \
-            --set s3.accessKey=${{ secrets.S3_ACCESS_KEY }} \
-            --set s3.secretAccessKey=${{ secrets.S3_SECRET_ACCESS_KEY }}
+            --set s3endpoint=${{ vars.S3_ENDPOINT }} \
+            --set s3bucket=${{ vars.S3_BUCKET }} \
+            --set s3accessKey=${{ secrets.S3_ACCESS_KEY }} \
+            --set s3secretAccessKey=${{ secrets.S3_SECRET_ACCESS_KEY }}
         shell: bash

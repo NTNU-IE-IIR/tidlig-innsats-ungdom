@@ -1,14 +1,12 @@
-import { RouterOutputs } from '@/utils/api';
+import { Content } from '@/types/content';
 import { NextRouter } from 'next/router';
 import { create } from 'zustand';
-
-export type Content = RouterOutputs['content']['listContent'][number];
 
 export interface BrowseStore {
   drill: Content[];
   appendContent: (theme: Content, router: NextRouter) => void;
   navigateBackTo: (theme: Content, i: number, router: NextRouter) => void;
-  navigateHome: () => void;
+  navigateHome: (router: NextRouter) => void;
 }
 
 export const useBrowseStore = create<BrowseStore>()((set, get) => ({
@@ -39,5 +37,8 @@ export const useBrowseStore = create<BrowseStore>()((set, get) => ({
         drill: state.drill.slice(0, i).concat(theme),
       };
     }),
-  navigateHome: () => set({ drill: [] }),
+  navigateHome: (router) => {
+    if (router.pathname.includes('media')) router.push('/');
+    set({ drill: [] });
+  },
 }));

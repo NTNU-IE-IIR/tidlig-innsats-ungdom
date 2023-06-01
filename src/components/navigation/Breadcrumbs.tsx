@@ -11,7 +11,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = () => {
 
   return (
     <div className='flex items-center justify-center gap-1 py-2 font-semibold'>
-      <button onClick={navigateHome}>
+      <button onClick={() => navigateHome(router)}>
         <IconHome className='h-5 w-5' />
       </button>
       {drill.map((theme, i) => (

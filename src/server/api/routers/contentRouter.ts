@@ -1,5 +1,6 @@
 import { db } from '@/server/db';
 import { media, theme, themeMedia } from '@/server/db/schema';
+import { Content, ContentDiscriminator } from '@/types/content';
 import { SQL, and, eq, ilike, isNull, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
@@ -25,12 +26,7 @@ export const contentRouter = createTRPCRouter({
       const parentId = input.parentId ?? null;
       const name = input.name ?? '';
 
-      let medias: {
-        id: number;
-        name: string;
-        shortDescription: string;
-        discriminator: 'MEDIA' | 'THEME';
-      }[] = [];
+      let medias: Content[] = [];
 
       const conditions = [
         parentId ? eq(theme.parentId, parentId) : isNull(theme.parentId),
@@ -42,7 +38,7 @@ export const contentRouter = createTRPCRouter({
           id: theme.id,
           name: theme.name,
           shortDescription: theme.shortDescription,
-          discriminator: sql<'THEME'>`'THEME'`,
+          discriminator: sql<ContentDiscriminator>`'THEME'`,
         })
         .from(theme)
         .where(and(...conditions));
@@ -53,7 +49,7 @@ export const contentRouter = createTRPCRouter({
             id: media.id,
             name: media.name,
             shortDescription: media.shortDescription,
-            discriminator: sql<'MEDIA'>`'MEDIA'`,
+            discriminator: sql<ContentDiscriminator>`'MEDIA'`,
           })
           .from(themeMedia)
           .innerJoin(media, eq(themeMedia.mediaId, media.id))

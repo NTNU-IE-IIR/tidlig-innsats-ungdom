@@ -85,6 +85,7 @@ jobs:
 
       - uses: azure/setup-helm@v3
         with:
+          version: 'v3.11.3'
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - run: |

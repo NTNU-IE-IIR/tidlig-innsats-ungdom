@@ -87,6 +87,9 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
         content: editorState?.toJSON(),
         published: !values.published,
       });
+
+      router.push('/media');
+
       return;
     }
 

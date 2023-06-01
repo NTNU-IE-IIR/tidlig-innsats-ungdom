@@ -1,8 +1,8 @@
+import { db } from '@/server/db';
+import { media, theme, themeMedia } from '@/server/db/schema';
+import { SQL, and, eq, ilike, isNull, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
-import { db } from '@/server/db';
-import { sql } from 'drizzle-orm';
-import { media, theme, themeMedia } from '@/server/db/schema';
 
 export const contentRouter = createTRPCRouter({
   /**
@@ -14,46 +14,61 @@ export const contentRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string().optional(),
-        parentId: z.number().or(z.string().regex(/\d+/gi)).optional(),
+        parentId: z
+          .number()
+          .or(z.string().regex(/\d+/gi))
+          .transform((n) => Number(n))
+          .optional(),
       })
     )
     .query(async ({ input }) => {
       const parentId = input.parentId ?? null;
-      const name = input.name ?? null;
+      const name = input.name ?? '';
 
-      const result = await db.execute<{
+      let medias: {
         id: number;
         name: string;
         shortDescription: string;
-        discriminator: 'THEME' | 'MEDIA';
-      }>(sql`
-        SELECT 
-          ${theme.id} AS id,
-          ${theme.name} AS name,
-          ${theme.shortDescription} AS "shortDescription",
-          'THEME' AS discriminator
-        FROM ${theme}
-        WHERE 
-          (
-            (${parentId}::bigint IS NULL AND ${theme.parentId} IS NULL) OR
-            (${theme.parentId} = ${parentId})
-          ) AND 
-          (${theme.name} ILIKE '%' || ${name} || '%')
-        UNION
-        SELECT
-          ${media.id} AS id,
-          ${media.name} AS name,
-          ${media.shortDescription} AS "shortDescription",
-          'MEDIA' AS discriminator
-        FROM ${themeMedia}
-        INNER JOIN ${media} ON ${themeMedia.mediaId} = ${media.id}
-        WHERE 
-          (${themeMedia.themeId} = ${parentId}) AND
-          (${media.name} ILIKE '%' || ${name} || '%') AND
-          (${media.published} = TRUE)
-        ORDER BY discriminator DESC
-      `);
+        discriminator: 'MEDIA' | 'THEME';
+      }[] = [];
 
-      return result.rows;
+      const conditions = [
+        parentId ? eq(theme.parentId, parentId) : isNull(theme.parentId),
+        name && ilike(theme.name, `%${name}%`),
+      ].filter(Boolean) as SQL[];
+
+      const themes = await db
+        .select({
+          id: theme.id,
+          name: theme.name,
+          shortDescription: theme.shortDescription,
+          discriminator: sql<'THEME'>`'THEME'`,
+        })
+        .from(theme)
+        .where(and(...conditions));
+
+      if (parentId) {
+        medias = await db
+          .select({
+            id: media.id,
+            name: media.name,
+            shortDescription: media.shortDescription,
+            discriminator: sql<'MEDIA'>`'MEDIA'`,
+          })
+          .from(themeMedia)
+          .innerJoin(media, eq(themeMedia.mediaId, media.id))
+          .where(
+            and(
+              eq(themeMedia.themeId, parentId),
+              ilike(media.name, `%${name}%`),
+              eq(media.published, true)
+            )
+          );
+      }
+
+      return {
+        themes,
+        medias,
+      };
     }),
 });

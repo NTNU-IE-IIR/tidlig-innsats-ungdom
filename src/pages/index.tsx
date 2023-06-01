@@ -4,7 +4,13 @@ import Breadcrumbs from '@/components/navigation/Breadcrumbs';
 import { useBrowseStore } from '@/store/browseStore';
 import { api } from '@/utils/api';
 import { useDebouncedValue, useHotkeys } from '@mantine/hooks';
-import { IconCloudPlus, IconSearch } from '@tabler/icons-react';
+import {
+  IconCloudPlus,
+  IconFolder,
+  IconFolderFilled,
+  IconListDetails,
+  IconSearch,
+} from '@tabler/icons-react';
 import { type NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -23,7 +29,7 @@ const Home: NextPage = () => {
 
   const parent = drill[drill.length - 1];
 
-  const { data: themes } = api.content.listContent.useQuery({
+  const { data: content } = api.content.listContent.useQuery({
     name: debouncedSearchInput,
     parentId: parent?.discriminator === 'THEME' ? parent.id : undefined,
   });
@@ -72,8 +78,8 @@ const Home: NextPage = () => {
         </div>
 
         <div className='relative mt-4 grid grid-cols-3 gap-2 px-4'>
-          {!themes ||
-            (themes.length === 0 && (
+          {!content ||
+            (content.themes.length === 0 && content.medias.length === 0 && (
               <Link
                 href='/media/new'
                 className='col-span-3 mx-auto my-32 flex max-w-xs flex-col items-center text-center text-zinc-500 transition-colors hover:text-zinc-600'
@@ -89,16 +95,38 @@ const Home: NextPage = () => {
               </Link>
             ))}
 
-          {themes?.map((theme) => (
-            <Card
-              onClick={() => appendContent(theme, router)}
-              key={theme.discriminator + theme.id}
-              className='flex aspect-[1.5/1] cursor-pointer flex-col items-center justify-center transition-all hover:scale-[1.025]'
-            >
-              <h3 className='text-xl font-bold'>{theme.name}</h3>
-              <p className='text-sm'>{theme.shortDescription}</p>
-            </Card>
-          ))}
+          <div className='col-span-3 grid grid-cols-[inherit] gap-2'>
+            {content?.themes.map((theme) => (
+              <Card
+                key={'THEME' + theme.id}
+                onClick={() => appendContent(theme, router)}
+                className='flex aspect-[6/1] cursor-pointer items-center gap-2 transition-all hover:scale-[1.01]'
+              >
+                <IconFolderFilled className='h-8 w-8 text-zinc-700' />
+                <div className='-mt-2'>
+                  <h3 className='truncate font-semibold'>{theme.name}</h3>
+                  <p className='-my-1 truncate text-sm'>
+                    {theme.shortDescription}
+                  </p>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          <div className='col-span-3 grid grid-cols-[inherit] gap-2'>
+            {content?.medias.map((media) => (
+              <Card
+                variant='media'
+                onClick={() => appendContent(media, router)}
+                key={'MEDIA' + media.id}
+                className='flex aspect-[1.5/1] cursor-pointer flex-col items-center justify-center transition-all hover:scale-[1.01]'
+              >
+                <IconListDetails className='-mt-12 h-12 w-12 text-zinc-700' />
+                <h3 className='text-xl font-bold'>{media.name}</h3>
+                <p className='text-sm font-medium'>{media.shortDescription}</p>
+              </Card>
+            ))}
+          </div>
         </div>
       </PageLayout>
     </>

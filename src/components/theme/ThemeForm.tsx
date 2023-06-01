@@ -136,6 +136,7 @@ const ThemeForm: React.FC<ThemeFormProps> = ({
         <h2 className='font-semibold'>Overordnet tema</h2>
 
         <button
+          type='button'
           onClick={() => form.setFieldValue('parentId', null)}
           className={clsx(
             'mb-2 flex items-center justify-center gap-1 rounded-md border py-0.5',

@@ -128,21 +128,26 @@ export const themeRouter = createTRPCRouter({
       const nodeMap = new Map<number, ThemeNode>();
       const rootNodes: ThemeNode[] = [];
 
+      // we have to do two passes here, because we need to make sure the
+      // map contains the parent nodes, since we currently cannot guarantee
+      // the order of the results. 
       for (const current of results) {
         const node = {
           id: current.id,
           name: current.name,
+          parentId: current.parentId ?? undefined,
           children: [],
         };
 
-        if (current.parentId) {
-          const parent = nodeMap.get(current.parentId);
-          if (parent) parent.children.push(node);
-        } else {
-          rootNodes.push(node);
-        }
-
         nodeMap.set(current.id, node);
+        if (!current.parentId) rootNodes.push(node);
+      }
+
+      for (const node of nodeMap.values()) {
+        if (node.parentId) {
+          const parent = nodeMap.get(node.parentId);
+          if (parent) parent.children.push(node);
+        }
       }
 
       return rootNodes;

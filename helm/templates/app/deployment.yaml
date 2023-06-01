@@ -31,9 +31,9 @@ spec:
           - name: POSTGRES_PORT
             value: {{ include "postgres.port" . | quote }}
           - name: S3_ENDPOINT
-            value: {{ .Values.s3.endpoint }}
+            value: {{ .Values.s3endpoint }}
           - name: S3_BUCKET_NAME
-            value: {{ .Values.s3.bucket }}
+            value: {{ .Values.s3bucket }}
 
       containers:
       - name: {{ include "app.name" . }}
@@ -64,6 +64,6 @@ spec:
           - name: POSTGRES_PORT
             value: {{ include "postgres.port" . | quote }}
           - name: S3_ENDPOINT
-            value: {{ .Values.s3.endpoint }}
+            value: {{ .Values.s3endpoint }}
           - name: S3_BUCKET_NAME
-            value: {{ .Values.s3.bucket }}
+            value: {{ .Values.s3bucket }}

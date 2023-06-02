@@ -3,6 +3,7 @@
  */
 import { InferModel } from 'drizzle-orm';
 import {
+  AnyPgColumn,
   bigint,
   jsonb,
   pgEnum,
@@ -139,6 +140,9 @@ export const tenantUserAccount = pgTable(
       .notNull()
       .references(() => tenant.id),
     userAccountId: uuid('fk_user_account_id').references(() => userAccount.id),
+    invitationId: uuid('fk_invitation_id').references(
+      (): AnyPgColumn => invitation.id
+    ),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
     deletedAt: timestamp('deleted_at', { withTimezone: true }),
   },
@@ -146,6 +150,27 @@ export const tenantUserAccount = pgTable(
     uniqueTenantUserAccount: uniqueIndex('tenant_user_account_uq_idx').on(
       tenantUserAccount.tenantId,
       tenantUserAccount.userAccountId
+    ),
+  })
+);
+
+export const invitation = pgTable(
+  'invitation',
+  {
+    id: uuid('invitation_id').primaryKey().defaultRandom(),
+    code: text('code').notNull(),
+    tenantId: uuid('fk_tenant_id')
+      .notNull()
+      .references(() => tenant.id),
+    createdBy: uuid('fk_created_by_account_id')
+      .notNull()
+      .references(() => userAccount.id),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  },
+  (invitation) => ({
+    uniqueInvitationCode: uniqueIndex('invitation_code_uq_idx').on(
+      invitation.code
     ),
   })
 );

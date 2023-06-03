@@ -3,12 +3,12 @@ import { ThemeNode } from '@/types/themes';
 import type { RouterOutputs } from '@/utils/api';
 import { api } from '@/utils/api';
 import { useForm, zodResolver } from '@mantine/form';
-import clsx from 'clsx';
+import { IconCheck } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useEffect } from 'react';
+import { twMerge } from 'tailwind-merge';
 import Button from '../input/Button';
 import TextField from '../input/TextField';
-import { IconCheck } from '@tabler/icons-react';
 
 type FormResult =
   | RouterOutputs['theme']['addTheme']
@@ -138,7 +138,7 @@ const ThemeForm: React.FC<ThemeFormProps> = ({
         <button
           type='button'
           onClick={() => form.setFieldValue('parentId', null)}
-          className={clsx(
+          className={twMerge(
             'mb-2 flex items-center justify-center gap-1 rounded-md border py-0.5',
             form.values.parentId !== null && 'border-zinc-400 text-zinc-400',
             form.values.parentId === null &&
@@ -184,9 +184,10 @@ const ThemeListNodeFlat: React.FC<ThemeListNodeFlatProps> = ({
     <>
       <li onClick={() => onSelect(theme)} className='relative py-0.5'>
         <div
-          className={clsx(
-            'flex cursor-pointer items-center gap-1 overflow-hidden border pr-2 font-medium text-sm py-0.5',
-            selected && 'rounded-md border-emerald-500 bg-emerald-50 text-emerald-500',
+          className={twMerge(
+            'flex cursor-pointer items-center gap-1 overflow-hidden border py-0.5 pr-2 text-sm font-medium',
+            selected &&
+              'rounded-md border-emerald-500 bg-emerald-50 text-emerald-500',
             !selected && 'border-transparent'
           )}
           style={{
@@ -194,8 +195,7 @@ const ThemeListNodeFlat: React.FC<ThemeListNodeFlatProps> = ({
           }}
         >
           <div
-            role='checkbox'
-            className={clsx(
+            className={twMerge(
               'h-2 w-2 rounded-full border',
               selected && 'border-emerald-500 bg-emerald-300',
               !selected && 'border-zinc-400 bg-zinc-200'

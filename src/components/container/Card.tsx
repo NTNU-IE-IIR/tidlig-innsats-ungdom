@@ -1,5 +1,5 @@
 import { VariantProps, cva } from 'class-variance-authority';
-import clsx from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 const card = cva(['rounded-md border border-black/10 shadow'], {
   variants: {
@@ -28,7 +28,10 @@ const Card: React.FC<CardProps> = ({
   onClick,
 }) => {
   return (
-    <div onClick={onClick} className={clsx(card({ variant, pad }), className)}>
+    <div
+      onClick={onClick}
+      className={twMerge(card({ variant, pad }), className)}
+    >
       {children}
     </div>
   );

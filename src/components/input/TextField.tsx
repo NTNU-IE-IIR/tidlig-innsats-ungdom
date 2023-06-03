@@ -1,5 +1,5 @@
-import clsx from 'clsx';
 import type { ComponentProps } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 export type BaseInputProps = Omit<
   ComponentProps<'input'>,
@@ -33,7 +33,7 @@ const TextField: React.FC<TextFieldProps> = (props) => {
 
   return (
     <fieldset
-      className={clsx(
+      className={twMerge(
         'group relative rounded-md border transition-colors',
         error
           ? 'border-red-500'

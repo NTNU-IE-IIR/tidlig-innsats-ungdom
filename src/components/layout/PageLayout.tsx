@@ -2,7 +2,7 @@ import { useSessionStore } from '@/store/sessionStore';
 import { Transition } from '@headlessui/react';
 import { useHotkeys } from '@mantine/hooks';
 import { IconChevronLeft } from '@tabler/icons-react';
-import clsx from 'clsx';
+import { twMerge } from 'tailwind-merge';
 import NavigationBar from '../navigation/NavigationBar';
 import SessionSideMenu from '../session/SessionSideMenu';
 
@@ -29,7 +29,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
         <div className='mx-auto flex h-fit min-h-screen max-w-screen-xl flex-col gap-2 py-5'>
           <NavigationBar />
 
-          <main className={clsx('flex-1', className)}>{children}</main>
+          <main className={twMerge('flex-1', className)}>{children}</main>
 
           <footer className='self-center'>
             <span className='text-sm font-semibold uppercase'>
@@ -44,7 +44,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
           onClick={toggleSideMenu}
         >
           <IconChevronLeft
-            className={clsx(
+            className={twMerge(
               'h-5 w-5 transform transition-transform',
               showSideMenu && 'rotate-180'
             )}

@@ -1,9 +1,9 @@
 import { Menu } from '@headlessui/react';
 import { IconChevronDown, IconLogout, IconUser } from '@tabler/icons-react';
-import clsx from 'clsx';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { twMerge } from 'tailwind-merge';
 
 const NavigationBar = () => {
   const { data } = useSession();
@@ -57,7 +57,7 @@ const NavigationLink: React.FC<{ href: string; children: string }> = ({
   return (
     <ul>
       <li
-        className={clsx(
+        className={twMerge(
           'border-b-2 px-2 font-semibold',
           router.pathname === href ? 'border-emerald-500' : 'border-transparent'
         )}

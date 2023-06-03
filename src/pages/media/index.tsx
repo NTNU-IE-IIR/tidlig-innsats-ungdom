@@ -12,12 +12,12 @@ import { ThemeNode } from '@/types/themes';
 import { api } from '@/utils/api';
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconCheck, IconX } from '@tabler/icons-react';
-import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 const MediaIndexPage: NextPage = () => {
   const [mediaName, setMediaName] = useState('');
@@ -120,7 +120,7 @@ const MediaIndexPage: NextPage = () => {
                 <div
                   key={media.id}
                   role='row'
-                  className={clsx(
+                  className={twMerge(
                     'col-span-6 grid grid-cols-[inherit] items-center px-1 py-1',
                     idx !== array.length - 1 && 'border-b'
                   )}
@@ -242,7 +242,7 @@ const ColumnHeader = ({
 }) => (
   <h2
     role='columnheader'
-    className={clsx('py-1 text-sm font-semibold', center && 'text-center')}
+    className={twMerge('py-1 text-sm font-semibold', center && 'text-center')}
   >
     {children}
   </h2>

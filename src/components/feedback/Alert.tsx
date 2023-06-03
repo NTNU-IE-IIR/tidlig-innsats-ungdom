@@ -5,7 +5,7 @@ import {
   IconX,
 } from '@tabler/icons-react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import clsx from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 const alert = cva(['border rounded-md px-2 py-1 flex gap-2 items-center'], {
   variants: {
@@ -25,7 +25,7 @@ export interface AlertProps extends VariantProps<typeof alert> {
 
 const Alert: React.FC<AlertProps> = ({ intent, children, className }) => {
   return (
-    <div className={clsx(alert({ intent }), className)}>
+    <div className={twMerge(alert({ intent }), className)}>
       {intent === 'info' && (
         <IconInfoCircle className='h-6 w-6 flex-shrink-0' />
       )}

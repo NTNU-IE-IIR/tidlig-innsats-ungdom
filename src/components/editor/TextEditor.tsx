@@ -16,13 +16,13 @@ import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
-import clsx from 'clsx';
 import {
   EditorState,
   SerializedEditorState,
   SerializedLexicalNode,
 } from 'lexical';
 import { useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
 import Placeholder from './Placeholder';
 import { ImageNode } from './nodes/ImageNode';
 import ImagePastePlugin from './plugins/ImagePastePlugin';
@@ -75,7 +75,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <div
-        className={clsx(
+        className={twMerge(
           'flex flex-col rounded-md border border-zinc-200',
           className
         )}

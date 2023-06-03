@@ -1,5 +1,5 @@
 import { VariantProps, cva } from 'class-variance-authority';
-import clsx from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 const button = cva(
   [
@@ -47,7 +47,7 @@ const Button: React.FC<ButtonProps> = ({
       type={type}
       onClick={() => onClick?.()}
       disabled={disabled ?? undefined}
-      className={clsx(button({ variant, disabled }), className)}
+      className={twMerge(button({ variant, disabled }), className)}
     >
       {/* Loading spinner */}
       {isLoading && (
@@ -76,7 +76,7 @@ const Button: React.FC<ButtonProps> = ({
       )}
 
       <div
-        className={clsx('flex items-center gap-1', isLoading && 'invisible')}
+        className={twMerge('flex items-center gap-1', isLoading && 'invisible')}
       >
         {children}
       </div>

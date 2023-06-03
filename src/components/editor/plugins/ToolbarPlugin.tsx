@@ -40,7 +40,6 @@ import {
   IconUnderline,
   IconUpload,
 } from '@tabler/icons-react';
-import clsx from 'clsx';
 import {
   $createParagraphNode,
   $getSelection,
@@ -57,6 +56,7 @@ import {
   UNDO_COMMAND,
 } from 'lexical';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 import { INSERT_IMAGE_COMMAND, InsertImagePayload } from './ImagePastePlugin';
 
 const BLOCK_TYPE_NAME_MAP = {
@@ -363,7 +363,7 @@ const ToolbarActionButton: React.FC<ToolbarActionButtonProps> = ({
       type='button'
       onClick={onClick}
       disabled={disabled}
-      className={clsx(
+      className={twMerge(
         'flex items-center gap-1 rounded-md border border-zinc-300 p-1 transition-colors',
         disabled && 'text-zinc-500',
         !disabled && 'hover:border-zinc-400 hover:bg-zinc-200'
@@ -390,7 +390,7 @@ const ToolbarToggleButton: React.FC<ToolbarToggleButtonProps> = ({
     <button
       type='button'
       onClick={onClick}
-      className={clsx(
+      className={twMerge(
         'rounded-md border border-zinc-300 p-1 transition-colors',
         active && 'border-zinc-400 bg-zinc-200'
       )}

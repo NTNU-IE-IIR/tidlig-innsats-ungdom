@@ -1,8 +1,8 @@
 import { useThemeStore } from '@/store/themeStore';
 import { ThemeNode } from '@/types/themes';
 import { IconPencil, IconTrash } from '@tabler/icons-react';
-import clsx from 'clsx';
-import { useId, useReducer } from 'react';
+import { useId } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 export interface ThemeListNodeProps {
   theme: ThemeNode;
@@ -34,7 +34,7 @@ const ThemeListNode: React.FC<ThemeListNodeProps> = ({
           type='checkbox'
           checked={isSelected(theme.id)}
           onChange={() => toggleTheme(theme.id)}
-          className={clsx(
+          className={twMerge(
             'h-3.5 w-3.5 rounded-full text-emerald-500 focus:ring-1 focus:ring-emerald-700 focus:ring-offset-1',
             !selectable && 'hidden'
           )}

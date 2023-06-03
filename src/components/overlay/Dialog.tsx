@@ -1,6 +1,6 @@
 import { Dialog as HeadlessDialog, Transition } from '@headlessui/react';
-import clsx from 'clsx';
 import { Fragment } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 export interface DialogRendererProps {
   close: () => void;
@@ -56,7 +56,7 @@ const Dialog: React.FC<DialogProps> = ({
               leaveTo='opacity-0 scale-95'
             >
               <HeadlessDialog.Panel
-                className={clsx(
+                className={twMerge(
                   'w-full max-w-md transform overflow-hidden rounded-lg bg-zinc-50 p-1 shadow-lg transition-all',
                   className
                 )}

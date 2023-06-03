@@ -5,6 +5,7 @@ import { InferModel } from 'drizzle-orm';
 import {
   AnyPgColumn,
   bigint,
+  integer,
   jsonb,
   pgEnum,
   pgTable,
@@ -58,6 +59,12 @@ export const userAccount = pgTable(
     updatedAt: timestamp('updated_at', { withTimezone: true })
       .notNull()
       .defaultNow(),
+    /**
+     * The invitation that created this user account.
+     */
+    invitationId: uuid('fk_invitation_id').references(
+      (): AnyPgColumn => invitation.id
+    ),
     role: userAccountRole('role').notNull().default(UserAccountRole.USER),
   },
   (userAccount) => ({
@@ -140,10 +147,17 @@ export const tenantUserAccount = pgTable(
       .notNull()
       .references(() => tenant.id),
     userAccountId: uuid('fk_user_account_id').references(() => userAccount.id),
+    /**
+     * The invitation that created this tenant membership.
+     */
     invitationId: uuid('fk_invitation_id').references(
       (): AnyPgColumn => invitation.id
     ),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+    /**
+     * The date this tenant membership was deleted/revoked.
+     * If null, the tenant membership is active.
+     */
     deletedAt: timestamp('deleted_at', { withTimezone: true }),
   },
   (tenantUserAccount) => ({
@@ -158,6 +172,8 @@ export const invitation = pgTable(
   'invitation',
   {
     id: uuid('invitation_id').primaryKey().defaultRandom(),
+    comment: text('comment'),
+    maxUses: integer('max_uses'),
     code: text('code').notNull(),
     tenantId: uuid('fk_tenant_id')
       .notNull()

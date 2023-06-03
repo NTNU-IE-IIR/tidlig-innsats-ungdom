@@ -21,3 +21,15 @@ html {
 .animate-horizontal-track {
   animation: horizontal-track 1s linear infinite;
 }
+
+/* Chrome, Safari, Edge, Opera */
+.number-input-wrapper > input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.number-input-wrapper > input[type='number'] {
+  -moz-appearance: textfield;
+}

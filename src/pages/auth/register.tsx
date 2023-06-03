@@ -97,6 +97,7 @@ const Register: NextPage = () => {
             <ErrorLabel>{form.errors.passwordConfirmation}</ErrorLabel>
 
             <Button
+              type='submit'
               isLoading={isLoading}
               className='mt-2 w-full self-center py-1.5'
             >

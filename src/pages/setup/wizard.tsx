@@ -64,7 +64,7 @@ const Wizard: NextPage = () => {
               <p className='text-sm font-medium'>Tillatt registrering</p>
             </div>
 
-            <Button className='mt-4 flex w-fit self-end py-1.5 text-sm'>
+            <Button type='submit' className='mt-4 flex w-fit self-end py-1.5 text-sm'>
               <span>Neste</span>
               <IconChevronRight className='-mr-1 h-4 w-4' />
             </Button>

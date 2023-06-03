@@ -37,7 +37,6 @@ specifiers:
   autoprefixer: ^10.4.14
   bcrypt: ^5.1.0
   class-variance-authority: ^0.6.0
-  clsx: ^1.2.1
   dayjs: ^1.11.7
   dotenv: ^16.0.3
   drizzle-kit: ^0.18.0
@@ -91,7 +90,6 @@ dependencies:
   '@trpc/server': 10.21.1
   bcrypt: 5.1.0
   class-variance-authority: 0.6.0_typescript@5.0.4
-  clsx: 1.2.1
   dayjs: 1.11.7
   dotenv: 16.0.3
   drizzle-orm: 0.26.1_@types+pg@8.6.6+pg@8.10.0

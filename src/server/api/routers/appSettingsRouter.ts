@@ -6,14 +6,13 @@ import {
   tenant,
   tenantUserAccount,
 } from '@/server/db/schema';
+import { isUserRegistrationEnabled } from '@/server/db/services/appSettings';
 import { hasRegisteredUserAccounts } from '@/server/db/services/userAccount';
-import { eq } from 'drizzle-orm';
 import {
   createTRPCRouter,
   publicProcedure,
   roleProtectedProcedure,
 } from '../trpc';
-import { isUserRegistrationEnabled } from '@/server/db/services/appSettings';
 
 export const appSettingsRouter = createTRPCRouter({
   uninitialized: publicProcedure.query(async () => {
@@ -51,7 +50,8 @@ export const appSettingsRouter = createTRPCRouter({
         .onConflictDoNothing()
         .returning();
 
-      db.insert(tenantUserAccount)
+      await db
+        .insert(tenantUserAccount)
         .values({
           tenantId: createdTenant[0]!.id,
           userAccountId: ctx.session.user.id,

@@ -5,6 +5,9 @@ import { IconChevronLeft } from '@tabler/icons-react';
 import { twMerge } from 'tailwind-merge';
 import NavigationBar from '../navigation/NavigationBar';
 import SessionSideMenu from '../session/SessionSideMenu';
+import { useTenantStore } from '@/store/tenantStore';
+import { api } from '@/utils/api';
+import { useEffect } from 'react';
 
 interface PageLayoutProps {
   children: React.ReactNode;
@@ -16,7 +19,16 @@ interface PageLayoutProps {
 }
 
 const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
+  const { data: tenants } = api.tenant.listMyTenants.useQuery();
+  const { setActiveTenant } = useTenantStore();
   const { showSideMenu, toggleSideMenu, closeSideMenu } = useSessionStore();
+
+  useEffect(() => {
+    if (tenants && tenants.length >= 1) {
+      const tenant = tenants[0]!;
+      setActiveTenant(tenant.id, tenant.name);
+    }
+  }, [tenants]);
 
   useHotkeys([
     ['ctrl+space', () => toggleSideMenu()],

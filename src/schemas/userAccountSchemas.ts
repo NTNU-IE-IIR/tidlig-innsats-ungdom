@@ -6,6 +6,7 @@ export const registerUserAccountSchema = z
     email: z.string().email('INVALID_EMAIL_ADDRESS'),
     password: z.string().min(10, 'PASSWORD_NEEDS_10_CHARACTERS'),
     passwordConfirmation: z.string().nonempty('PASSWORD_CONFIRMATION_REQUIRED'),
+    inviteCode: z.string().optional(),
   })
   .refine(
     (data) => {

@@ -33,7 +33,9 @@ const InviteCard: React.FC<InviteCardProps> = ({
   const clipboard = useClipboard({ timeout: 500 });
 
   const copyInviteLink = (code: string) => {
-    clipboard.copy(window.location.host.concat(`/join?code=${code}`));
+    const url = new URL(window.location.host.concat('/join'));
+    url.searchParams.set('code', code);
+    clipboard.copy(url.toString());
   };
 
   return (

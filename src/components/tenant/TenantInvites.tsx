@@ -1,20 +1,8 @@
 import { api } from '@/utils/api';
-import {
-  IconBan,
-  IconCheck,
-  IconInfinity,
-  IconLink,
-  IconUser,
-  IconUsersGroup,
-} from '@tabler/icons-react';
 import { useState } from 'react';
-import { twMerge } from 'tailwind-merge';
-import Button from '../input/Button';
 import DeleteInviteDialog from '../invite/DeleteInviteDialog';
-import Dialog from '../overlay/Dialog';
-import dayjs from 'dayjs';
-import { useClipboard } from '@mantine/hooks';
 import InviteCard from '../invite/InviteCard';
+import Dialog from '../overlay/Dialog';
 
 interface TenantInvitesProps {
   expired?: boolean;
@@ -26,11 +14,6 @@ const TenantInvites: React.FC<TenantInvitesProps> = ({ expired }) => {
   });
 
   const [expiringInviteId, setExpiringInviteId] = useState<string>();
-  const clipboard = useClipboard({ timeout: 500 });
-
-  const copyInviteLink = (code: string) => {
-    clipboard.copy(window.location.host.concat(`/join?code=${code}`));
-  };
 
   return (
     <div>

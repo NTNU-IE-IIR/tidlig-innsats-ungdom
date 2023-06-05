@@ -2,6 +2,7 @@ import { api } from '@/utils/api';
 import { useState } from 'react';
 import DeleteInviteDialog from '../invite/DeleteInviteDialog';
 import InviteCard from '../invite/InviteCard';
+import InvitedUsersDialog from '../invite/InvitedUsersDialog';
 import Dialog from '../overlay/Dialog';
 
 interface TenantInvitesProps {
@@ -14,6 +15,7 @@ const TenantInvites: React.FC<TenantInvitesProps> = ({ expired }) => {
   });
 
   const [expiringInviteId, setExpiringInviteId] = useState<string>();
+  const [showMembersInviteId, setShowMembersInviteId] = useState<string>();
 
   return (
     <div>
@@ -34,6 +36,7 @@ const TenantInvites: React.FC<TenantInvitesProps> = ({ expired }) => {
             expiresAt={invite.expiresAt}
             comment={invite.comment}
             onExpire={() => setExpiringInviteId(invite.id)}
+            onShowMembers={() => setShowMembersInviteId(invite.id)}
           />
         ))}
       </ul>
@@ -44,6 +47,18 @@ const TenantInvites: React.FC<TenantInvitesProps> = ({ expired }) => {
       >
         {({ close }) => (
           <DeleteInviteDialog inviteId={expiringInviteId} onClose={close} />
+        )}
+      </Dialog>
+
+      <Dialog
+        open={showMembersInviteId !== undefined}
+        onClose={() => setShowMembersInviteId(undefined)}
+      >
+        {({ close }) => (
+          <InvitedUsersDialog
+            invitationId={showMembersInviteId}
+            onClose={close}
+          />
         )}
       </Dialog>
     </div>

@@ -35,7 +35,7 @@ const Settings: NextPage = () => {
               <TenantMembers />
             </HeadlessTab.Panel>
             <HeadlessTab.Panel as={Fragment}>
-              <TenantMembers />
+              <TenantMembers deleted />
             </HeadlessTab.Panel>
 
             <HeadlessTab.Panel as={Fragment}>

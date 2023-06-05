@@ -6,11 +6,16 @@ import dayjs from 'dayjs';
 import Button from '../input/Button';
 import { twMerge } from 'tailwind-merge';
 
-const TenantMembers = () => {
+interface TenantMembersProps {
+  deleted?: boolean;
+}
+
+const TenantMembers: React.FC<TenantMembersProps> = ({ deleted }) => {
   const { activeTenantId } = useTenantStore();
   const { data: members } = api.tenant.listMembers.useQuery(
     {
       tenantId: activeTenantId!,
+      deleted,
     },
     {
       enabled: activeTenantId !== null,

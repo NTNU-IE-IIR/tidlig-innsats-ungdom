@@ -19,6 +19,7 @@ interface InviteCardProps {
   expiresAt: Date;
   comment: string | null;
   onExpire: () => void;
+  onShowMembers: () => void;
 }
 
 const InviteCard: React.FC<InviteCardProps> = ({
@@ -29,6 +30,7 @@ const InviteCard: React.FC<InviteCardProps> = ({
   expiresAt,
   comment,
   onExpire,
+  onShowMembers,
 }) => {
   const clipboard = useClipboard({ timeout: 500 });
 
@@ -59,7 +61,11 @@ const InviteCard: React.FC<InviteCardProps> = ({
         </div>
       </div>
 
-      <Button variant='neutral' className='aspect-square h-fit self-center p-1'>
+      <Button
+        onClick={onShowMembers}
+        variant='neutral'
+        className='aspect-square h-fit self-center p-1'
+      >
         <IconUsersGroup className='h-5 w-5' />
       </Button>
 

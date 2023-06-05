@@ -1,6 +1,6 @@
 import { db } from '@/server/db';
 import { tenant, tenantUserAccount, userAccount } from '@/server/db/schema';
-import { and, eq, ilike } from 'drizzle-orm';
+import { and, eq, ilike, isNotNull } from 'drizzle-orm';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
@@ -27,6 +27,7 @@ export const tenantRouter = createTRPCRouter({
       z.object({
         tenantId: z.string().uuid(),
         name: z.string().optional(),
+        deleted: z.boolean().optional(),
       })
     )
     .query(async ({ input }) => {
@@ -45,7 +46,8 @@ export const tenantRouter = createTRPCRouter({
         .where(
           and(
             eq(tenantUserAccount.tenantId, input.tenantId),
-            ilike(userAccount.fullName, `%${input.name ?? ''}%`)
+            ilike(userAccount.fullName, `%${input.name ?? ''}%`),
+            input.deleted ? isNotNull(tenantUserAccount.deletedAt) : undefined
           )
         );
     }),

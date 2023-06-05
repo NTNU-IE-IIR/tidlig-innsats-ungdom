@@ -96,6 +96,28 @@ export const invitationRouter = createTRPCRouter({
     }),
 
   /**
+   * Lists all users invited by a specific invitation.
+   */
+  listInvitedUsers: protectedProcedure
+    .input(z.string())
+    .query(async ({ input: id }) => {
+      return await db
+        .select({
+          id: userAccount.id,
+          fullName: userAccount.fullName,
+          role: sql`''`, // TODO: Update this whenever we add roles per tenant
+          createdAt: tenantUserAccount.createdAt,
+          active: sql<boolean>`${tenantUserAccount.deletedAt} IS NULL`,
+        })
+        .from(tenantUserAccount)
+        .innerJoin(
+          userAccount,
+          eq(tenantUserAccount.userAccountId, userAccount.id)
+        )
+        .where(eq(tenantUserAccount.invitationId, id));
+    }),
+
+  /**
    * Creates an invitation code for a tenant.
    */
   // TODO: Require the user to be an 'ADMIN' of the tenant.

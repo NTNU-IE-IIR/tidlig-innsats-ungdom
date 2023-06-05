@@ -1,13 +1,14 @@
 import { useSessionStore } from '@/store/sessionStore';
+import { useTenantStore } from '@/store/tenantStore';
+import { api } from '@/utils/api';
 import { Transition } from '@headlessui/react';
 import { useHotkeys } from '@mantine/hooks';
 import { IconChevronLeft } from '@tabler/icons-react';
+import getConfig from 'next/config';
+import { useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 import NavigationBar from '../navigation/NavigationBar';
 import SessionSideMenu from '../session/SessionSideMenu';
-import { useTenantStore } from '@/store/tenantStore';
-import { api } from '@/utils/api';
-import { useEffect } from 'react';
 
 interface PageLayoutProps {
   children: React.ReactNode;
@@ -17,6 +18,8 @@ interface PageLayoutProps {
    */
   className?: string;
 }
+
+const { publicRuntimeConfig } = getConfig();
 
 const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
   const { data: tenants } = api.tenant.listMyTenants.useQuery();
@@ -44,8 +47,11 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
           <main className={twMerge('flex-1', className)}>{children}</main>
 
           <footer className='self-center'>
-            <span className='text-sm font-semibold uppercase'>
-              tidlig innsats ungdom © {new Date().getFullYear()}
+            <span className='block text-sm font-semibold uppercase'>
+              Tidlig innsats ungdom © {new Date().getFullYear()}
+            </span>
+            <span className='block text-center text-xs font-medium'>
+              Versjon {publicRuntimeConfig.version}
             </span>
           </footer>
         </div>

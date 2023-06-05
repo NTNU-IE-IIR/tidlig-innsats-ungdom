@@ -4,12 +4,17 @@
  */
 await import('./src/env.mjs');
 
+import pkg from './package.json' assert { type: "json" };
+
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
   output: 'standalone',
   eslint: {
     ignoreDuringBuilds: true,
+  },
+  publicRuntimeConfig: {
+    version: pkg.version,
   },
 };
 export default config;

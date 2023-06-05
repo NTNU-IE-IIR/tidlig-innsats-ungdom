@@ -72,7 +72,7 @@ const Settings: NextPage = () => {
       </PageLayout>
 
       <Dialog open={showInviteForm} onClose={() => setShowInviteForm(false)}>
-        <InviteForm />
+        {({ close }) => <InviteForm onSuccess={close} onCancel={close} />}
       </Dialog>
     </>
   );

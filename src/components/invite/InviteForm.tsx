@@ -1,20 +1,23 @@
-import { useForm, zodResolver } from '@mantine/form';
-import TextField from '../input/TextField';
 import {
   CreateInvitationInput,
   createInvitationSchema,
 } from '@/schemas/invitationSchemas';
-import { api } from '@/utils/api';
-import Button from '../input/Button';
-import NumberField from '../input/NumberField';
 import { useTenantStore } from '@/store/tenantStore';
-import Switch from '../input/Switch';
+import { api } from '@/utils/api';
+import { useForm, zodResolver } from '@mantine/form';
 import { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
+import Button from '../input/Button';
+import NumberField from '../input/NumberField';
+import Switch from '../input/Switch';
+import TextField from '../input/TextField';
 
-interface InviteFormProps {}
+interface InviteFormProps {
+  onSuccess?: () => void;
+  onCancel?: () => void;
+}
 
-const InviteForm: React.FC<InviteFormProps> = () => {
+const InviteForm: React.FC<InviteFormProps> = ({ onSuccess, onCancel }) => {
   const { activeTenantId } = useTenantStore();
   const utils = api.useContext();
   const { mutateAsync: createInvite, isLoading } =
@@ -41,6 +44,8 @@ const InviteForm: React.FC<InviteFormProps> = () => {
       ...values,
       maxUses: limitUses ? values.maxUses : undefined,
     });
+
+    onSuccess?.();
   };
 
   return (
@@ -75,9 +80,14 @@ const InviteForm: React.FC<InviteFormProps> = () => {
         {...form.getInputProps('maxUses')}
       />
 
-      <Button type='submit' className='self-end' isLoading={isLoading}>
-        Opprett
-      </Button>
+      <div className='flex items-center justify-end gap-2 text-sm'>
+        <Button variant='neutral' onClick={onCancel}>
+          Avbryt
+        </Button>
+        <Button type='submit' isLoading={isLoading}>
+          Opprett
+        </Button>
+      </div>
     </form>
   );
 };

@@ -2,16 +2,21 @@ import { twMerge } from 'tailwind-merge';
 
 interface TableProps {
   children: React.ReactNode;
-  columns: number;
+  columns?: number;
+  className?: string;
 }
 
-const Table = ({ children, columns }: TableProps) => {
+const Table = ({ children, columns, className }: TableProps) => {
   return (
     <div
       role='table'
-      className='grid rounded-md border'
+      className={twMerge('grid rounded-md border', className)}
       style={{
-        gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+        // it's optional to set `columns`, if it's not set the grid cols 
+        // will have to be defined using the `className` prop
+        gridTemplateColumns: columns
+          ? `repeat(${columns}, minmax(0, 1fr))`
+          : undefined,
       }}
     >
       {children}

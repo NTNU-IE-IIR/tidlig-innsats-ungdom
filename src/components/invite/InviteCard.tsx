@@ -46,7 +46,7 @@ const InviteCard: React.FC<InviteCardProps> = ({
         <p
           className={twMerge('font-medium', !comment && 'italic text-zinc-400')}
         >
-          {comment ?? '(ingen kommentar)'}
+          {(!comment || comment?.length === 0) ? '(ingen kommentar)' : comment}
         </p>
         <div className='flex items-center gap-1'>
           <IconUser className='h-4 w-4' />

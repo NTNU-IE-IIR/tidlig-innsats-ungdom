@@ -28,7 +28,8 @@ const NavigationBar = () => {
 
         <Menu.Items className='absolute right-1 top-full mt-1 divide-y rounded-md border border-black/10 bg-white shadow'>
           <Menu.Item
-            as='button'
+            as={Link}
+            href='/profile'
             className='flex w-full items-center gap-1 rounded-t-md px-2 py-1 transition-colors hover:bg-zinc-100'
           >
             <IconUser className='h-4 w-4' />

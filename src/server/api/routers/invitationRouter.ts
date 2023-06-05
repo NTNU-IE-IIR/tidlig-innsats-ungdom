@@ -23,11 +23,18 @@ export const invitationRouter = createTRPCRouter({
       .select({
         tenantName: tenant.name,
         inviteeName: userAccount.fullName,
+        invitedUsers: sql<number>`COUNT(DISTINCT ${tenantUserAccount.userAccountId})`,
+        maxUses: invitation.maxUses,
       })
       .from(invitation)
       .innerJoin(tenant, eq(invitation.tenantId, tenant.id))
       .innerJoin(userAccount, eq(invitation.createdBy, userAccount.id))
-      .where(eq(invitation.code, input));
+      .leftJoin(
+        tenantUserAccount,
+        eq(invitation.id, tenantUserAccount.invitationId)
+      )
+      .where(eq(invitation.code, input))
+      .groupBy(invitation.id, tenant.id, userAccount.id);
 
     if (invites.length !== 1) {
       throw new TRPCError({
@@ -36,7 +43,19 @@ export const invitationRouter = createTRPCRouter({
       });
     }
 
-    return invites[0];
+    const foundInvite = invites[0]!;
+
+    if (
+      foundInvite.maxUses &&
+      foundInvite.invitedUsers >= foundInvite.maxUses
+    ) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'INVITATION_MAX_USES_REACHED',
+      });
+    }
+
+    return foundInvite;
   }),
 
   /**

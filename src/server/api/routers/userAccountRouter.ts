@@ -42,8 +42,17 @@ export const userAccountRouter = createTRPCRouter({
           });
         }
 
-        invitationId = results[0]!.id;
-        tenantId = results[0]!.tenantId;
+        const invite = results[0]!;
+
+        if (invite.maxUses && invite.uses >= invite.maxUses) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'INVITATION_MAX_USES_REACHED',
+          });
+        }
+
+        invitationId = invite.id;
+        tenantId = invite.tenantId;
       }
 
       const hashedPassword = await bcrypt.hash(input.password, 10);
@@ -77,7 +86,7 @@ export const userAccountRouter = createTRPCRouter({
         await db.insert(tenantUserAccount).values({
           tenantId,
           invitationId,
-          userAccountId: registeredUser.id
+          userAccountId: registeredUser.id,
         });
       }
 

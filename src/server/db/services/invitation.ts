@@ -1,6 +1,6 @@
 import { and, eq, sql } from 'drizzle-orm';
 import { db } from '..';
-import { invitation } from '../schema';
+import { invitation, tenantUserAccount } from '../schema';
 
 /**
  * Finds a non expired invitation with a given id.
@@ -14,9 +14,14 @@ export const findNonExpiredInvitationByCode = async (code: string) => {
     .select({
       id: invitation.id,
       tenantId: invitation.tenantId,
+      maxUses: invitation.maxUses,
+      uses: sql<number>`COUNT(DISTINCT ${tenantUserAccount.userAccountId})`,
     })
     .from(invitation)
-    .where(
-      and(eq(invitation.code, code), sql`${invitation.expiresAt} > NOW()`)
-    );
+    .leftJoin(
+      tenantUserAccount,
+      eq(invitation.id, tenantUserAccount.invitationId)
+    )
+    .where(and(eq(invitation.code, code), sql`${invitation.expiresAt} > NOW()`))
+    .groupBy(invitation.id);
 };

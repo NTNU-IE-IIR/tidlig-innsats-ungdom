@@ -1,4 +1,5 @@
 import { VariantProps, cva } from 'class-variance-authority';
+import { ComponentProps, forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 const button = cva(
@@ -25,7 +26,9 @@ const button = cva(
   }
 );
 
-interface ButtonProps extends VariantProps<typeof button> {
+type BaseButtonProps = VariantProps<typeof button> & ComponentProps<'button'>;
+
+export interface ButtonProps extends BaseButtonProps {
   className?: string;
   type?: 'button' | 'submit' | 'reset';
   children?: React.ReactNode;
@@ -33,19 +36,22 @@ interface ButtonProps extends VariantProps<typeof button> {
   onClick?: () => void;
 }
 
-const Button: React.FC<ButtonProps> = ({
-  className,
-  type = 'button',
-  children,
-  isLoading,
-  onClick,
-  variant,
-  disabled,
-}) => {
+const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
+  const {
+    className,
+    type = 'button',
+    children,
+    isLoading,
+    variant,
+    disabled,
+    ...remainder
+  } = props;
+
   return (
     <button
+      {...remainder}
+      ref={ref}
       type={type}
-      onClick={() => onClick?.()}
       disabled={disabled ?? undefined}
       className={twMerge(button({ variant, disabled }), className)}
     >
@@ -82,6 +88,6 @@ const Button: React.FC<ButtonProps> = ({
       </div>
     </button>
   );
-};
+});
 
 export default Button;

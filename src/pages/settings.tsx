@@ -31,13 +31,8 @@ const Settings: NextPage = () => {
           </HeadlessTab.List>
 
           <HeadlessTab.Panels as={Fragment}>
-            <HeadlessTab.Panel as={Fragment}>
-              <TenantMembers />
-            </HeadlessTab.Panel>
-            <HeadlessTab.Panel as={Fragment}>
-              <TenantMembers deleted />
-            </HeadlessTab.Panel>
-
+            <HeadlessTab.Panel as={TenantMembers} />
+            <HeadlessTab.Panel as={TenantMembers} deleted />
             <HeadlessTab.Panel as={Fragment}>
               <p>Alle brukere</p>
             </HeadlessTab.Panel>
@@ -54,12 +49,8 @@ const Settings: NextPage = () => {
             <Tab>Utgåtte invitasjoner</Tab>
           </HeadlessTab.List>
           <HeadlessTab.Panels className='flex-1'>
-            <HeadlessTab.Panel>
-              <TenantInvites />
-            </HeadlessTab.Panel>
-            <HeadlessTab.Panel>
-              <TenantInvites expired />
-            </HeadlessTab.Panel>
+            <HeadlessTab.Panel as={TenantInvites} />
+            <HeadlessTab.Panel as={TenantInvites} expired />
           </HeadlessTab.Panels>
 
           <Button

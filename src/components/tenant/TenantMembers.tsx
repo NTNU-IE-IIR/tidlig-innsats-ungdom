@@ -1,14 +1,17 @@
 import { useTenantStore } from '@/store/tenantStore';
 import { api } from '@/utils/api';
+import { useDebouncedValue } from '@mantine/hooks';
 import dayjs from 'dayjs';
+import { useSession } from 'next-auth/react';
 import { forwardRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import Button from '../input/Button';
 import TextField from '../input/TextField';
 import Dialog from '../overlay/Dialog';
 import Table from '../table/Table';
-import RevokeTenantMembershipDialog from './RevokeTenantMembershipDialog';
+import RegisterMemberForm from './RegisterMemberForm';
 import RestoreTenantMembershipDialog from './RestoreTenantMembershipDialog';
+import RevokeTenantMembershipDialog from './RevokeTenantMembershipDialog';
 
 interface TenantMembersProps {
   deleted?: boolean;
@@ -21,11 +24,17 @@ interface Member {
 
 const TenantMembers = forwardRef<HTMLDivElement, TenantMembersProps>(
   ({ deleted }, ref) => {
+    const { data: session } = useSession();
     const { activeTenantId, activeTenantName } = useTenantStore();
+
+    const [name, setName] = useState('');
+    const [debouncedName] = useDebouncedValue(name, 500);
+
     const { data: members } = api.tenant.listMembers.useQuery(
       {
         tenantId: activeTenantId!,
         deleted,
+        name: debouncedName,
       },
       {
         enabled: activeTenantId !== null,
@@ -36,6 +45,7 @@ const TenantMembers = forwardRef<HTMLDivElement, TenantMembersProps>(
     const [showRevokeAccessDialog, setShowRevokeAccessDialog] = useState(false);
     const [showRestoreAccessDialog, setShowRestoreAccessDialog] =
       useState(false);
+    const [showRegisterMemberForm, setShowRegisterMemberForm] = useState(false);
 
     const promptRevoke = (member: Member) => {
       setEditingUser(member);
@@ -48,8 +58,17 @@ const TenantMembers = forwardRef<HTMLDivElement, TenantMembersProps>(
     };
 
     return (
-      <div className='flex flex-1 flex-col gap-2 p-2'>
-        <TextField label='Navn' />
+      <div ref={ref} className='flex flex-1 flex-col gap-2 p-2'>
+        <div className='flex items-center gap-2'>
+          <TextField label='Navn' onChange={setName} className='flex-1' />
+
+          <Button
+            onClick={() => setShowRegisterMemberForm(true)}
+            className='h-9 py-0.5 text-sm'
+          >
+            Nytt medlem
+          </Button>
+        </div>
 
         <Table columns={4}>
           <Table.Header>
@@ -60,16 +79,21 @@ const TenantMembers = forwardRef<HTMLDivElement, TenantMembersProps>(
               <span className='sr-only'>Handlinger</span>
             </Table.ColumnHeader>
           </Table.Header>
+          {members?.length === 0 && (
+            <p className='col-span-4 py-8 text-center text-sm font-medium text-zinc-700'>
+              Fant ingen medlemmer.
+            </p>
+          )}
           {members?.map((member, idx, array) => (
             <Table.Row
               key={member.id}
               className={twMerge(
-                'items-center py-2',
-                idx <= array.length - 1 && 'border-b'
+                'items-center py-2 text-sm',
+                idx < array.length - 1 && 'border-b'
               )}
             >
               <Table.Cell>{member.fullName}</Table.Cell>
-              <Table.Cell className='text-center'>Administrator</Table.Cell>
+              <Table.Cell className='text-center'>{member.role}</Table.Cell>
               <Table.Cell className='text-center'>
                 {dayjs(member.createdAt).format('DD.MM.YYYY')}
               </Table.Cell>
@@ -78,6 +102,7 @@ const TenantMembers = forwardRef<HTMLDivElement, TenantMembersProps>(
                   <Button
                     variant='destructive'
                     className='text-sm'
+                    disabled={member.id === session?.user.id}
                     onClick={() =>
                       promptRevoke({
                         id: member.id,
@@ -136,6 +161,22 @@ const TenantMembers = forwardRef<HTMLDivElement, TenantMembersProps>(
               }}
               onCancel={close}
               onSuccess={close}
+            />
+          )}
+        </Dialog>
+
+        <Dialog
+          open={showRegisterMemberForm}
+          onClose={() => setShowRegisterMemberForm(false)}
+        >
+          {({ close }) => (
+            <RegisterMemberForm
+              tenant={{
+                id: activeTenantId!,
+                name: activeTenantName!,
+              }}
+              onSuccess={close}
+              onCancel={close}
             />
           )}
         </Dialog>

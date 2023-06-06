@@ -1,10 +1,18 @@
+import {
+  createMemberSchema,
+  modifyTenantMembershipSchema,
+} from '@/schemas/tenantSchemas';
 import { db } from '@/server/db';
-import { tenant, tenantUserAccount, userAccount } from '@/server/db/schema';
+import {
+  UserAccountRole,
+  tenant,
+  tenantUserAccount,
+  userAccount,
+} from '@/server/db/schema';
+import { TRPCError } from '@trpc/server';
 import { and, eq, ilike, isNotNull, isNull } from 'drizzle-orm';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
-import { TRPCError } from '@trpc/server';
-import { modifyTenantMembershipSchema } from '@/schemas/tenantSchemas';
 
 export const tenantRouter = createTRPCRouter({
   /**
@@ -38,6 +46,7 @@ export const tenantRouter = createTRPCRouter({
           id: userAccount.id,
           fullName: userAccount.fullName,
           email: userAccount.email,
+          role: tenantUserAccount.role,
           createdAt: tenantUserAccount.createdAt,
         })
         .from(tenantUserAccount)
@@ -54,6 +63,31 @@ export const tenantRouter = createTRPCRouter({
               : isNull(tenantUserAccount.deletedAt)
           )
         );
+    }),
+
+  registerMember: protectedProcedure
+    .input(createMemberSchema)
+    .mutation(async ({ input, ctx }) => {
+      const registeredUser = await db
+        .insert(userAccount)
+        .values({
+          email: input.userAccount.email,
+          fullName: input.userAccount.fullName,
+          password: input.userAccount.password,
+          createdAt: new Date(),
+          role: UserAccountRole.USER,
+        })
+        .returning({
+          id: userAccount.id,
+        });
+
+      const user = registeredUser[0]!;
+
+      await db.insert(tenantUserAccount).values({
+        tenantId: input.tenantId,
+        userAccountId: user.id,
+        role: input.role,
+      });
     }),
 
   /**

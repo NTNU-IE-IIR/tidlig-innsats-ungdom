@@ -1,6 +1,7 @@
 import { configureSchema } from '@/schemas/appSettingsSchemas';
 import { db } from '@/server/db';
 import {
+  TenantRole,
   UserAccountRole,
   applicationSettings,
   tenant,
@@ -55,6 +56,7 @@ export const appSettingsRouter = createTRPCRouter({
         .values({
           tenantId: createdTenant[0]!.id,
           userAccountId: ctx.session.user.id,
+          role: TenantRole.OWNER,
         })
         .onConflictDoNothing();
     }),

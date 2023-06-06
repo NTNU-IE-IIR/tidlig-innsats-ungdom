@@ -136,6 +136,18 @@ export const tenant = pgTable('tenant', {
 
 export type Tenant = InferModel<typeof tenant>;
 
+export enum TenantRole {
+  OWNER = 'OWNER',
+  SUPER_USER = 'SUPER_USER',
+  USER = 'USER',
+}
+
+export const tenantRole = pgEnum('tenant_role', [
+  TenantRole.OWNER,
+  TenantRole.SUPER_USER,
+  TenantRole.USER,
+]);
+
 /**
  * Join table between a tenant and a user account.
  * This is used to determine which user accounts have access to which tenants.
@@ -147,6 +159,7 @@ export const tenantUserAccount = pgTable(
       .notNull()
       .references(() => tenant.id),
     userAccountId: uuid('fk_user_account_id').references(() => userAccount.id),
+    role: tenantRole('role').notNull().default(TenantRole.USER),
     /**
      * The invitation that created this tenant membership.
      */

@@ -40,6 +40,13 @@
       "when": 1685806234177,
       "tag": "0005_first_makkari",
       "breakpoints": false
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1686086910993,
+      "tag": "0006_nervous_scorpion",
+      "breakpoints": false
     }
   ]
 }

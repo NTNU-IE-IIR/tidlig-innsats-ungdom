@@ -10,6 +10,7 @@ import {
 import dayjs from 'dayjs';
 import { twMerge } from 'tailwind-merge';
 import Button from '../input/Button';
+import Tooltip from '../feedback/Tooltip';
 
 interface InviteCardProps {
   code: string;
@@ -47,7 +48,7 @@ const InviteCard: React.FC<InviteCardProps> = ({
         <p
           className={twMerge('font-medium', !comment && 'italic text-zinc-400')}
         >
-          {(!comment || comment?.length === 0) ? '(ingen kommentar)' : comment}
+          {!comment || comment?.length === 0 ? '(ingen kommentar)' : comment}
         </p>
         <div className='flex items-center gap-1'>
           <IconUser className='h-4 w-4' />
@@ -62,39 +63,45 @@ const InviteCard: React.FC<InviteCardProps> = ({
         </div>
       </div>
 
-      <Button
-        onClick={onShowMembers}
-        variant='neutral'
-        className='aspect-square h-fit self-center p-1'
-      >
-        <IconUsersGroup className='h-5 w-5' />
-      </Button>
+      <Tooltip content='Vis anvendelser'>
+        <Button
+          onClick={onShowMembers}
+          variant='neutral'
+          className='aspect-square h-fit self-center p-1'
+        >
+          <IconUsersGroup className='h-5 w-5' />
+        </Button>
+      </Tooltip>
 
       {dayjs().isBefore(expiresAt) && (
         <>
-          <Button
-            variant='neutral'
-            onClick={() => copyInviteLink(code)}
-            className={twMerge(
-              'aspect-square h-fit self-center p-1 transition-colors',
-              clipboard.copied &&
-                'bg-emerald-500 text-zinc-100 hover:bg-emerald-600 focus:bg-emerald-600'
-            )}
-          >
-            {clipboard.copied ? (
-              <IconCheck className='h-5 w-5' />
-            ) : (
-              <IconLink className='h-5 w-5' />
-            )}
-          </Button>
+          <Tooltip content='Kopier invitasjonskobling'>
+            <Button
+              variant='neutral'
+              onClick={() => copyInviteLink(code)}
+              className={twMerge(
+                'aspect-square h-fit self-center p-1 transition-colors',
+                clipboard.copied &&
+                  'bg-emerald-500 text-zinc-100 hover:bg-emerald-600 focus:bg-emerald-600'
+              )}
+            >
+              {clipboard.copied ? (
+                <IconCheck className='h-5 w-5' />
+              ) : (
+                <IconLink className='h-5 w-5' />
+              )}
+            </Button>
+          </Tooltip>
 
-          <Button
-            variant='destructive'
-            onClick={onExpire}
-            className='aspect-square h-fit self-center p-1'
-          >
-            <IconBan className='h-5 w-5' />
-          </Button>
+          <Tooltip content='Test'>
+            <Button
+              variant='destructive'
+              onClick={onExpire}
+              className='aspect-square h-fit self-center p-1'
+            >
+              <IconBan className='h-5 w-5' />
+            </Button>
+          </Tooltip>
         </>
       )}
     </li>

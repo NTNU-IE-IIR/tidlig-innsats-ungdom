@@ -75,7 +75,7 @@ const InviteCard: React.FC<InviteCardProps> = ({
 
       {dayjs().isBefore(expiresAt) && (
         <>
-          <Tooltip content='Kopier invitasjonskobling'>
+          <Tooltip content='Kopier kobling'>
             <Button
               variant='neutral'
               onClick={() => copyInviteLink(code)}
@@ -93,7 +93,7 @@ const InviteCard: React.FC<InviteCardProps> = ({
             </Button>
           </Tooltip>
 
-          <Tooltip content='Test'>
+          <Tooltip content='Avslutt'>
             <Button
               variant='destructive'
               onClick={onExpire}

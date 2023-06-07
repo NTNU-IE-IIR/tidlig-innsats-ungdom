@@ -1,0 +1,14 @@
+{
+  "USER_REGISTRATION": {
+    "FULL_NAME_REQUIRED": "Fullt navn er påkrevd",
+    "INVALID_EMAIL_ADDRESS": "Ugyldig e-postadresse",
+    "PASSWORD_NEEDS_10_CHARACTERS": "Passordet må være minst 10 tegn",
+    "PASSWORD_CONFIRMATION_REQUIRED": "Passordbekreftelse er påkrevd",
+    "PASSWORDS_DO_NOT_MATCH": "Passordene er ikke like"
+  },
+  "TENANT_ROLE": {
+    "OWNER": "Eier",
+    "SUPER_USER": "Superbruker",
+    "USER": "Bruker"
+  }
+}

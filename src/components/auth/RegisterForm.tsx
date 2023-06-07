@@ -8,15 +8,17 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 import Card from '../container/Card';
-import TextField from '../input/TextField';
-import ErrorLabel from '../feedback/ErrorLabel';
 import Alert from '../feedback/Alert';
+import ErrorLabel from '../feedback/ErrorLabel';
 import Button from '../input/Button';
+import TextField from '../input/TextField';
 
 export interface RegisterFormProps {
   inviteCode?: string;
   children?: React.ReactNode;
 }
+
+const TRANSLATE_PREFIX = 'USER_REGISTRATION';
 
 const RegisterForm: React.FC<RegisterFormProps> = ({
   inviteCode,
@@ -71,14 +73,18 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           className='flex flex-col py-2'
         >
           <TextField label='Fullt navn' {...form.getInputProps('fullName')} />
-          <ErrorLabel>{form.errors.fullName}</ErrorLabel>
+          <ErrorLabel translatePrefix={TRANSLATE_PREFIX} translate>
+            {form.errors.fullName}
+          </ErrorLabel>
 
           <TextField
             className='mt-3'
             label='E-post'
             {...form.getInputProps('email', { withError: true })}
           />
-          <ErrorLabel>{form.errors.email}</ErrorLabel>
+          <ErrorLabel translatePrefix={TRANSLATE_PREFIX} translate>
+            {form.errors.email}
+          </ErrorLabel>
 
           <TextField
             className='mt-3'
@@ -86,7 +92,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
             label='Passord'
             {...form.getInputProps('password', { withError: true })}
           />
-          <ErrorLabel>{form.errors.password}</ErrorLabel>
+          <ErrorLabel translatePrefix={TRANSLATE_PREFIX} translate>
+            {form.errors.password}
+          </ErrorLabel>
 
           <TextField
             className='mt-3'
@@ -96,7 +104,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
               withError: true,
             })}
           />
-          <ErrorLabel>{form.errors.passwordConfirmation}</ErrorLabel>
+          <ErrorLabel translatePrefix={TRANSLATE_PREFIX} translate>
+            {form.errors.passwordConfirmation}
+          </ErrorLabel>
 
           <Button
             type='submit'

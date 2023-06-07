@@ -12,6 +12,7 @@ import Table from '../table/Table';
 import RegisterMemberForm from './RegisterMemberForm';
 import RestoreTenantMembershipDialog from './RestoreTenantMembershipDialog';
 import RevokeTenantMembershipDialog from './RevokeTenantMembershipDialog';
+import { useTranslation } from 'react-i18next';
 
 interface TenantMembersProps {
   deleted?: boolean;
@@ -24,6 +25,7 @@ interface Member {
 
 const TenantMembers = forwardRef<HTMLDivElement, TenantMembersProps>(
   ({ deleted }, ref) => {
+    const { t } = useTranslation();
     const { data: session } = useSession();
     const { activeTenantId, activeTenantName } = useTenantStore();
 
@@ -93,7 +95,9 @@ const TenantMembers = forwardRef<HTMLDivElement, TenantMembersProps>(
               )}
             >
               <Table.Cell>{member.fullName}</Table.Cell>
-              <Table.Cell className='text-center'>{member.role}</Table.Cell>
+              <Table.Cell className='text-center'>
+                {t('TENANT_ROLE.' + member.role)}
+              </Table.Cell>
               <Table.Cell className='text-center'>
                 {dayjs(member.createdAt).format('DD.MM.YYYY')}
               </Table.Cell>

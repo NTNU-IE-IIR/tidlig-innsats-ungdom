@@ -2,9 +2,9 @@ import { CreateMemberInput, createMemberSchema } from '@/schemas/tenantSchemas';
 import { TenantRole } from '@/server/db/schema';
 import { api } from '@/utils/api';
 import { useForm, zodResolver } from '@mantine/form';
+import ErrorLabel from '../feedback/ErrorLabel';
 import Button from '../input/Button';
 import TextField from '../input/TextField';
-import ErrorLabel from '../feedback/ErrorLabel';
 
 interface RegisterMemberFormProps {
   tenant?: {
@@ -14,6 +14,8 @@ interface RegisterMemberFormProps {
   onSuccess?: () => void;
   onCancel?: () => void;
 }
+
+const TRANSLATE_PREFIX = 'USER_REGISTRATION';
 
 const RegisterMemberForm: React.FC<RegisterMemberFormProps> = ({
   tenant,
@@ -65,14 +67,18 @@ const RegisterMemberForm: React.FC<RegisterMemberFormProps> = ({
           label='Fullt navn'
           {...form.getInputProps('userAccount.fullName')}
         />
-        <ErrorLabel>{form.errors['userAccount.fullName']}</ErrorLabel>
+        <ErrorLabel translatePrefix={TRANSLATE_PREFIX} translate>
+          {form.errors['userAccount.fullName']}
+        </ErrorLabel>
 
         <TextField
           className='mt-3'
           label='E-post'
           {...form.getInputProps('userAccount.email', { withError: true })}
         />
-        <ErrorLabel>{form.errors['userAccount.email']}</ErrorLabel>
+        <ErrorLabel translatePrefix={TRANSLATE_PREFIX} translate>
+          {form.errors['userAccount.email']}
+        </ErrorLabel>
 
         <TextField
           className='mt-3'
@@ -80,7 +86,9 @@ const RegisterMemberForm: React.FC<RegisterMemberFormProps> = ({
           label='Passord'
           {...form.getInputProps('userAccount.password', { withError: true })}
         />
-        <ErrorLabel>{form.errors['userAccount.password']}</ErrorLabel>
+        <ErrorLabel translatePrefix={TRANSLATE_PREFIX} translate>
+          {form.errors['userAccount.password']}
+        </ErrorLabel>
 
         <TextField
           className='mt-3'
@@ -90,7 +98,7 @@ const RegisterMemberForm: React.FC<RegisterMemberFormProps> = ({
             withError: true,
           })}
         />
-        <ErrorLabel>
+        <ErrorLabel translatePrefix={TRANSLATE_PREFIX} translate>
           {form.errors['userAccount.passwordConfirmation']}
         </ErrorLabel>
       </section>

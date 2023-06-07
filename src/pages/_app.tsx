@@ -6,6 +6,7 @@ import { api } from '@/utils/api';
 
 import '@/styles/globals.css';
 import 'dayjs/locale/nb';
+import '@/i18n';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip';

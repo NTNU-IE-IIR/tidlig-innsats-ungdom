@@ -89,6 +89,7 @@ const TenantMembers = forwardRef<HTMLDivElement, TenantMembersProps>(
 
           <Button
             onClick={() => setShowRegisterMemberForm(true)}
+            disabled={activeTenantRole !== TenantRole.OWNER}
             className='h-9 py-0.5 text-sm'
           >
             Nytt medlem
@@ -164,7 +165,7 @@ const TenantMembers = forwardRef<HTMLDivElement, TenantMembersProps>(
                     className='text-sm'
                     disabled={
                       member.id === session?.user.id ||
-                      member.role !== TenantRole.OWNER
+                      activeTenantRole !== TenantRole.OWNER
                     }
                     onClick={() =>
                       promptRevoke({
@@ -179,7 +180,7 @@ const TenantMembers = forwardRef<HTMLDivElement, TenantMembersProps>(
                   <Button
                     variant='neutral'
                     className='text-sm'
-                    disabled={member.role !== TenantRole.OWNER}
+                    disabled={activeTenantRole !== TenantRole.OWNER}
                     onClick={() =>
                       promptRestore({
                         id: member.id,

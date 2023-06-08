@@ -13,6 +13,7 @@ import {
 import { TRPCError } from '@trpc/server';
 import { and, eq, ilike, isNotNull, isNull } from 'drizzle-orm';
 import { z } from 'zod';
+import bcrypt from 'bcrypt';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 import { userHasTenantRole } from '@/server/db/services/tenant';
 
@@ -71,12 +72,27 @@ export const tenantRouter = createTRPCRouter({
   registerMember: protectedProcedure
     .input(createMemberSchema)
     .mutation(async ({ input, ctx }) => {
+      const isPermitted = await userHasTenantRole(
+        input.tenantId,
+        ctx.session.user.id,
+        TenantRole.OWNER
+      );
+
+      if (!isPermitted) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'NOT_PERMITTED',
+        });
+      }
+
+      const hashedPassword = await bcrypt.hash(input.userAccount.password, 10);
+
       const registeredUser = await db
         .insert(userAccount)
         .values({
           email: input.userAccount.email,
           fullName: input.userAccount.fullName,
-          password: input.userAccount.password,
+          password: hashedPassword,
           createdAt: new Date(),
           role: UserAccountRole.USER,
         })
@@ -99,7 +115,7 @@ export const tenantRouter = createTRPCRouter({
    */
   updateRole: protectedProcedure
     .input(modifyTenantMembershipSchema)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       if (input.role === undefined) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
@@ -109,7 +125,7 @@ export const tenantRouter = createTRPCRouter({
 
       const isPermitted = await userHasTenantRole(
         input.tenantId,
-        input.userId,
+        ctx.session.user.id,
         TenantRole.OWNER
       );
 

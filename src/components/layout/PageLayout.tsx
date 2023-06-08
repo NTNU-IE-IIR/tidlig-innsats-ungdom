@@ -29,7 +29,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
   useEffect(() => {
     if (tenants && tenants.length >= 1) {
       const tenant = tenants[0]!;
-      setActiveTenant(tenant.id, tenant.name);
+      setActiveTenant(tenant.id, tenant.name, tenant.role);
     }
   }, [tenants]);
 

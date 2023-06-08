@@ -1,21 +1,21 @@
+import { TenantRole } from '@/server/db/schema';
 import { useTenantStore } from '@/store/tenantStore';
 import { api } from '@/utils/api';
 import { useDebouncedValue } from '@mantine/hooks';
+import { IconCheck, IconSelector } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useSession } from 'next-auth/react';
 import { forwardRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { twMerge } from 'tailwind-merge';
 import Button from '../input/Button';
+import Select from '../input/Select';
 import TextField from '../input/TextField';
 import Dialog from '../overlay/Dialog';
 import Table from '../table/Table';
 import RegisterMemberForm from './RegisterMemberForm';
 import RestoreTenantMembershipDialog from './RestoreTenantMembershipDialog';
 import RevokeTenantMembershipDialog from './RevokeTenantMembershipDialog';
-import { useTranslation } from 'react-i18next';
-import Select from '../input/Select';
-import { TenantRole } from '@/server/db/schema';
-import { IconCheck, IconSelector } from '@tabler/icons-react';
 
 interface TenantMembersProps {
   deleted?: boolean;
@@ -30,7 +30,8 @@ const TenantMembers = forwardRef<HTMLDivElement, TenantMembersProps>(
   ({ deleted }, ref) => {
     const { t } = useTranslation();
     const { data: session } = useSession();
-    const { activeTenantId, activeTenantName } = useTenantStore();
+    const { activeTenantId, activeTenantName, activeTenantRole } =
+      useTenantStore();
 
     const [name, setName] = useState('');
     const [debouncedName] = useDebouncedValue(name, 500);
@@ -125,7 +126,10 @@ const TenantMembers = forwardRef<HTMLDivElement, TenantMembersProps>(
                       TenantRole.SUPER_USER,
                       TenantRole.USER,
                     ]}
-                    disabled={member.id === session?.user.id}
+                    disabled={
+                      member.id === session?.user.id ||
+                      activeTenantRole !== TenantRole.OWNER
+                    }
                     value={member.role}
                     onChange={(role) => handleRoleChange(member, role)}
                     selectedRenderer={(role) => (
@@ -158,7 +162,10 @@ const TenantMembers = forwardRef<HTMLDivElement, TenantMembersProps>(
                   <Button
                     variant='destructive'
                     className='text-sm'
-                    disabled={member.id === session?.user.id}
+                    disabled={
+                      member.id === session?.user.id ||
+                      member.role !== TenantRole.OWNER
+                    }
                     onClick={() =>
                       promptRevoke({
                         id: member.id,
@@ -172,6 +179,7 @@ const TenantMembers = forwardRef<HTMLDivElement, TenantMembersProps>(
                   <Button
                     variant='neutral'
                     className='text-sm'
+                    disabled={member.role !== TenantRole.OWNER}
                     onClick={() =>
                       promptRestore({
                         id: member.id,

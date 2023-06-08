@@ -25,6 +25,7 @@ export const tenantRouter = createTRPCRouter({
       .select({
         id: tenant.id,
         name: tenant.name,
+        role: tenantUserAccount.role,
       })
       .from(tenantUserAccount)
       .innerJoin(tenant, eq(tenantUserAccount.tenantId, tenant.id))

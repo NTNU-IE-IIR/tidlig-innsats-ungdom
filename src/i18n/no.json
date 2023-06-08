@@ -7,7 +7,7 @@
     "PASSWORDS_DO_NOT_MATCH": "Passordene er ikke like"
   },
   "TENANT_ROLE": {
-    "OWNER": "Eier",
+    "OWNER": "Administrator",
     "SUPER_USER": "Superbruker",
     "USER": "Bruker"
   }

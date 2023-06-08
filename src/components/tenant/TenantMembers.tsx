@@ -13,6 +13,9 @@ import RegisterMemberForm from './RegisterMemberForm';
 import RestoreTenantMembershipDialog from './RestoreTenantMembershipDialog';
 import RevokeTenantMembershipDialog from './RevokeTenantMembershipDialog';
 import { useTranslation } from 'react-i18next';
+import Select from '../input/Select';
+import { TenantRole } from '@/server/db/schema';
+import { IconCheck, IconSelector } from '@tabler/icons-react';
 
 interface TenantMembersProps {
   deleted?: boolean;
@@ -59,6 +62,25 @@ const TenantMembers = forwardRef<HTMLDivElement, TenantMembersProps>(
       setShowRestoreAccessDialog(true);
     };
 
+    const utils = api.useContext();
+    const { mutateAsync: updateRole } = api.tenant.updateRole.useMutation({
+      onSuccess: () => {
+        utils.tenant.listMembers.invalidate();
+      },
+    });
+
+    const handleRoleChange = async (member: Member, role: TenantRole) => {
+      try {
+        await updateRole({
+          tenantId: activeTenantId!,
+          userId: member.id,
+          role,
+        });
+      } catch (error) {
+        // TODO: Handle error
+      }
+    };
+
     return (
       <div ref={ref} className='flex flex-1 flex-col gap-2 p-2'>
         <div className='flex items-center gap-2'>
@@ -95,8 +117,38 @@ const TenantMembers = forwardRef<HTMLDivElement, TenantMembersProps>(
               )}
             >
               <Table.Cell>{member.fullName}</Table.Cell>
-              <Table.Cell className='text-center'>
-                {t('TENANT_ROLE.' + member.role)}
+              <Table.Cell className='flex items-center justify-center'>
+                <div className='w-fit'>
+                  <Select
+                    options={[
+                      TenantRole.OWNER,
+                      TenantRole.SUPER_USER,
+                      TenantRole.USER,
+                    ]}
+                    disabled={member.id === session?.user.id}
+                    value={member.role}
+                    onChange={(role) => handleRoleChange(member, role)}
+                    selectedRenderer={(role) => (
+                      <div className='flex items-center py-0.5 pl-1.5'>
+                        <span>{t('TENANT_ROLE.' + role)}</span>
+                        <IconSelector className='h-5 w-5' />
+                      </div>
+                    )}
+                    renderer={(role) => (
+                      <div className='flex items-center px-1.5 py-0.5'>
+                        <span className='flex-1'>
+                          {t('TENANT_ROLE.' + role)}
+                        </span>
+                        <IconCheck
+                          className={twMerge(
+                            'h-5 w-5',
+                            role !== member.role && 'invisible'
+                          )}
+                        />
+                      </div>
+                    )}
+                  />
+                </div>
               </Table.Cell>
               <Table.Cell className='text-center'>
                 {dayjs(member.createdAt).format('DD.MM.YYYY')}

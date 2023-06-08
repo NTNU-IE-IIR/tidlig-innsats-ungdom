@@ -4,6 +4,7 @@ import {
 } from '@/schemas/tenantSchemas';
 import { db } from '@/server/db';
 import {
+  TenantRole,
   UserAccountRole,
   tenant,
   tenantUserAccount,
@@ -13,6 +14,7 @@ import { TRPCError } from '@trpc/server';
 import { and, eq, ilike, isNotNull, isNull } from 'drizzle-orm';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
+import { userHasTenantRole } from '@/server/db/services/tenant';
 
 export const tenantRouter = createTRPCRouter({
   /**
@@ -88,6 +90,46 @@ export const tenantRouter = createTRPCRouter({
         userAccountId: user.id,
         role: input.role,
       });
+    }),
+
+  /**
+   * Updates the role of a user in a tenant.
+   * Only the owner of the tenant can do this.
+   */
+  updateRole: protectedProcedure
+    .input(modifyTenantMembershipSchema)
+    .mutation(async ({ input }) => {
+      if (input.role === undefined) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'ROLE_REQUIRED',
+        });
+      }
+
+      const isPermitted = await userHasTenantRole(
+        input.tenantId,
+        input.userId,
+        TenantRole.OWNER
+      );
+
+      if (!isPermitted) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'NOT_PERMITTED',
+        });
+      }
+
+      await db
+        .update(tenantUserAccount)
+        .set({
+          role: input.role,
+        })
+        .where(
+          and(
+            eq(tenantUserAccount.tenantId, input.tenantId),
+            eq(tenantUserAccount.userAccountId, input.userId)
+          )
+        );
     }),
 
   /**

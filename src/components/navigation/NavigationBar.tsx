@@ -1,3 +1,5 @@
+import { TenantRole, UserAccountRole } from '@/server/db/schema';
+import { useTenantStore } from '@/store/tenantStore';
 import { Menu } from '@headlessui/react';
 import { IconChevronDown, IconLogout, IconUser } from '@tabler/icons-react';
 import { signOut, useSession } from 'next-auth/react';
@@ -11,8 +13,15 @@ const NavigationBar = () => {
     <header className='flex items-center justify-between border-b-2 border-zinc-400'>
       <nav className='-mb-0.5 flex items-center self-end'>
         <NavigationLink href='/'>Temautforsker</NavigationLink>
-        <NavigationLink href='/media'>Innholdsadministrasjon</NavigationLink>
-        <NavigationLink href='/settings'>Innstillinger</NavigationLink>
+        <NavigationLink
+          tenantRoles={[TenantRole.OWNER, TenantRole.SUPER_USER]}
+          href='/media'
+        >
+          Innholdsadministrasjon
+        </NavigationLink>
+        <NavigationLink tenantRoles={[TenantRole.OWNER]} href='/settings'>
+          Innstillinger
+        </NavigationLink>
       </nav>
 
       <Menu as='div' className='relative'>
@@ -49,11 +58,19 @@ const NavigationBar = () => {
   );
 };
 
-const NavigationLink: React.FC<{ href: string; children: string }> = ({
-  href,
-  children,
-}) => {
+const NavigationLink: React.FC<{
+  href: string;
+  children: string;
+  tenantRoles?: TenantRole[];
+  userRoles?: UserAccountRole[];
+}> = ({ href, children, tenantRoles, userRoles }) => {
   const router = useRouter();
+
+  const { activeTenantRole } = useTenantStore();
+  const { data: session } = useSession();
+
+  if (tenantRoles && !tenantRoles.includes(activeTenantRole!)) return null;
+  if (userRoles && !userRoles.includes(session?.user.role!)) return null;
 
   return (
     <ul>

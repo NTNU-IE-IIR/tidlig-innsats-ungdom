@@ -76,12 +76,12 @@ const Home: NextPage = () => {
           </div>
         </div>
 
-        <div className='relative mt-4 grid grid-cols-3 gap-2 px-4'>
+        <div className='relative mt-4 grid grid-cols-1 gap-2 px-4'>
           {!content ||
             (content.themes.length === 0 && content.medias.length === 0 && (
               <Link
                 href='/media/new'
-                className='col-span-3 mx-auto my-32 flex max-w-xs flex-col items-center text-center text-zinc-500 transition-colors hover:text-zinc-600'
+                className='mx-auto my-32 flex max-w-xs flex-col items-center text-center text-zinc-500 transition-colors hover:text-zinc-600'
               >
                 <IconCloudPlus className='h-24 w-24' />
                 <p className='text-sm font-semibold'>
@@ -94,14 +94,14 @@ const Home: NextPage = () => {
               </Link>
             ))}
 
-          <div className='col-span-3 grid grid-cols-[inherit] gap-2'>
+          <div className='grid grid-cols-1 xxs:grid-cols-2 gap-2 md:grid-cols-3'>
             {content?.themes.map((theme) => (
               <Card
                 key={'THEME' + theme.id}
                 onClick={() => appendContent(theme, router)}
                 className='flex aspect-[6/1] cursor-pointer items-center gap-2 transition-all hover:scale-[1.01]'
               >
-                <IconFolderFilled className='h-8 w-8 text-zinc-700' />
+                <IconFolderFilled className='h-8 w-8 flex-shrink-0 text-zinc-700' />
                 <div className='-mt-2'>
                   <h3 className='truncate font-semibold'>{theme.name}</h3>
                   <p className='-my-1 truncate text-sm'>
@@ -112,17 +112,19 @@ const Home: NextPage = () => {
             ))}
           </div>
 
-          <div className='col-span-3 grid grid-cols-[inherit] gap-2'>
+          <div className='grid grid-cols-1 xxs:grid-cols-2 gap-2 md:grid-cols-3'>
             {content?.medias.map((media) => (
               <Card
                 variant='media'
                 onClick={() => appendContent(media, router)}
                 key={'MEDIA' + media.id}
-                className='flex aspect-[1.5/1] cursor-pointer flex-col items-center justify-center transition-all hover:scale-[1.01]'
+                className='flex aspect-[1.5/1] cursor-pointer flex-col items-center justify-center text-center transition-all hover:scale-[1.01]'
               >
-                <IconListDetails className='-mt-12 h-12 w-12 text-zinc-700' />
-                <h3 className='text-xl font-bold'>{media.name}</h3>
-                <p className='text-sm font-medium'>{media.shortDescription}</p>
+                <IconListDetails className='h-10 w-10 text-zinc-700' />
+                <h3 className='truncate text-xl font-bold'>{media.name}</h3>
+                <p className='line-clamp-2 text-sm font-medium'>
+                  {media.shortDescription}
+                </p>
               </Card>
             ))}
           </div>

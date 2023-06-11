@@ -6,7 +6,6 @@ import { api } from '@/utils/api';
 import { useDebouncedValue, useHotkeys } from '@mantine/hooks';
 import {
   IconCloudPlus,
-  IconFolder,
   IconFolderFilled,
   IconListDetails,
   IconSearch,

@@ -9,6 +9,7 @@ import { Tab as HeadlessTab } from '@headlessui/react';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import React, { Fragment, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 const Settings: NextPage = () => {
   const [showInviteForm, setShowInviteForm] = useState(false);
@@ -18,11 +19,35 @@ const Settings: NextPage = () => {
       <Head>
         <title>Tidlig innsats ungdom</title>
       </Head>
-      <PageLayout className='flex gap-2'>
+      <PageLayout className='grid grid-cols-1 gap-2 md:grid-cols-3'>
         <HeadlessTab.Group
           as={Card}
           pad={false}
-          className='flex w-2/3 flex-col'
+          className='flex flex-col md:hidden'
+        >
+          <HeadlessTab.List className='flex overflow-x-auto overflow-y-clip rounded-t-md border-b border-zinc-300 bg-zinc-50 px-1'>
+            <Tab>Medlemmer</Tab>
+            <Tab>Tidligere medlemmer</Tab>
+            <Tab>Alle brukere</Tab>
+            <Tab>Åpne invitasjoner</Tab>
+            <Tab>Utgåtte invitasjoner</Tab>
+          </HeadlessTab.List>
+
+          <HeadlessTab.Panels as={Fragment}>
+            <HeadlessTab.Panel as={TenantMembers} />
+            <HeadlessTab.Panel as={TenantMembers} deleted />
+            <HeadlessTab.Panel as={Fragment}>
+              <p>Alle brukere</p>
+            </HeadlessTab.Panel>
+            <HeadlessTab.Panel as={TenantInvites} />
+            <HeadlessTab.Panel as={TenantInvites} expired />
+          </HeadlessTab.Panels>
+        </HeadlessTab.Group>
+
+        <HeadlessTab.Group
+          as={Card}
+          pad={false}
+          className='flex flex-col max-md:hidden col-span-2'
         >
           <HeadlessTab.List className='flex rounded-t-md border-b border-zinc-300 bg-zinc-50 px-1'>
             <Tab>Medlemmer</Tab>
@@ -42,7 +67,7 @@ const Settings: NextPage = () => {
         <HeadlessTab.Group
           as={Card}
           pad={false}
-          className='flex w-1/3 flex-col'
+          className='col-span-1 flex flex-col max-md:hidden'
         >
           <HeadlessTab.List className='flex rounded-t-md border-b border-zinc-300 bg-zinc-50 px-1'>
             <Tab>Åpne invitasjoner</Tab>
@@ -71,11 +96,17 @@ const Settings: NextPage = () => {
 
 interface TabProps {
   children?: React.ReactNode;
+  className?: string;
 }
 
-const Tab: React.FC<TabProps> = ({ children }) => {
+const Tab: React.FC<TabProps> = ({ children, className }) => {
   return (
-    <HeadlessTab className='-mb-px border-b-2 border-zinc-300 px-2 py-1 font-medium outline-none ui-selected:border-emerald-500'>
+    <HeadlessTab
+      className={twMerge(
+        '-mb-px border-b-2 border-zinc-300 px-2 py-1 font-medium outline-none ui-selected:border-emerald-500',
+        className
+      )}
+    >
       {children}
     </HeadlessTab>
   );

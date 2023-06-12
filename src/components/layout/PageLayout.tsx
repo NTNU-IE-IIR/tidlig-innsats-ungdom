@@ -3,12 +3,15 @@ import { useTenantStore } from '@/store/tenantStore';
 import { api } from '@/utils/api';
 import { Transition } from '@headlessui/react';
 import { useHotkeys } from '@mantine/hooks';
-import { IconChevronLeft } from '@tabler/icons-react';
+import { IconChevronLeft, IconList, IconMenu2 } from '@tabler/icons-react';
 import getConfig from 'next/config';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import NavigationBar from '../navigation/NavigationBar';
+import NavigationMenu from '../navigation/NavigationMenu';
+import SlideOverPanel from '../overlay/SlideOverPanel';
 import SessionSideMenu from '../session/SessionSideMenu';
+import Button from '../input/Button';
 
 interface PageLayoutProps {
   children: React.ReactNode;
@@ -25,6 +28,8 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
   const { data: tenants } = api.tenant.listMyTenants.useQuery();
   const { setActiveTenant } = useTenantStore();
   const { showSideMenu, toggleSideMenu, closeSideMenu } = useSessionStore();
+
+  const [showMobileNav, setShowMobileNav] = useState(false);
 
   useEffect(() => {
     if (tenants && tenants.length >= 1) {
@@ -43,6 +48,21 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
       <div className='relative flex-1 overflow-y-auto'>
         <div className='mx-auto flex h-fit min-h-screen max-w-screen-xl flex-col gap-2 py-5'>
           <NavigationBar />
+
+          <Button
+            className='mt-1 w-fit self-end bg-white md:hidden'
+            variant='neutral'
+            onClick={() => setShowMobileNav(true)}
+          >
+            <IconMenu2 />
+          </Button>
+
+          <SlideOverPanel
+            open={showMobileNav}
+            onClose={() => setShowMobileNav(false)}
+          >
+            <NavigationMenu onNavigate={() => setShowMobileNav(false)} />
+          </SlideOverPanel>
 
           <main className={twMerge('flex-1', className)}>{children}</main>
 

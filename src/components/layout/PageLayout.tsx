@@ -46,7 +46,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
 
           <main className={twMerge('flex-1', className)}>{children}</main>
 
-          <footer className='self-center'>
+          <footer className='self-center print:hidden'>
             <span className='block text-sm font-semibold uppercase'>
               Tidlig innsats ungdom © {new Date().getFullYear()}
             </span>
@@ -58,7 +58,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
 
         <button
           type='button'
-          className='absolute right-0 top-0 mt-0.5 flex items-center self-start'
+          className='absolute right-0 top-0 mt-0.5 flex items-center self-start print:hidden'
           onClick={toggleSideMenu}
         >
           <IconChevronLeft
@@ -81,7 +81,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
         leave='transition-all duration-300 ease-out'
         leaveFrom='transform w-96 opacity-100'
         leaveTo='transform w-0 opacity-0'
-        className='w-96 overflow-hidden'
+        className='w-96 overflow-hidden print:hidden'
       >
         <SessionSideMenu />
       </Transition>

@@ -10,7 +10,7 @@ import { twMerge } from 'tailwind-merge';
 const NavigationBar = () => {
   const { data } = useSession();
   return (
-    <header className='flex items-center justify-between border-b-2 border-zinc-400'>
+    <header className='flex items-center justify-between border-b-2 border-zinc-400 print:hidden'>
       <nav className='-mb-0.5 flex items-center self-end'>
         <NavigationLink href='/'>Temautforsker</NavigationLink>
         <NavigationLink

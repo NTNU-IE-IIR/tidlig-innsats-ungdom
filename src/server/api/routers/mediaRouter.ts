@@ -64,6 +64,7 @@ export const mediaRouter = createTRPCRouter({
             id: theme.id,
             name: theme.name,
           },
+          type: media.type,
         })
         .from(media)
         .where(eq(media.id, id))
@@ -87,6 +88,7 @@ export const mediaRouter = createTRPCRouter({
         createdAt: first.createdAt,
         updatedAt: first.updatedAt,
         themes: results.map((r) => r.theme),
+        type: first.type,
       };
 
       return result;

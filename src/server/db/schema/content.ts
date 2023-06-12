@@ -37,11 +37,13 @@ export type Theme = InferModel<typeof theme>;
 export enum MediaType {
   FORM = 'FORM',
   RICH_TEXT = 'RICH_TEXT',
+  FILE = 'FILE',
 }
 
 export const mediaType = pgEnum('media_type', [
   MediaType.FORM,
   MediaType.RICH_TEXT,
+  MediaType.FILE,
 ]);
 
 export const media = pgTable('media', {

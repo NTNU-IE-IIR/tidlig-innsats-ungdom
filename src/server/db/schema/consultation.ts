@@ -1,6 +1,7 @@
+import { InferModel } from 'drizzle-orm';
 import {
   bigserial,
-  jsonb,
+  integer,
   pgTable,
   text,
   timestamp,
@@ -8,11 +9,13 @@ import {
 } from 'drizzle-orm/pg-core';
 import { media } from './content';
 import { tenant, userAccount } from './core';
-import { InferModel } from 'drizzle-orm';
 
 export const consultationSession = pgTable('consultation_session', {
   id: bigserial('consultation_session_id', { mode: 'number' }).primaryKey(),
   name: text('name').notNull(),
+  /**
+   * User notes about the consultation session.
+   */
   notes: text('notes').notNull().default(''),
   startedAt: timestamp('started_at', { withTimezone: true })
     .notNull()
@@ -28,8 +31,6 @@ export const consultationSession = pgTable('consultation_session', {
 
 export type ConsultationSession = InferModel<typeof consultationSession>;
 
-export type ConsultationSessionEntry = [Date, Date];
-
 export const consultationSessionMedia = pgTable('consultation_session_media', {
   consultationSessionId: uuid('fk_consultation_session_id')
     .notNull()
@@ -37,9 +38,31 @@ export const consultationSessionMedia = pgTable('consultation_session_media', {
   mediaId: uuid('fk_media_id')
     .notNull()
     .references(() => media.id),
-  timestamps: jsonb('timestamps').$type<ConsultationSessionEntry[]>(),
+  /**
+   * The duration of the media being open in seconds.
+   */
+  duration: integer('duration_seconds'),
 });
 
 export type ConsultationSessionMedia = InferModel<
   typeof consultationSessionMedia
 >;
+
+export const consultationPatient = pgTable('consultation_patient', {
+  id: uuid('consultation_patient_id').primaryKey().defaultRandom(),
+  /**
+   * A code or identifier for the patient.
+   */
+  discriminator: text('discriminator').notNull(),
+  /**
+   * A reference to the consultant/doctor that created this patient.
+   * This is used to only show the patients that the consultant/doctor has created.
+   */
+  consultedById: uuid('fk_consulted_by_id').references(() => userAccount.id),
+  /**
+   * The tenant in which the patient was created.
+   */
+  tenantId: uuid('fk_tenant_id')
+    .notNull()
+    .references(() => tenant.id),
+});

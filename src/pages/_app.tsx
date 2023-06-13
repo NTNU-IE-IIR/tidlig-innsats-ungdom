@@ -9,10 +9,12 @@ import 'dayjs/locale/nb';
 import '@/i18n';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import duration from 'dayjs/plugin/duration';
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip';
 
 dayjs.locale('nb');
 dayjs.extend(relativeTime);
+dayjs.extend(duration);
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,

@@ -36,3 +36,38 @@ export const userHasTenantRole = async (
 
   return results[0]!.role === role;
 };
+
+/**
+ * Checks whether a user has any of the specified roles in a tenant.
+ *
+ * @param tenantId the id of the tenant to check in
+ * @param userId the id of the user to check
+ * @param roles the roles to check for
+ *
+ * @returns true if the user has any of the roles, false otherwise
+ */
+export const userHasAnyOfTenantRoles = async (
+  tenantId: string,
+  userId: string,
+  roles: TenantRole[]
+) => {
+  const results = await db
+    .select({
+      userId: tenantUserAccount.userAccountId,
+      tenantId: tenantUserAccount.tenantId,
+      role: tenantUserAccount.role,
+    })
+    .from(tenantUserAccount)
+    .where(
+      and(
+        eq(tenantUserAccount.tenantId, tenantId),
+        eq(tenantUserAccount.userAccountId, userId)
+      )
+    );
+
+  if (results.length === 0) {
+    return false;
+  }
+
+  return roles.includes(results[0]!.role);
+};

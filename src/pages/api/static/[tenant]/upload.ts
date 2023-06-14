@@ -9,12 +9,26 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth';
 import { PassThrough } from 'stream';
 
-const uploadStream = (key: string) => {
+interface VolatileFile {
+  lastModiedDate: Date | null;
+  filepath: string;
+  newFilename: string;
+  originalFilename: string;
+  mimetype: string;
+  size: number;
+}
+
+const uploadStream = (tenant: string, file: VolatileFile) => {
   const pass = new PassThrough();
 
-  s3.putObject(env.S3_BUCKET_NAME, key, pass, (err, data) => {
-    console.log(err, data);
-  });
+  s3.putObject(
+    env.S3_BUCKET_NAME,
+    [tenant, file.newFilename].join('/'),
+    pass,
+    (err, _data) => {
+      if (err) console.error(err);
+    }
+  );
 
   return pass;
 };
@@ -38,19 +52,22 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (!isPermitted) return res.status(403).send('Forbidden');
 
   const fileId = randomUUID();
-  const key = [tenant, fileId].join('/');
 
   const form = new IncomingForm({
     uploadDir: './tmp-uploads',
-    fileWriteStreamHandler: () => uploadStream(key),
+    keepExtensions: true,
+    filename: (_name, ext) => `${fileId}${ext}`,
+    // @ts-ignore
+    fileWriteStreamHandler: (file: VolatileFile) => uploadStream(tenant, file),
   });
 
-  form.parse(req, (err, _fields, _files) => {
+  form.parse(req, (err, _fields, files) => {
     if (err) return res.status(400).send('Error occured processing request');
 
     res.status(200).send({
       tenantId: tenant,
-      fileId,
+      // well...
+      fileId: (files[Object.keys(files)[0]!] as any).newFilename,
     });
   });
 };

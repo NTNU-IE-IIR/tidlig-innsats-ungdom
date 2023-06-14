@@ -46,13 +46,26 @@ export const mediaType = pgEnum('media_type', [
   MediaType.FILE,
 ]);
 
+export interface FormMedia {
+  questions: any[];
+}
+
+export interface RichTextMedia {
+  root: any;
+}
+
+export interface FileMedia {
+  tenantId: string;
+  fileId: string;
+}
+
+export type MediaContent = FormMedia | RichTextMedia | FileMedia;
+
 export const media = pgTable('media', {
   id: bigserial('media_id', { mode: 'number' }).primaryKey(),
   name: text('name').notNull(),
   shortDescription: text('short_description').notNull().default(''),
-  // TODO: Give this a type using .$type<>() and preferably a zod schema
-  // the direction this'll take is dependant on the result of a discussion with the user
-  content: jsonb('content'),
+  content: jsonb('content').$type<MediaContent>(),
   published: boolean('published').notNull().default(false),
   createdBy: uuid('fk_created_by_account_id')
     .notNull()

@@ -2,11 +2,13 @@ import TextViewer from '@/components/editor/TextViewer';
 import Button from '@/components/input/Button';
 import PageLayout from '@/components/layout/PageLayout';
 import Breadcrumbs from '@/components/navigation/Breadcrumbs';
+import { useSessionStore } from '@/store/sessionStore';
 import { api } from '@/utils/api';
 import { IconPrinter } from '@tabler/icons-react';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 const MediaView: NextPage = () => {
   const router = useRouter();
@@ -20,6 +22,16 @@ const MediaView: NextPage = () => {
     window.print();
   };
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (media) {
+        // TODO: Increment duration of media in consultation session
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <>
       <Head>
@@ -29,7 +41,7 @@ const MediaView: NextPage = () => {
         <div className='flex justify-end print:hidden'>
           <Button
             variant='neutral'
-            className='self-end bg-white text-sm pl-1.5'
+            className='self-end bg-white pl-1.5 text-sm'
             onClick={openPrinterPrompt}
           >
             <IconPrinter className='h-5 w-5' />

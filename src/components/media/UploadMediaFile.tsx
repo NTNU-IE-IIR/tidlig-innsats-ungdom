@@ -1,6 +1,7 @@
 import { IconFileCheck, IconFileUpload } from '@tabler/icons-react';
-import { useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { twMerge } from 'tailwind-merge';
+import { useDropzone } from 'react-dropzone';
 import Button from '../input/Button';
 
 interface UploadMediaFileProps {
@@ -14,30 +15,39 @@ const UploadMediaFile: React.FC<UploadMediaFileProps> = ({
   onFileChanged,
   className,
 }) => {
-  const fileInput = useRef<HTMLInputElement>(null);
+  const { getRootProps, getInputProps, open, isDragActive } = useDropzone({
+    multiple: false,
+    noClick: true,
+    onDrop: (files) => {
+      onFileChanged(files?.[0]);
+    },
+  });
 
   return (
     <label
+      {...getRootProps()}
       className={twMerge(
         'flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-zinc-400 text-zinc-600 transition-all hover:bg-zinc-50',
+        isDragActive && 'border-emerald-500',
         className
       )}
     >
-      <input
-        type='file'
-        className='hidden'
-        ref={fileInput}
-        onChange={(e) => onFileChanged(e.target.files?.[0])}
-      />
+      <input type='file' className='hidden' {...getInputProps()} />
 
       {fileToUpload === undefined && (
         <>
           <IconFileUpload className='h-12 w-12' />
           <p className='text-center text-sm font-medium'>
-            Dra og slipp filen du vil laste opp, <br /> eller{' '}
-            <span className='font-semibold text-emerald-600'>
-              trykk for å velge
-            </span>
+            {isDragActive ? (
+              'Slipp filen for å laste opp'
+            ) : (
+              <>
+                Dra og slipp filen du vil laste opp, <br /> eller{' '}
+                <span className='font-semibold text-emerald-600'>
+                  trykk for å velge
+                </span>
+              </>
+            )}
           </p>
         </>
       )}
@@ -50,11 +60,7 @@ const UploadMediaFile: React.FC<UploadMediaFileProps> = ({
             {fileToUpload.name}
           </p>
 
-          <Button
-            className='text-sm'
-            variant='neutral'
-            onClick={() => fileInput.current?.click()}
-          >
+          <Button className='text-sm' variant='neutral' onClick={open}>
             Velg annen fil
           </Button>
         </>

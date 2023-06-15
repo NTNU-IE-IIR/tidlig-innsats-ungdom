@@ -14,13 +14,22 @@ import {
   updateMediaSchema,
 } from '@/schemas/mediaSchemas';
 import { MediaType } from '@/server/db/schema';
+import { useTenantStore } from '@/store/tenantStore';
 import { useThemeStore } from '@/store/themeStore';
 import { ThemeNode } from '@/types/themes';
 import { RouterOutputs, api } from '@/utils/api';
 import { useForm, zodResolver } from '@mantine/form';
+import {
+  IconChevronLeft,
+  IconFile,
+  IconFileText,
+  IconListCheck,
+} from '@tabler/icons-react';
 import { EditorState } from 'lexical';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import Tooltip from '../feedback/Tooltip';
+import UploadMediaFile from './UploadMediaFile';
 
 interface MediaEditorProps {
   existingMedia?: RouterOutputs['media']['getById'];
@@ -30,10 +39,13 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
   const { data: themes } = api.theme.listThemeTree.useQuery({});
   const [editorState, setEditorState] = useState<EditorState>();
   const { selectedThemeIds, set, isEqual } = useThemeStore();
+  const [mediaType, setMediaType] = useState(existingMedia?.type);
+  const [fileToUpload, setFileToUpload] = useState<File>();
   const [showThemeDialog, setShowThemeDialog] = useState(false);
   const [showDeleteThemeDialog, setShowDeleteThemeDialog] = useState(false);
   const [editingThemeId, setEditingThemeId] = useState<number>();
   const [contentChanged, setContentChanged] = useState(false);
+  const { activeTenantId } = useTenantStore();
 
   const utils = api.useContext();
 
@@ -71,20 +83,37 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
   const isChanged =
     !isEqual(initialThemeIds) || contentChanged || form.isDirty();
 
-  const h = (t: boolean) => {
-    console.log(t);
-    setContentChanged(t);
-  };
-
   const router = useRouter();
 
   const submit = async (values: CreateMediaInput | UpdateMediaInput) => {
+    let content;
+
+    if (mediaType === MediaType.FILE && fileToUpload) {
+      const formData = new FormData();
+
+      formData.append('file', fileToUpload);
+
+      const response = await fetch(`/api/static/${activeTenantId}/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const { fileId } = await response.json();
+
+      content = {
+        tenantId: activeTenantId,
+        fileId,
+      };
+    } else if (mediaType === MediaType.RICH_TEXT) {
+      content = editorState?.toJSON();
+    }
+
     if (existingMedia) {
       await updateMedia({
         ...values,
         id: existingMedia.id,
         themeIds: Array.from(selectedThemeIds),
-        content: editorState?.toJSON(),
+        content,
         published: !values.published,
       });
 
@@ -96,7 +125,7 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
     await createMedia({
       ...values,
       themeIds: Array.from(selectedThemeIds),
-      content: editorState?.toJSON(),
+      content,
       published: !values.published,
     });
 
@@ -134,13 +163,77 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
               {...form.getInputProps('shortDescription')}
             />
 
-            <TextEditor
-              name={`media` + (existingMedia?.id ?? '')}
-              initialState={existingMedia?.content as any}
-              onEditorChange={setEditorState}
-              onCanUndo={h}
-              className='flex-1'
-            />
+            {mediaType === undefined && (
+              <div className='flex flex-1 flex-col items-center justify-center'>
+                <p className='pb-4 text-lg font-medium text-zinc-700'>
+                  Velg type innhold du vil opprette
+                </p>
+
+                <div className='grid grid-cols-3 place-items-center gap-4'>
+                  <Button
+                    variant='neutral'
+                    className='w-full'
+                    onClick={() => setMediaType(MediaType.RICH_TEXT)}
+                  >
+                    <div className='flex flex-col items-center'>
+                      <IconFileText className='h-10 w-10' />
+                      <span className='text-sm font-semibold'>Fritekst</span>
+                    </div>
+                  </Button>
+
+                  <Button
+                    variant='neutral'
+                    className='w-full'
+                    onClick={() => setMediaType(MediaType.FILE)}
+                  >
+                    <div className='flex flex-col items-center'>
+                      <IconFile className='h-10 w-10' />
+                      <span className='text-sm font-semibold'>
+                        Last opp fil
+                      </span>
+                    </div>
+                  </Button>
+
+                  <Tooltip content='Ikke tilgjengelig, enda.'>
+                    <Button disabled variant='neutral' className='w-full'>
+                      <div className='flex flex-col items-center'>
+                        <IconListCheck className='h-10 w-10' />
+                        <span className='text-sm font-semibold'>Skjema</span>
+                      </div>
+                    </Button>
+                  </Tooltip>
+                </div>
+              </div>
+            )}
+
+            {mediaType !== undefined && (
+              <Button
+                className='w-fit pl-0.5 text-sm'
+                variant='neutral'
+                onClick={() => setMediaType(undefined)}
+              >
+                <IconChevronLeft className='h-4 w-4' />
+                <span>Bytt type innhold</span>
+              </Button>
+            )}
+
+            {mediaType === MediaType.FILE && (
+              <UploadMediaFile
+                className='flex-1'
+                fileToUpload={fileToUpload}
+                onFileChanged={setFileToUpload}
+              />
+            )}
+
+            {mediaType === MediaType.RICH_TEXT && (
+              <TextEditor
+                name={`media` + (existingMedia?.id ?? '')}
+                initialState={existingMedia?.content as any}
+                onEditorChange={setEditorState}
+                onCanUndo={setContentChanged}
+                className='flex-1'
+              />
+            )}
 
             <div className='flex items-center gap-1'>
               <Switch

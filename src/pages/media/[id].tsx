@@ -1,21 +1,30 @@
 import TextViewer from '@/components/editor/TextViewer';
+import Alert from '@/components/feedback/Alert';
 import Button from '@/components/input/Button';
 import PageLayout from '@/components/layout/PageLayout';
 import Breadcrumbs from '@/components/navigation/Breadcrumbs';
-import { useSessionStore } from '@/store/sessionStore';
+import { FileMedia, MediaType } from '@/server/db/schema';
+import { useTenantStore } from '@/store/tenantStore';
 import { api } from '@/utils/api';
-import { IconPrinter } from '@tabler/icons-react';
+import {
+  IconChevronLeft,
+  IconExternalLink,
+  IconPrinter,
+} from '@tabler/icons-react';
 import { NextPage } from 'next';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
 const MediaView: NextPage = () => {
   const router = useRouter();
   const { id } = router.query;
+  const { activeTenantId } = useTenantStore();
 
   const { data: media, isError } = api.media.getById.useQuery(Number(id), {
     enabled: !Number.isNaN(id),
+    retry: 0,
   });
 
   const openPrinterPrompt = () => {
@@ -38,22 +47,61 @@ const MediaView: NextPage = () => {
         <title>Tidlig innsats ungdom</title>
       </Head>
       <PageLayout>
-        <div className='flex justify-end print:hidden'>
-          <Button
-            variant='neutral'
-            className='self-end bg-white pl-1.5 text-sm'
-            onClick={openPrinterPrompt}
-          >
-            <IconPrinter className='h-5 w-5' />
-            <span className='font-semibold'>Skriv ut</span>
-          </Button>
-        </div>
-
-        {isError && <p></p>}
+        {media && media.type !== MediaType.FILE && (
+          <div className='flex justify-end print:hidden'>
+            <Button
+              variant='neutral'
+              className='self-end bg-white pl-1.5 text-sm'
+              onClick={openPrinterPrompt}
+            >
+              <IconPrinter className='h-5 w-5' />
+              <span className='font-semibold'>Skriv ut</span>
+            </Button>
+          </div>
+        )}
 
         <Breadcrumbs />
 
-        {media && <TextViewer name='media' content={media.content as any} />}
+        {isError && (
+          <div className='flex flex-col items-center justify-center gap-1'>
+            <h1 className='text-6xl font-bold'>404</h1>
+            <p className='font-medium'>Fant ikke innholdet du lette etter.</p>
+
+            <Link
+              href='/'
+              className='flex items-center gap-1 rounded-md border border-zinc-300 bg-white py-1 pl-1 pr-2 transition-colors hover:bg-zinc-50'
+            >
+              <IconChevronLeft className='h-5 w-5' />
+              <span className='text-sm font-medium'>
+                Tilbake til temautforsker
+              </span>
+            </Link>
+          </div>
+        )}
+
+        {media && media.type === MediaType.FILE && (
+          <div className='mx-auto flex max-w-sm flex-col items-center justify-center gap-2 '>
+            <a
+              href={`/api/static/${activeTenantId}/${
+                (media.content as FileMedia).fileId
+              }`}
+              target='_blank'
+              className='flex items-center gap-1 rounded-md border border-zinc-300 bg-white px-2 py-1 transition-colors hover:bg-zinc-50'
+            >
+              <IconExternalLink className='h-5 w-5' />
+              <span className='font-medium'>Åpne fil i ny fane</span>
+            </a>
+
+            <Alert intent='info'>
+              Forbli på denne siden om du ønsker å spore tiden du bruker på å se
+              på filen i økten din.
+            </Alert>
+          </div>
+        )}
+
+        {media && media.type === MediaType.RICH_TEXT && (
+          <TextViewer name='media' content={media.content as any} />
+        )}
       </PageLayout>
     </>
   );

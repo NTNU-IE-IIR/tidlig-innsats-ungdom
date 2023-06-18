@@ -1,5 +1,6 @@
 import { env } from '@/env.mjs';
 import { authOptions } from '@/server/auth';
+import { userIsInTenant } from '@/server/db/services/tenant';
 import { s3 } from '@/server/static';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth';
@@ -13,6 +14,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (typeof tenant !== 'string' || typeof object !== 'string') {
     return res.status(400).send('Invalid tenant or object');
   }
+
+  const isPermitted = await userIsInTenant(tenant, session.user.id);
+
+  if (!isPermitted) return res.status(403).send('Forbidden');
 
   const key = [tenant, object].join('/');
 

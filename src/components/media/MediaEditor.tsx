@@ -127,6 +127,7 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
       themeIds: Array.from(selectedThemeIds),
       content,
       published: !values.published,
+      type: mediaType ?? MediaType.RICH_TEXT,
     });
 
     router.push('/media');

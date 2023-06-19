@@ -24,7 +24,7 @@ export const theme: Theme = {
     listitem: 'editor-listitem',
   },
   image: 'editor-image',
-  link: 'editor-link',
+  link: 'text-cyan-500 underline font-medium',
   text: {
     bold: 'font-semibold',
     italic: 'italic',

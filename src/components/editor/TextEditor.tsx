@@ -28,6 +28,7 @@ import { ImageNode } from './nodes/ImageNode';
 import ImagePastePlugin from './plugins/ImagePastePlugin';
 import ToolbarPlugin from './plugins/ToolbarPlugin';
 import { theme } from './theme';
+import AutoLinkPlugin from './plugins/AutoLinkPlugin';
 
 interface TextEditorProps {
   name: string;
@@ -91,6 +92,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
           />
           <ListPlugin />
           <LinkPlugin />
+          <AutoLinkPlugin />
           <HistoryPlugin />
           <OnChangePlugin onChange={(editor) => onEditorChange?.(editor)} />
           <ImagePastePlugin />

@@ -18,6 +18,7 @@ specifiers:
   '@popperjs/core': ^2.11.7
   '@radix-ui/react-tooltip': ^1.0.6
   '@tabler/icons-react': ^2.17.0
+  '@tailwindcss/container-queries': ^0.1.1
   '@tailwindcss/forms': ^0.5.3
   '@tanstack/react-query': ^4.29.5
   '@trpc/client': ^10.21.1
@@ -117,6 +118,7 @@ dependencies:
   zustand: 4.3.8_react@18.2.0
 
 devDependencies:
+  '@tailwindcss/container-queries': 0.1.1_tailwindcss@3.3.1
   '@tailwindcss/forms': 0.5.3_tailwindcss@3.3.1
   '@types/bcrypt': 5.0.0
   '@types/eslint': 8.37.0
@@ -1284,6 +1286,14 @@ packages:
   /@tabler/icons/2.17.0:
     resolution: {integrity: sha512-UeJaylOGNRhQKyDlgZfrQ3UPSGlfVQuXcmCsTYeXioKKepibW6VZ3H36Lo1jvBTBkQD2e9m+k2NxwkztOTXwrA==}
     dev: false
+
+  /@tailwindcss/container-queries/0.1.1_tailwindcss@3.3.1:
+    resolution: {integrity: sha512-p18dswChx6WnTSaJCSGx6lTmrGzNNvm2FtXmiO6AuA1V4U5REyoqwmT6kgAsIMdjo07QdAfYXHJ4hnMtfHzWgA==}
+    peerDependencies:
+      tailwindcss: '>=3.2.0'
+    dependencies:
+      tailwindcss: 3.3.1_postcss@8.4.23
+    dev: true
 
   /@tailwindcss/forms/0.5.3_tailwindcss@3.3.1:
     resolution: {integrity: sha512-y5mb86JUoiUgBjY/o6FJSFZSEttfb3Q5gllE4xoKjAAD+vBrnIhE4dViwUuow3va8mpH4s9jyUbUbrRGoRdc2Q==}

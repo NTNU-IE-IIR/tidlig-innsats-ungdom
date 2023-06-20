@@ -97,3 +97,27 @@ export const themeMedia = pgTable(
 );
 
 export type ThemeMedia = InferModel<typeof themeMedia>;
+
+export const userAccountFavoriteTheme = pgTable('user_account_favorite_theme', {
+  userAccountId: uuid('fk_user_account_id').references(() => userAccount.id),
+  themeId: bigint('fk_theme_id', { mode: 'number' }).references(() => theme.id),
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export type UserAccountFavoriteTheme = InferModel<
+  typeof userAccountFavoriteTheme
+>;
+
+export const userAccountFavoriteMedia = pgTable('user_account_favorite_media', {
+  userAccountId: uuid('fk_user_account_id').references(() => userAccount.id),
+  mediaId: bigint('fk_media_id', { mode: 'number' }).references(() => media.id),
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+export type UserAccountFavoriteMedia = InferModel<
+  typeof userAccountFavoriteMedia
+>;

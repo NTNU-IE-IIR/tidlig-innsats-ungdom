@@ -33,6 +33,7 @@ import {
   IconH5,
   IconH6,
   IconItalic,
+  IconLink,
   IconList,
   IconListCheck,
   IconListNumbers,
@@ -58,6 +59,8 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { INSERT_IMAGE_COMMAND, InsertImagePayload } from './ImagePastePlugin';
+import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
+import { getSelectedNode } from './utils';
 
 const BLOCK_TYPE_NAME_MAP = {
   paragraph: 'Normal',
@@ -116,6 +119,7 @@ const ToolbarPlugin: React.FC<ToolbarPluginProps> = ({ onCanUndo }) => {
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
   const [isStrikethrough, setIsStrikethrough] = useState(false);
+  const [isLink, setIsLink] = useState(false);
 
   const [showInsertImageDialog, setShowInsertImageDialog] = useState(false);
 
@@ -132,6 +136,15 @@ const ToolbarPlugin: React.FC<ToolbarPluginProps> = ({ onCanUndo }) => {
     setIsItalic(selection.hasFormat('italic'));
     setIsUnderline(selection.hasFormat('underline'));
     setIsStrikethrough(selection.hasFormat('strikethrough'));
+
+    const node = getSelectedNode(selection);
+    const parent = node.getParent();
+
+    if ($isLinkNode(parent) || $isLinkNode(node)) {
+      setIsLink(true);
+    } else {
+      setIsLink(false);
+    }
 
     const anchorNode = selection.anchor.getNode();
     let element =
@@ -166,6 +179,14 @@ const ToolbarPlugin: React.FC<ToolbarPluginProps> = ({ onCanUndo }) => {
       }
     }
   }, [editor]);
+
+  const insertLink = useCallback(() => {
+    if (!isLink) {
+      editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://');
+    } else {
+      editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+    }
+  }, [editor, isLink]);
 
   /**
    * Switch map for block types, used to switch between block types.
@@ -319,6 +340,12 @@ const ToolbarPlugin: React.FC<ToolbarPluginProps> = ({ onCanUndo }) => {
           editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')
         }
         icon={IconStrikethrough}
+      />
+
+      <ToolbarToggleButton
+        active={isLink}
+        onClick={insertLink}
+        icon={IconLink}
       />
 
       <VerticalRule />

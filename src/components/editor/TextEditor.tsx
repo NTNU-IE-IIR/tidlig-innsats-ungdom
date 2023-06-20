@@ -21,14 +21,15 @@ import {
   SerializedEditorState,
   SerializedLexicalNode,
 } from 'lexical';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import Placeholder from './Placeholder';
 import { ImageNode } from './nodes/ImageNode';
+import AutoLinkPlugin from './plugins/AutoLinkPlugin';
+import FloatingLinkEditorPlugin from './plugins/FloatingLinkEditorPlugin';
 import ImagePastePlugin from './plugins/ImagePastePlugin';
 import ToolbarPlugin from './plugins/ToolbarPlugin';
 import { theme } from './theme';
-import AutoLinkPlugin from './plugins/AutoLinkPlugin';
 
 interface TextEditorProps {
   name: string;
@@ -45,6 +46,9 @@ const TextEditor: React.FC<TextEditorProps> = ({
   onEditorChange,
   onCanUndo,
 }) => {
+  const [floatingAnchorElement, setFloatingAnchorElem] =
+    useState<HTMLDivElement | null>(null);
+
   const initialConfig = useMemo<InitialConfigType>(
     () => ({
       namespace: name,
@@ -86,7 +90,11 @@ const TextEditor: React.FC<TextEditorProps> = ({
           <RichTextPlugin
             ErrorBoundary={LexicalErrorBoundary}
             contentEditable={
-              <ContentEditable className='h-full w-full border-0 focus:outline-none' />
+              <div>
+                <div ref={(r) => setFloatingAnchorElem(r)}>
+                  <ContentEditable className='h-full w-full border-0 focus:outline-none' />
+                </div>
+              </div>
             }
             placeholder={<Placeholder />}
           />
@@ -96,6 +104,9 @@ const TextEditor: React.FC<TextEditorProps> = ({
           <HistoryPlugin />
           <OnChangePlugin onChange={(editor) => onEditorChange?.(editor)} />
           <ImagePastePlugin />
+          {floatingAnchorElement && (
+            <FloatingLinkEditorPlugin anchorElem={floatingAnchorElement} />
+          )}
           <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
         </div>
       </div>

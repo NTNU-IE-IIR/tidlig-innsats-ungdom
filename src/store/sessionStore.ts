@@ -3,11 +3,11 @@ import { create } from 'zustand';
 
 const sessionStoreSchema = z.object({
   showSideMenu: z.boolean().default(false),
-  viewedSessionId: z.number().nullable(),
+  viewedSessionId: z.string().nullable(),
 });
 
 export interface SessionStore extends z.infer<typeof sessionStoreSchema> {
-  setViewedSessionId: (sessionId: number) => void;
+  setViewedSessionId: (sessionId: string) => void;
   clearViewedSessionId: () => void;
   toggleSideMenu: () => void;
   closeSideMenu: () => void;

@@ -2,9 +2,11 @@ import { IconChevronRight } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import Button from '../input/Button';
 import { useSessionStore } from '@/store/sessionStore';
+import TextField from '../input/TextField';
+import { api } from '@/utils/api';
 
 interface SessionSummaryProps {
-  sessionId: number;
+  sessionId: string;
   onEnd: () => void;
 }
 
@@ -21,6 +23,21 @@ interface SessionEntry {
 
 const SessionSummary: React.FC<SessionSummaryProps> = ({ sessionId }) => {
   const { clearViewedSessionId } = useSessionStore();
+  const utils = api.useContext();
+  const { mutateAsync: endConsultation } =
+    api.consultation.endConsultation.useMutation({
+      onSuccess: () => {
+        utils.consultation.listConsultations.invalidate();
+        utils.consultation.activeConsultation.invalidate();
+      },
+    });
+
+  const onEndConsultation = async () => {
+    await endConsultation({
+      consultationId: sessionId,
+    });
+    clearViewedSessionId();
+  };
 
   const entries: SessionEntry[] = [
     {
@@ -59,6 +76,12 @@ const SessionSummary: React.FC<SessionSummaryProps> = ({ sessionId }) => {
     <>
       <h1 className='text-xl font-semibold'>Øktsammendrag</h1>
 
+      <TextField label='Navn' />
+
+      <h2 className='-mb-2 font-semibold'>Tidslinje</h2>
+
+      <hr className='border-zinc-300' />
+
       {entries.map((entry, i) => (
         <div key={entry.id} className='relative mb-8 flex items-center gap-2'>
           <div className='z-10 h-8 w-8 rounded-full bg-blue-500' />
@@ -91,7 +114,7 @@ const SessionSummary: React.FC<SessionSummaryProps> = ({ sessionId }) => {
       <h2 className='-mb-2 mt-auto font-semibold'>Notater</h2>
       <textarea className='h-40 resize-none rounded-md border border-zinc-300 bg-zinc-100 p-2 outline-none focus:border-zinc-400 focus:ring-0' />
 
-      <Button variant='destructive' onClick={clearViewedSessionId}>
+      <Button variant='destructive' onClick={onEndConsultation}>
         Stopp økt
       </Button>
     </>

@@ -1,5 +1,6 @@
 import { createTRPCRouter } from '@/server/api/trpc';
 import { appSettingsRouter } from './routers/appSettingsRouter';
+import { consultationRouter } from './routers/consultationRouter';
 import { contentRouter } from './routers/contentRouter';
 import { invitationRouter } from './routers/invitationRouter';
 import { mediaRouter } from './routers/mediaRouter';
@@ -9,6 +10,7 @@ import { userAccountRouter } from './routers/userAccountRouter';
 
 export const appRouter = createTRPCRouter({
   appSettings: appSettingsRouter,
+  consultation: consultationRouter,
   content: contentRouter,
   userAccount: userAccountRouter,
   theme: themeRouter,

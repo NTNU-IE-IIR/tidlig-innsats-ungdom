@@ -54,6 +54,13 @@
       "when": 1686584496320,
       "tag": "0007_rich_preak",
       "breakpoints": false
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1687531858847,
+      "tag": "0008_peaceful_solo",
+      "breakpoints": false
     }
   ]
 }

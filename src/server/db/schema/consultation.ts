@@ -1,5 +1,6 @@
 import { InferModel } from 'drizzle-orm';
 import {
+  bigint,
   bigserial,
   integer,
   pgTable,
@@ -11,7 +12,7 @@ import { media } from './content';
 import { tenant, userAccount } from './core';
 
 export const consultationSession = pgTable('consultation_session', {
-  id: bigserial('consultation_session_id', { mode: 'number' }).primaryKey(),
+  id: uuid('consultation_session_id').primaryKey().defaultRandom(),
   name: text('name').notNull(),
   /**
    * User notes about the consultation session.
@@ -35,7 +36,7 @@ export const consultationSessionMedia = pgTable('consultation_session_media', {
   consultationSessionId: uuid('fk_consultation_session_id')
     .notNull()
     .references(() => consultationSession.id),
-  mediaId: uuid('fk_media_id')
+  mediaId: bigint('fk_media_id', { mode: 'number' })
     .notNull()
     .references(() => media.id),
   /**

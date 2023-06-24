@@ -4,6 +4,7 @@ import Button from '@/components/input/Button';
 import PageLayout from '@/components/layout/PageLayout';
 import Breadcrumbs from '@/components/navigation/Breadcrumbs';
 import { FileMedia, MediaType } from '@/server/db/schema';
+import { useSessionStore } from '@/store/sessionStore';
 import { useTenantStore } from '@/store/tenantStore';
 import { api } from '@/utils/api';
 import {
@@ -21,6 +22,7 @@ const MediaView: NextPage = () => {
   const router = useRouter();
   const { id } = router.query;
   const { activeTenantId } = useTenantStore();
+  const { incrementMediaViewDuration: incrementMedia } = useSessionStore();
 
   const { data: media, isError } = api.media.getById.useQuery(Number(id), {
     enabled: !Number.isNaN(id),
@@ -34,7 +36,7 @@ const MediaView: NextPage = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       if (media) {
-        // TODO: Increment duration of media in consultation session
+        incrementMedia(media.id);
       }
     }, 1000);
 

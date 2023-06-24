@@ -1,14 +1,13 @@
 import { useSessionStore } from '@/store/sessionStore';
-import dayjs from 'dayjs';
+import { useTenantStore } from '@/store/tenantStore';
+import { api } from '@/utils/api';
+import { Transition } from '@headlessui/react';
 import Button from '../input/Button';
 import SessionCard from './SessionCard';
 import SessionSummary from './SessionSummary';
-import { Transition } from '@headlessui/react';
-import { api } from '@/utils/api';
-import { useTenantStore } from '@/store/tenantStore';
 
 const SessionSideMenu = () => {
-  const { viewedSessionId, setViewedSessionId, clearViewedSessionId } =
+  const { viewedSessionId, setViewedSessionId, clearViewedSession } =
     useSessionStore();
   const { activeTenantId } = useTenantStore();
 
@@ -37,10 +36,10 @@ const SessionSideMenu = () => {
         leave='transition-all duration-300 ease-out'
         leaveFrom='transform translate-x-0 opacity-100'
         leaveTo='transform -translate-x-full opacity-0'
-        className='absolute flex h-full w-full flex-col gap-2 p-2 overflow-hidden'
+        className='absolute flex h-full w-full flex-col gap-2 overflow-hidden p-2'
       >
         <h1 className='text-xl font-semibold'>Øktoversikt</h1>
-        <div className='flex flex-col gap-2 flex-1 overflow-y-auto'>
+        <div className='flex flex-1 flex-col gap-2 overflow-y-auto'>
           {consultations?.map((consultation) => (
             <SessionCard
               key={consultation.id}
@@ -69,7 +68,7 @@ const SessionSideMenu = () => {
       >
         <SessionSummary
           sessionId={viewedSessionId!}
-          onEnd={clearViewedSessionId}
+          onEnd={clearViewedSession}
         />
       </Transition>
     </div>

@@ -22,7 +22,7 @@ interface SessionEntry {
 }
 
 const SessionSummary: React.FC<SessionSummaryProps> = ({ sessionId }) => {
-  const { clearViewedSessionId } = useSessionStore();
+  const { clearViewedSession: clearViewedSessionId } = useSessionStore();
   const utils = api.useContext();
   const { mutateAsync: endConsultation } =
     api.consultation.endConsultation.useMutation({

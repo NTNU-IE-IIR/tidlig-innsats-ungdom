@@ -100,6 +100,8 @@ export const mediaRouter = createTRPCRouter({
   getByIdsWithThemes: protectedProcedure
     .input(z.array(z.number()))
     .query(async ({ input }) => {
+      if (input.length === 0) return [];
+
       return await db.query.media.findMany({
         columns: {
           id: true,

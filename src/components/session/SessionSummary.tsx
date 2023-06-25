@@ -4,6 +4,7 @@ import Button from '../input/Button';
 import { useSessionStore } from '@/store/sessionStore';
 import TextField from '../input/TextField';
 import { api } from '@/utils/api';
+import Link from 'next/link';
 
 interface SessionSummaryProps {
   sessionId: string;
@@ -32,6 +33,10 @@ const SessionSummary: React.FC<SessionSummaryProps> = ({ sessionId }) => {
       },
     });
 
+  const { data: entries } = api.media.getByIdsWithThemes.useQuery(
+    Object.keys(viewedSessionMedias).map(Number)
+  );
+
   const onEndConsultation = async () => {
     await endConsultation({
       consultationId: sessionId,
@@ -40,39 +45,6 @@ const SessionSummary: React.FC<SessionSummaryProps> = ({ sessionId }) => {
 
     clearViewedSession();
   };
-
-  const entries: SessionEntry[] = [
-    {
-      id: 1,
-      media: {
-        name: 'Kapittel 1',
-        id: 1,
-        themes: ['Tema 1', 'Tema 2'],
-      },
-      startedAt: new Date(),
-      endedAt: new Date(),
-    },
-    {
-      id: 2,
-      media: {
-        name: 'Kapittel 4',
-        id: 1,
-        themes: ['Tema 1', 'Tema 2'],
-      },
-      startedAt: dayjs().subtract(5, 'minute').toDate(),
-      endedAt: new Date(),
-    },
-    {
-      id: 3,
-      media: {
-        name: 'Kapittel 4',
-        id: 1,
-        themes: ['Tema 1', 'Tema 2'],
-      },
-      startedAt: dayjs().subtract(2, 'minute').toDate(),
-      endedAt: new Date(),
-    },
-  ];
 
   return (
     <>
@@ -84,22 +56,30 @@ const SessionSummary: React.FC<SessionSummaryProps> = ({ sessionId }) => {
 
       <hr className='border-zinc-300' />
 
-      {entries.map((entry, i) => (
-        <div key={entry.id} className='relative mb-8 flex items-center gap-2'>
+      {entries?.map((entry, i) => (
+        <Link
+          key={entry.id}
+          className='relative mb-8 flex items-center gap-2 rounded-md border border-transparent p-1 hover:border-zinc-200 hover:bg-zinc-100'
+          href={`/media/${entry.id}`}
+        >
           <div className='z-10 h-8 w-8 rounded-full bg-blue-500' />
 
           <div className='flex-1'>
-            <h2 className='inline font-bold'>{entry.media.name}</h2>
+            <h2 className='inline font-bold'>{entry.name}</h2>
+
             <time className='ml-1 inline text-sm font-medium'>
-              {dayjs(entry.startedAt).from(entry.endedAt, true)}
+              {dayjs
+                .duration(viewedSessionMedias[entry.id] ?? 0, 'seconds')
+                .humanize()}
             </time>
+
             <div className='flex flex-wrap gap-1'>
-              {entry.media.themes.map((theme) => (
+              {entry.themes.map(({ theme }) => (
                 <div
-                  key={theme}
+                  key={theme?.id}
                   className='rounded-full border border-red-900 bg-red-100 px-1 text-xs font-medium text-red-900'
                 >
-                  {theme}
+                  {theme?.name}
                 </div>
               ))}
             </div>
@@ -108,9 +88,9 @@ const SessionSummary: React.FC<SessionSummaryProps> = ({ sessionId }) => {
           <IconChevronRight className='h-5 w-5' />
 
           {i !== 0 && (
-            <div className='absolute bottom-full left-4 h-full w-0.5 -translate-x-1/2 bg-zinc-400' />
+            <div className='absolute bottom-full left-5 h-full w-0.5 -translate-x-1/2 translate-y-1 bg-zinc-400' />
           )}
-        </div>
+        </Link>
       ))}
 
       <h2 className='-mb-2 mt-auto font-semibold'>Notater</h2>

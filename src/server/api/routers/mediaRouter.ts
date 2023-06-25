@@ -2,7 +2,7 @@ import { createMediaSchema, updateMediaSchema } from '@/schemas/mediaSchemas';
 import { db } from '@/server/db';
 import { media, theme, themeMedia, userAccount } from '@/server/db/schema';
 import { TRPCError } from '@trpc/server';
-import { SQL, and, eq, ilike, notInArray, sql } from 'drizzle-orm';
+import { SQL, and, eq, ilike, inArray, notInArray, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
@@ -92,6 +92,35 @@ export const mediaRouter = createTRPCRouter({
       };
 
       return result;
+    }),
+
+  /**
+   * Finds a list of medias by their ids and includes its related themes.
+   */
+  getByIdsWithThemes: protectedProcedure
+    .input(z.array(z.number()))
+    .query(async ({ input }) => {
+      return await db.query.media.findMany({
+        columns: {
+          id: true,
+          name: true,
+          shortDescription: true,
+        },
+        with: {
+          themes: {
+            columns: {},
+            with: {
+              theme: {
+                columns: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+        where: inArray(media.id, input),
+      });
     }),
 
   /**

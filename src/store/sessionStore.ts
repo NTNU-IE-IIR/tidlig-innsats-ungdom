@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
 
 const sessionStoreSchema = z.object({
   showSideMenu: z.boolean().default(false),
@@ -45,7 +45,7 @@ export const useSessionStore = create<SessionStore>()(
     }),
     {
       name: 'session-storage',
-      storage: createJSONStorage(() => localStorage),
+      skipHydration: true,
     }
   )
 );

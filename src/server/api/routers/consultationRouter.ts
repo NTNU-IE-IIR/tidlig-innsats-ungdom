@@ -5,7 +5,7 @@ import {
   consultationSession,
   consultationSessionMedia,
 } from '@/server/db/schema';
-import { and, eq, isNotNull } from 'drizzle-orm';
+import { and, eq, isNotNull, isNull } from 'drizzle-orm';
 import { endConsultationSchema } from '@/schemas/consultationSchemas';
 
 export const consultationRouter = createTRPCRouter({
@@ -19,7 +19,12 @@ export const consultationRouter = createTRPCRouter({
           endedAt: consultationSession.endedAt,
         })
         .from(consultationSession)
-        .where(and(eq(consultationSession.userAccountId, ctx.session.user.id)))
+        .where(
+          and(
+            eq(consultationSession.userAccountId, ctx.session.user.id),
+            isNull(consultationSession.endedAt)
+          )
+        )
     )[0];
   }),
 
@@ -66,6 +71,7 @@ export const consultationRouter = createTRPCRouter({
       await db
         .update(consultationSession)
         .set({
+          name: input.consultationName,
           endedAt: new Date(),
         })
         .where(eq(consultationSession.id, input.consultationId));

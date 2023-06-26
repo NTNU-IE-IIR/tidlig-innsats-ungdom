@@ -5,9 +5,11 @@ import { useSessionStore } from '@/store/sessionStore';
 import TextField from '../input/TextField';
 import { api } from '@/utils/api';
 import Link from 'next/link';
+import { useState } from 'react';
 
 interface SessionSummaryProps {
   sessionId: string;
+  sessionName: string;
   onEnd: () => void;
 }
 
@@ -22,7 +24,10 @@ interface SessionEntry {
   endedAt: Date;
 }
 
-const SessionSummary: React.FC<SessionSummaryProps> = ({ sessionId }) => {
+const SessionSummary: React.FC<SessionSummaryProps> = ({
+  sessionId,
+  sessionName: initialSessionName,
+}) => {
   const { clearViewedSession, viewedSessionMedias } = useSessionStore();
   const utils = api.useContext();
   const { mutateAsync: endConsultation } =
@@ -33,6 +38,8 @@ const SessionSummary: React.FC<SessionSummaryProps> = ({ sessionId }) => {
       },
     });
 
+  const [sessionName, setSessionName] = useState(initialSessionName);
+
   const { data: entries } = api.media.getByIdsWithThemes.useQuery(
     Object.keys(viewedSessionMedias).map(Number)
   );
@@ -40,6 +47,7 @@ const SessionSummary: React.FC<SessionSummaryProps> = ({ sessionId }) => {
   const onEndConsultation = async () => {
     await endConsultation({
       consultationId: sessionId,
+      consultationName: sessionName,
       viewedMedias: viewedSessionMedias,
     });
 
@@ -50,7 +58,7 @@ const SessionSummary: React.FC<SessionSummaryProps> = ({ sessionId }) => {
     <>
       <h1 className='text-xl font-semibold'>Øktsammendrag</h1>
 
-      <TextField label='Navn' />
+      <TextField label='Navn' value={sessionName} onChange={setSessionName} />
 
       <h2 className='-mb-2 font-semibold'>Tidslinje</h2>
 

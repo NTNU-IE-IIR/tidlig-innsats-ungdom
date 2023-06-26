@@ -5,6 +5,7 @@ import { Transition } from '@headlessui/react';
 import Button from '../input/Button';
 import SessionCard from './SessionCard';
 import SessionSummary from './SessionSummary';
+import { useEffect } from 'react';
 
 const SessionSideMenu = () => {
   const { viewedSessionId, setViewedSessionId, clearViewedSession } =
@@ -14,6 +15,9 @@ const SessionSideMenu = () => {
   const { data: consultations } = api.consultation.listConsultations.useQuery(
     {}
   );
+
+  const { data: activeConsultation } =
+    api.consultation.activeConsultation.useQuery();
 
   const { mutateAsync: newConsultation } =
     api.consultation.newConsultation.useMutation();
@@ -25,6 +29,12 @@ const SessionSideMenu = () => {
 
     setViewedSessionId(consultation);
   };
+
+  useEffect(() => {
+    if (activeConsultation) {
+      setViewedSessionId(activeConsultation.id);
+    }
+  }, [activeConsultation]);
 
   return (
     <div className='relative h-full w-full overflow-x-hidden border-l border-black/10 bg-white'>
@@ -67,6 +77,7 @@ const SessionSideMenu = () => {
         className='absolute flex h-full w-full flex-col gap-2 p-2'
       >
         <SessionSummary
+          sessionName={activeConsultation!.name}
           sessionId={viewedSessionId!}
           onEnd={clearViewedSession}
         />

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 const sessionStoreSchema = z.object({
   showSideMenu: z.boolean().default(false),
@@ -18,24 +19,33 @@ export interface SessionStore extends z.infer<typeof sessionStoreSchema> {
   incrementMediaViewDuration: (mediaId: number) => void;
 }
 
-export const useSessionStore = create<SessionStore>()((set) => ({
-  showSideMenu: false,
-  viewedSessionId: null,
-  viewedSessionMedias: {},
-  setViewedSessionId: (sessionId) => set({ viewedSessionId: sessionId }),
-  clearViewedSession: () =>
-    set({ viewedSessionId: null, viewedSessionMedias: {} }),
-  toggleSideMenu: () => set((state) => ({ showSideMenu: !state.showSideMenu })),
-  closeSideMenu: () => set({ showSideMenu: false }),
-  incrementMediaViewDuration: (mediaId) =>
-    set((state) => {
-      if (state.viewedSessionId === null) return {};
+export const useSessionStore = create<SessionStore>()(
+  persist(
+    (set) => ({
+      showSideMenu: false,
+      viewedSessionId: null,
+      viewedSessionMedias: {},
+      setViewedSessionId: (sessionId) => set({ viewedSessionId: sessionId }),
+      clearViewedSession: () =>
+        set({ viewedSessionId: null, viewedSessionMedias: {} }),
+      toggleSideMenu: () =>
+        set((state) => ({ showSideMenu: !state.showSideMenu })),
+      closeSideMenu: () => set({ showSideMenu: false }),
+      incrementMediaViewDuration: (mediaId) =>
+        set((state) => {
+          if (state.viewedSessionId === null) return {};
 
-      return {
-        viewedSessionMedias: {
-          ...state.viewedSessionMedias,
-          [mediaId]: (state.viewedSessionMedias[mediaId] ?? 0) + 1,
-        },
-      };
+          return {
+            viewedSessionMedias: {
+              ...state.viewedSessionMedias,
+              [mediaId]: (state.viewedSessionMedias[mediaId] ?? 0) + 1,
+            },
+          };
+        }),
     }),
-}));
+    {
+      name: 'session-storage',
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);

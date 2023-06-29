@@ -29,6 +29,14 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
   const { setActiveTenant } = useTenantStore();
   const { showSideMenu, toggleSideMenu, closeSideMenu } = useSessionStore();
 
+  /**
+   * Hydrate the session store from local storage, resulting in the side menu opening (or staying closed)
+   * based on the previous state saved to local storage.
+   */
+  useEffect(() => {
+    useSessionStore.persist.rehydrate();
+  }, []);
+
   const [showMobileNav, setShowMobileNav] = useState(false);
 
   useEffect(() => {

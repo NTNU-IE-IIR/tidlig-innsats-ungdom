@@ -4,41 +4,91 @@ import { persist } from 'zustand/middleware';
 
 const sessionStoreSchema = z.object({
   showSideMenu: z.boolean().default(false),
-  viewedSessionId: z.string().nullable(),
-  /**
-   * The key is the media id, the value is the duration of seconds spent viewing that media.
-   */
-  viewedSessionMedias: z.record(z.number(), z.number()),
+  viewedConsultationId: z.string().optional(),
+  activeSession: z
+    .object({
+      name: z.string(),
+      startedAt: z.date(),
+      endedAt: z.date().nullable(),
+      /**
+       * The key is the media id, the value is the duration of seconds spent viewing that media.
+       */
+      viewedMedias: z.record(z.string().regex(/\d+/), z.number()),
+      notes: z.string(),
+    })
+    .nullable(),
 });
 
 export interface SessionStore extends z.infer<typeof sessionStoreSchema> {
-  setViewedSessionId: (sessionId: string) => void;
-  clearViewedSession: () => void;
+  newSession: () => void;
+  clearSession: () => void;
   toggleSideMenu: () => void;
   closeSideMenu: () => void;
+  setViewedConsultationId: (id: string | undefined) => void;
+  setSessionName: (name: string) => void;
+  setSessionNotes: (notes: string) => void;
+  showConsultation: () => boolean;
   incrementMediaViewDuration: (mediaId: number) => void;
 }
 
 export const useSessionStore = create<SessionStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       showSideMenu: false,
-      viewedSessionId: null,
-      viewedSessionMedias: {},
-      setViewedSessionId: (sessionId) => set({ viewedSessionId: sessionId }),
-      clearViewedSession: () =>
-        set({ viewedSessionId: null, viewedSessionMedias: {} }),
+      activeSession: null,
       toggleSideMenu: () =>
         set((state) => ({ showSideMenu: !state.showSideMenu })),
       closeSideMenu: () => set({ showSideMenu: false }),
-      incrementMediaViewDuration: (mediaId) =>
+      newSession: () =>
+        set((_state) => {
+          return {
+            activeSession: {
+              name: '',
+              startedAt: new Date(),
+              endedAt: null,
+              viewedMedias: {},
+              notes: '',
+            },
+          };
+        }),
+      setSessionName: (name) =>
         set((state) => {
-          if (state.viewedSessionId === null) return {};
+          if (state.activeSession === null) return {};
 
           return {
-            viewedSessionMedias: {
-              ...state.viewedSessionMedias,
-              [mediaId]: (state.viewedSessionMedias[mediaId] ?? 0) + 1,
+            activeSession: {
+              ...state.activeSession,
+              name,
+            },
+          };
+        }),
+      setSessionNotes: (notes) =>
+        set((state) => {
+          if (state.activeSession === null) return {};
+
+          return {
+            activeSession: {
+              ...state.activeSession,
+              notes,
+            },
+          };
+        }),
+      showConsultation: () =>
+        get().activeSession !== null ||
+        get().viewedConsultationId !== undefined,
+      setViewedConsultationId: (id) => set({ viewedConsultationId: id }),
+      clearSession: () => set({ activeSession: null }),
+      incrementMediaViewDuration: (mediaId) =>
+        set((state) => {
+          if (state.activeSession === null) return {};
+
+          return {
+            activeSession: {
+              ...state.activeSession,
+              viewedMedias: {
+                ...state.activeSession.viewedMedias,
+                [mediaId]: (state.activeSession.viewedMedias[mediaId] ?? 0) + 1,
+              },
             },
           };
         }),

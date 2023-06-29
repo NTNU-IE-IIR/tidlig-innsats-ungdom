@@ -7,6 +7,7 @@ import {
   userAccount,
   userAccountSession,
 } from './core';
+import { consultationSession, consultationSessionMedia } from './consultation';
 
 export const themeRelations = relations(theme, ({ one, many }) => ({
   parent: one(theme, {
@@ -81,6 +82,31 @@ export const tenantToUserAccountRelations = relations(
     userAccount: one(userAccount, {
       fields: [tenantUserAccount.userAccountId],
       references: [userAccount.id],
+    }),
+  })
+);
+
+export const consultationSessionRelations = relations(
+  consultationSession,
+  ({ one, many }) => ({
+    userAccount: one(userAccount, {
+      fields: [consultationSession.userAccountId],
+      references: [userAccount.id],
+    }),
+    viewedMedias: many(consultationSessionMedia),
+  })
+);
+
+export const consultationSessionMediaRelations = relations(
+  consultationSessionMedia,
+  ({ one }) => ({
+    consultationSession: one(consultationSession, {
+      fields: [consultationSessionMedia.consultationSessionId],
+      references: [consultationSession.id],
+    }),
+    media: one(media, {
+      fields: [consultationSessionMedia.mediaId],
+      references: [media.id],
     }),
   })
 );

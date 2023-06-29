@@ -1,45 +1,40 @@
 import { useSessionStore } from '@/store/sessionStore';
-import { useTenantStore } from '@/store/tenantStore';
 import { api } from '@/utils/api';
 import { Transition } from '@headlessui/react';
 import Button from '../input/Button';
+import ActiveSession from './ActiveSession';
+import EndedSession from './EndedSession';
 import SessionCard from './SessionCard';
-import SessionSummary from './SessionSummary';
 import { useEffect } from 'react';
 
 const SessionSideMenu = () => {
-  const { viewedSessionId, setViewedSessionId, clearViewedSession } =
-    useSessionStore();
-  const { activeTenantId } = useTenantStore();
+  const {
+    activeSession,
+    newSession,
+    viewedConsultationId,
+    setViewedConsultationId,
+    showConsultation,
+  } = useSessionStore();
 
   const { data: consultations } = api.consultation.listConsultations.useQuery(
     {}
   );
 
-  const { data: activeConsultation } =
-    api.consultation.activeConsultation.useQuery();
-
-  const { mutateAsync: newConsultation } =
-    api.consultation.newConsultation.useMutation();
-
-  const createNewConsultation = async () => {
-    const consultation = await newConsultation({
-      tenantId: activeTenantId!,
+  const { data: viewedConsultation } =
+    api.consultation.getConsultation.useQuery(viewedConsultationId!, {
+      enabled: viewedConsultationId !== undefined,
     });
 
-    setViewedSessionId(consultation);
-  };
-
   useEffect(() => {
-    if (activeConsultation) {
-      setViewedSessionId(activeConsultation.id);
+    if (viewedConsultation !== undefined) {
+      console.log(viewedConsultation);
     }
-  }, [activeConsultation]);
+  }, [viewedConsultation]);
 
   return (
     <div className='relative h-full w-full overflow-x-hidden border-l border-black/10 bg-white'>
       <Transition
-        show={viewedSessionId === null}
+        show={viewedConsultationId === undefined && activeSession === null}
         enter='transition-all duration-300 ease-out'
         enterFrom='transform -translate-x-full opacity-0'
         enterTo='transform translate-x-0 opacity-100'
@@ -50,24 +45,30 @@ const SessionSideMenu = () => {
       >
         <h1 className='text-xl font-semibold'>Øktoversikt</h1>
         <div className='flex flex-1 flex-col gap-2 overflow-y-auto'>
+          {consultations?.length === 0 && (
+            <p className='text-sm text-gray-500'>
+              Ingen økter er opprettet enda
+            </p>
+          )}
+
           {consultations?.map((consultation) => (
             <SessionCard
               key={consultation.id}
               title={consultation.name}
               startedAt={consultation.startedAt}
               endedAt={consultation.endedAt!}
-              onClick={() => setViewedSessionId(consultation.id)}
+              onClick={() => setViewedConsultationId(consultation.id)}
             />
           ))}
         </div>
 
-        <Button className='mt-auto' onClick={createNewConsultation}>
+        <Button className='mt-auto' onClick={newSession}>
           Ny økt
         </Button>
       </Transition>
 
       <Transition
-        show={viewedSessionId !== null}
+        show={showConsultation()}
         enter='transition-all duration-300 ease-out'
         enterFrom='transform translate-x-full opacity-0'
         enterTo='transform translate-x-0 opacity-100'
@@ -76,11 +77,18 @@ const SessionSideMenu = () => {
         leaveTo='transform translate-x-full opacity-0'
         className='absolute flex h-full w-full flex-col gap-2 p-2'
       >
-        <SessionSummary
-          sessionName={activeConsultation!.name}
-          sessionId={viewedSessionId!}
-          onEnd={clearViewedSession}
-        />
+        {activeSession !== null && <ActiveSession />}
+        {viewedConsultationId !== undefined &&
+          viewedConsultation !== undefined && (
+            <EndedSession
+              key={viewedConsultation.id}
+              id={viewedConsultation.id}
+              name={viewedConsultation.name}
+              notes={viewedConsultation.notes}
+              entries={viewedConsultation.viewedMedias}
+              onClose={() => setViewedConsultationId(undefined)}
+            />
+          )}
       </Transition>
     </div>
   );

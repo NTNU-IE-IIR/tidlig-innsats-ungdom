@@ -58,7 +58,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
           <NavigationBar />
 
           <Button
-            className='mt-1 w-fit self-end bg-white md:hidden'
+            className='mt-1 w-fit self-end bg-white md:hidden printer:hidden'
             variant='neutral'
             onClick={() => setShowMobileNav(true)}
           >

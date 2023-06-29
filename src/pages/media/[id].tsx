@@ -41,7 +41,7 @@ const MediaView: NextPage = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [media]);
 
   return (
     <>

@@ -76,7 +76,7 @@ const InviteCard: React.FC<InviteCardProps> = ({
       {dayjs().isBefore(expiresAt) && (
         <>
           <Tooltip
-            open={clipboard.copied}
+            open={clipboard.copied ? clipboard.copied : undefined}
             content={
               clipboard.copied
                 ? 'Kobling kopiert til utklippstavle'

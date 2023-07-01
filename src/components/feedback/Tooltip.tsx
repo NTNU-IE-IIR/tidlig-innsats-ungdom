@@ -1,18 +1,20 @@
 import * as RadixTooltip from '@radix-ui/react-tooltip';
 
 interface TooltipProps {
+  open?: boolean;
   side?: 'top' | 'bottom' | 'left' | 'right';
   children: React.ReactNode;
   content: React.ReactNode;
 }
 
 const Tooltip: React.FC<TooltipProps> = ({
+  open,
   side = 'bottom',
   children,
   content,
 }) => {
   return (
-    <RadixTooltip.Root delayDuration={300}>
+    <RadixTooltip.Root delayDuration={300} open={open}>
       <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
       <RadixTooltip.Portal>
         <RadixTooltip.Content

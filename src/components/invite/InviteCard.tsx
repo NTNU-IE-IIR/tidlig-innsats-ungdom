@@ -33,7 +33,7 @@ const InviteCard: React.FC<InviteCardProps> = ({
   onExpire,
   onShowMembers,
 }) => {
-  const clipboard = useClipboard({ timeout: 500 });
+  const clipboard = useClipboard({ timeout: 1000 });
 
   const copyInviteLink = (code: string) => {
     const url = new URL(window.location.toString());
@@ -75,7 +75,14 @@ const InviteCard: React.FC<InviteCardProps> = ({
 
       {dayjs().isBefore(expiresAt) && (
         <>
-          <Tooltip content='Kopier kobling'>
+          <Tooltip
+            open={clipboard.copied}
+            content={
+              clipboard.copied
+                ? 'Kobling kopiert til utklippstavle'
+                : 'Kopier kobling'
+            }
+          >
             <Button
               variant='neutral'
               onClick={() => copyInviteLink(code)}

@@ -1,7 +1,13 @@
 import { db } from '@/server/db';
-import { media, theme, themeMedia } from '@/server/db/schema';
+import {
+  media,
+  theme,
+  themeMedia,
+  userAccountFavoriteMedia,
+  userAccountFavoriteTheme,
+} from '@/server/db/schema';
 import { Content, ContentDiscriminator } from '@/types/content';
-import { SQL, and, eq, ilike, isNull, sql } from 'drizzle-orm';
+import { SQL, and, desc, eq, ilike, isNotNull, isNull, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
@@ -39,9 +45,15 @@ export const contentRouter = createTRPCRouter({
           name: theme.name,
           shortDescription: theme.shortDescription,
           discriminator: sql<ContentDiscriminator>`'THEME'`,
+          favorited: sql<boolean>`${userAccountFavoriteTheme.createdAt} IS NOT NULL`,
         })
         .from(theme)
-        .where(and(...conditions));
+        .leftJoin(
+          userAccountFavoriteTheme,
+          eq(theme.id, userAccountFavoriteTheme.themeId)
+        )
+        .where(and(...conditions))
+        .orderBy(desc(isNotNull(userAccountFavoriteTheme.createdAt)));
 
       if (parentId) {
         medias = await db
@@ -50,21 +62,73 @@ export const contentRouter = createTRPCRouter({
             name: media.name,
             shortDescription: media.shortDescription,
             discriminator: sql<ContentDiscriminator>`'MEDIA'`,
+            favorited: sql<boolean>`${userAccountFavoriteMedia.createdAt} IS NOT NULL`,
           })
           .from(themeMedia)
           .innerJoin(media, eq(themeMedia.mediaId, media.id))
+          .leftJoin(
+            userAccountFavoriteMedia,
+            eq(userAccountFavoriteMedia.mediaId, media.id)
+          )
           .where(
             and(
               eq(themeMedia.themeId, parentId),
               ilike(media.name, `%${name}%`),
               eq(media.published, true)
             )
-          );
+          )
+          .orderBy(desc(isNotNull(userAccountFavoriteMedia.createdAt)));
       }
 
       return {
         themes,
         medias,
       };
+    }),
+
+  toggleFavoriteContent: protectedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        discriminator: z.enum(['THEME', 'MEDIA']),
+        favorited: z.boolean(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      if (input.discriminator === 'THEME') {
+        if (input.favorited) {
+          await db
+            .delete(userAccountFavoriteTheme)
+            .where(
+              and(
+                eq(userAccountFavoriteTheme.userAccountId, ctx.session.user.id),
+                eq(userAccountFavoriteTheme.themeId, input.id)
+              )
+            );
+        } else {
+          await db.insert(userAccountFavoriteTheme).values({
+            userAccountId: ctx.session.user.id,
+            themeId: input.id,
+          });
+        }
+
+        return {};
+      }
+
+      if (input.favorited) {
+        await db
+          .delete(userAccountFavoriteMedia)
+          .where(
+            and(
+              eq(userAccountFavoriteMedia.userAccountId, ctx.session.user.id),
+              eq(userAccountFavoriteMedia.mediaId, input.id)
+            )
+          );
+      } else {
+        await db.insert(userAccountFavoriteMedia).values({
+          userAccountId: ctx.session.user.id,
+          mediaId: input.id,
+        });
+      }
     }),
 });

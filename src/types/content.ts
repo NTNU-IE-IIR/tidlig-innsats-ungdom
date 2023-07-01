@@ -5,4 +5,5 @@ export interface Content {
   name: string;
   shortDescription: string;
   discriminator: ContentDiscriminator;
+  favorited: boolean;
 }

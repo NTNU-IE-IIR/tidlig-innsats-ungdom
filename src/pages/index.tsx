@@ -2,6 +2,7 @@ import Card from '@/components/container/Card';
 import PageLayout from '@/components/layout/PageLayout';
 import Breadcrumbs from '@/components/navigation/Breadcrumbs';
 import { useBrowseStore } from '@/store/browseStore';
+import { ContentDiscriminator } from '@/types/content';
 import { api } from '@/utils/api';
 import { useDebouncedValue, useHotkeys } from '@mantine/hooks';
 import {
@@ -9,12 +10,15 @@ import {
   IconFolderFilled,
   IconListDetails,
   IconSearch,
+  IconStar,
+  IconStarFilled,
 } from '@tabler/icons-react';
 import { type NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 const Home: NextPage = () => {
   const searchBarRef = useRef<HTMLInputElement>(null);
@@ -38,6 +42,27 @@ const Home: NextPage = () => {
       navigateBackTo(drill[drill.length - 2]!, drill.length - 2, router);
     }
   }, []);
+
+  const utils = api.useContext();
+
+  const { mutateAsync: toggleFavorization } =
+    api.content.toggleFavoriteContent.useMutation({
+      onSuccess: () => {
+        utils.content.listContent.invalidate();
+      },
+    });
+
+  const toggleContentFavorization = async (
+    id: number,
+    discriminator: ContentDiscriminator,
+    favorited: boolean
+  ) => {
+    await toggleFavorization({
+      id,
+      discriminator,
+      favorited,
+    });
+  };
 
   return (
     <>
@@ -94,7 +119,7 @@ const Home: NextPage = () => {
               </Link>
             ))}
 
-          <div className='grid grid-cols-1 xxs:grid-cols-2 gap-2 md:grid-cols-3'>
+          <div className='grid grid-cols-1 gap-2 xxs:grid-cols-2 md:grid-cols-3'>
             {content?.themes.map((theme) => (
               <Card
                 key={'THEME' + theme.id}
@@ -102,35 +127,94 @@ const Home: NextPage = () => {
                 className='flex aspect-[6/1] cursor-pointer items-center gap-2 transition-all hover:scale-[1.01]'
               >
                 <IconFolderFilled className='h-8 w-8 flex-shrink-0 text-zinc-700' />
-                <div className='-mt-2'>
+
+                <div className='-mt-2 flex-1'>
                   <h3 className='truncate font-semibold'>{theme.name}</h3>
                   <p className='-my-1 truncate text-sm'>
                     {theme.shortDescription}
                   </p>
                 </div>
+
+                <FavoriteContentButton
+                  favorited={theme.favorited}
+                  onToggle={() =>
+                    toggleContentFavorization(
+                      theme.id,
+                      theme.discriminator,
+                      theme.favorited
+                    )
+                  }
+                />
               </Card>
             ))}
           </div>
 
-          <div className='grid grid-cols-1 xxs:grid-cols-2 gap-2 md:grid-cols-3'>
+          <div className='grid grid-cols-1 gap-2 xxs:grid-cols-2 md:grid-cols-3'>
             {content?.medias.map((media) => (
               <Card
                 variant='media'
                 onClick={() => appendContent(media, router)}
                 key={'MEDIA' + media.id}
-                className='flex aspect-[1.5/1] cursor-pointer flex-col items-center justify-center text-center transition-all hover:scale-[1.01]'
+                className='relative flex aspect-[1.5/1] cursor-pointer flex-col items-center justify-center text-center transition-all hover:scale-[1.01]'
               >
                 <IconListDetails className='h-10 w-10 text-zinc-700' />
+
                 <h3 className='truncate text-xl font-bold'>{media.name}</h3>
                 <p className='line-clamp-2 text-sm font-medium'>
                   {media.shortDescription}
                 </p>
+
+                <FavoriteContentButton
+                  favorited={media.favorited}
+                  className='absolute right-3 top-3'
+                  onToggle={() =>
+                    toggleContentFavorization(
+                      media.id,
+                      media.discriminator,
+                      media.favorited
+                    )
+                  }
+                />
               </Card>
             ))}
           </div>
         </div>
       </PageLayout>
     </>
+  );
+};
+
+interface FavoriteContentButtonProps {
+  favorited: boolean;
+  onToggle: () => void;
+  className?: string;
+}
+
+const FavoriteContentButton: React.FC<FavoriteContentButtonProps> = ({
+  favorited,
+  onToggle,
+  className,
+}) => {
+  const onFavoriteClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.stopPropagation();
+    onToggle();
+  };
+
+  return (
+    <button
+      onClick={onFavoriteClick}
+      className={twMerge(
+        'rounded-full border border-transparent p-0.5 hover:border-zinc-300 hover:bg-zinc-200 focus:border-zinc-300 focus:bg-zinc-200 focus:outline-none',
+        className
+      )}
+    >
+      {favorited ? (
+        <IconStarFilled className='h-5 w-5 text-yellow-600' />
+      ) : (
+        <IconStar className='h-5 w-5 text-zinc-800' />
+      )}
+      <span className='sr-only'>Merk som favoritt</span>
+    </button>
   );
 };
 

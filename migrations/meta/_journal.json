@@ -61,6 +61,13 @@
       "when": 1687531858847,
       "tag": "0008_peaceful_solo",
       "breakpoints": false
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1688221490930,
+      "tag": "0009_sticky_vision",
+      "breakpoints": false
     }
   ]
 }

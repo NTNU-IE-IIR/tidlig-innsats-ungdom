@@ -1,6 +1,10 @@
 import { createThemeSchema, updateThemeSchema } from '@/schemas/themeSchemas';
 import { db } from '@/server/db';
-import { theme, themeMedia } from '@/server/db/schema';
+import {
+  theme,
+  themeMedia,
+  userAccountFavoriteTheme,
+} from '@/server/db/schema';
 import { ThemeNode } from '@/types/themes';
 import { SQL, and, eq, inArray, notInArray, or, sql } from 'drizzle-orm';
 import { z } from 'zod';
@@ -69,6 +73,9 @@ export const themeRouter = createTRPCRouter({
     )
     .mutation(async ({ input }) => {
       await db.delete(themeMedia).where(eq(themeMedia.themeId, input.id));
+      await db
+        .delete(userAccountFavoriteTheme)
+        .where(eq(userAccountFavoriteTheme.themeId, input.id));
 
       if (input.bubbleChildren) {
         await db
@@ -130,7 +137,7 @@ export const themeRouter = createTRPCRouter({
 
       // we have to do two passes here, because we need to make sure the
       // map contains the parent nodes, since we currently cannot guarantee
-      // the order of the results. 
+      // the order of the results.
       for (const current of results) {
         const node = {
           id: current.id,

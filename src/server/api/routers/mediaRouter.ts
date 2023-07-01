@@ -1,6 +1,12 @@
 import { createMediaSchema, updateMediaSchema } from '@/schemas/mediaSchemas';
 import { db } from '@/server/db';
-import { media, theme, themeMedia, userAccount } from '@/server/db/schema';
+import {
+  media,
+  theme,
+  themeMedia,
+  userAccount,
+  userAccountFavoriteMedia,
+} from '@/server/db/schema';
 import { TRPCError } from '@trpc/server';
 import { SQL, and, eq, ilike, inArray, notInArray, sql } from 'drizzle-orm';
 import { z } from 'zod';
@@ -205,6 +211,9 @@ export const mediaRouter = createTRPCRouter({
     .input(z.number().positive())
     .mutation(async ({ input }) => {
       await db.delete(themeMedia).where(eq(themeMedia.mediaId, input));
+      await db
+        .delete(userAccountFavoriteMedia)
+        .where(eq(userAccountFavoriteMedia.mediaId, input));
       await db.delete(media).where(eq(media.id, input));
     }),
 });

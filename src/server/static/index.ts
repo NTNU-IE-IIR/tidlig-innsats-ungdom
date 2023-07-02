@@ -3,7 +3,7 @@ import { Client } from 'minio';
 
 const minioClient = new Client({
   endPoint: env.S3_ENDPOINT,
-  port: 9000,
+  port: Number(env.S3_PORT),
   useSSL: false,
   accessKey: env.S3_ACCESS_KEY,
   secretKey: env.S3_SECRET_ACCESS_KEY,

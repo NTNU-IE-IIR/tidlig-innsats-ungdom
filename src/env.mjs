@@ -17,6 +17,7 @@ const server = z.object({
   POSTGRES_DB: z.string().min(1),
   S3_BUCKET_NAME: z.string().min(1),
   S3_ENDPOINT: z.string().min(1),
+  S3_PORT: z.string().min(1).regex(/^\d+/g),
   S3_ACCESS_KEY: z.string().min(1),
   S3_SECRET_ACCESS_KEY: z.string().min(1),
 });
@@ -43,6 +44,7 @@ const processEnv = {
   POSTGRES_DB: process.env.POSTGRES_DB,
   S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
   S3_ENDPOINT: process.env.S3_ENDPOINT,
+  S3_PORT: process.env.S3_PORT,
   S3_ACCESS_KEY: process.env.S3_ACCESS_KEY,
   S3_SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY,
 };

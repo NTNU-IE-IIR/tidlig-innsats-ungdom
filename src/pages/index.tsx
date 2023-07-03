@@ -22,6 +22,7 @@ import { twMerge } from 'tailwind-merge';
 
 const Home: NextPage = () => {
   const searchBarRef = useRef<HTMLInputElement>(null);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [debouncedSearchInput] = useDebouncedValue(searchInput, 500);
 
@@ -35,6 +36,7 @@ const Home: NextPage = () => {
   const { data: content } = api.content.listContent.useQuery({
     name: debouncedSearchInput,
     parentId: parent?.discriminator === 'THEME' ? parent.id : undefined,
+    favoritesOnly: showFavoritesOnly,
   });
 
   useEffect(() => {
@@ -72,9 +74,34 @@ const Home: NextPage = () => {
       <PageLayout>
         <Breadcrumbs />
 
-        <h1 className='my-4 text-center text-2xl font-bold'>
+        <h1 className='mb-2 mt-4 text-center text-2xl font-bold'>
           Velg eller søk på tema og innhold
         </h1>
+
+        <div className='mb-3 flex items-center justify-center'>
+          <div className='grid grid-cols-2 items-center divide-x divide-black/20 rounded-md border border-black/20 bg-white text-sm shadow'>
+            <button
+              type='button'
+              className={twMerge(
+                'rounded-l-md px-2 py-0.5 font-medium',
+                !showFavoritesOnly && 'bg-emerald-50 text-emerald-900'
+              )}
+              onClick={() => setShowFavoritesOnly(false)}
+            >
+              Alt innhold
+            </button>
+            <button
+              type='button'
+              className={twMerge(
+                'rounded-r-md px-2 py-0.5 font-medium',
+                showFavoritesOnly && 'bg-emerald-50 text-emerald-900'
+              )}
+              onClick={() => setShowFavoritesOnly(true)}
+            >
+              Kun favoritter
+            </button>
+          </div>
+        </div>
 
         <div className='flex items-center justify-center'>
           <div className='relative'>
@@ -119,20 +146,19 @@ const Home: NextPage = () => {
               </Link>
             ))}
 
-          <div className='grid grid-cols-1 gap-2 xxs:grid-cols-2 md:grid-cols-3'>
+          <div className='grid grid-cols-1 gap-2 xs:grid-cols-2 md:grid-cols-3'>
             {content?.themes.map((theme) => (
               <Card
+                pad={false}
                 key={'THEME' + theme.id}
                 onClick={() => appendContent(theme, router)}
-                className='flex aspect-[6/1] cursor-pointer items-center gap-2 transition-all hover:scale-[1.01]'
+                className='flex h-14 cursor-pointer items-center gap-2 px-2 transition-all hover:scale-[1.01]'
               >
                 <IconFolderFilled className='h-8 w-8 flex-shrink-0 text-zinc-700' />
 
-                <div className='-mt-2 flex-1'>
+                <div className='flex h-full flex-1 flex-col justify-center overflow-hidden'>
                   <h3 className='truncate font-semibold'>{theme.name}</h3>
-                  <p className='-my-1 truncate text-sm'>
-                    {theme.shortDescription}
-                  </p>
+                  <p className='truncate text-sm'>{theme.shortDescription}</p>
                 </div>
 
                 <FavoriteContentButton
@@ -149,7 +175,7 @@ const Home: NextPage = () => {
             ))}
           </div>
 
-          <div className='grid grid-cols-1 gap-2 xxs:grid-cols-2 md:grid-cols-3'>
+          <div className='grid grid-cols-1 gap-2 xs:grid-cols-2 md:grid-cols-3'>
             {content?.medias.map((media) => (
               <Card
                 variant='media'

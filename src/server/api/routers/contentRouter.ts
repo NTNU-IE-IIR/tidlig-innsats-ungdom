@@ -26,6 +26,7 @@ export const contentRouter = createTRPCRouter({
           .or(z.string().regex(/\d+/gi))
           .transform((n) => Number(n))
           .optional(),
+        favoritesOnly: z.boolean(),
       })
     )
     .query(async ({ input }) => {
@@ -37,6 +38,9 @@ export const contentRouter = createTRPCRouter({
       const conditions = [
         parentId ? eq(theme.parentId, parentId) : isNull(theme.parentId),
         name && ilike(theme.name, `%${name}%`),
+        input.favoritesOnly
+          ? isNotNull(userAccountFavoriteTheme.createdAt)
+          : null,
       ].filter(Boolean) as SQL[];
 
       const themes = await db
@@ -56,6 +60,14 @@ export const contentRouter = createTRPCRouter({
         .orderBy(desc(isNotNull(userAccountFavoriteTheme.createdAt)));
 
       if (parentId) {
+        const mediaConditions = [
+          eq(themeMedia.themeId, parentId),
+          name && ilike(media.name, `%${name}%`),
+          input.favoritesOnly
+            ? isNotNull(userAccountFavoriteMedia.createdAt)
+            : null,
+        ].filter(Boolean) as SQL[];
+
         medias = await db
           .select({
             id: media.id,
@@ -70,13 +82,7 @@ export const contentRouter = createTRPCRouter({
             userAccountFavoriteMedia,
             eq(userAccountFavoriteMedia.mediaId, media.id)
           )
-          .where(
-            and(
-              eq(themeMedia.themeId, parentId),
-              ilike(media.name, `%${name}%`),
-              eq(media.published, true)
-            )
-          )
+          .where(and(...mediaConditions))
           .orderBy(desc(isNotNull(userAccountFavoriteMedia.createdAt)));
       }
 

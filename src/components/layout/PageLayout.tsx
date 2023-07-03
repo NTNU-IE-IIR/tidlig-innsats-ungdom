@@ -86,7 +86,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
 
         <button
           type='button'
-          className='absolute right-0 top-0 mt-0.5 flex items-center self-start print:hidden'
+          className='absolute right-0 top-0 mt-0.5 flex items-center self-start print:hidden max-md:hidden'
           onClick={toggleSideMenu}
         >
           <IconChevronLeft

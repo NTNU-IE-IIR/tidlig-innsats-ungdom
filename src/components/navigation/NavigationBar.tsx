@@ -1,14 +1,27 @@
 import { TenantRole, UserAccountRole } from '@/server/db/schema';
 import { useTenantStore } from '@/store/tenantStore';
 import { Menu } from '@headlessui/react';
-import { IconChevronDown, IconLogout, IconUser } from '@tabler/icons-react';
+import {
+  IconChevronDown,
+  IconHelp,
+  IconLogout,
+  IconUser,
+} from '@tabler/icons-react';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { twMerge } from 'tailwind-merge';
+import Button from '../input/Button';
+import Tooltip from '../feedback/Tooltip';
 
 const NavigationBar = () => {
   const { data } = useSession();
+  const router = useRouter();
+
+  const onHelp = () => {
+    router.push('/about');
+  };
+
   return (
     <header className='flex items-center justify-between border-b-2 border-zinc-400 print:hidden max-md:hidden'>
       <nav className='-mb-0.5 flex items-center self-end'>
@@ -24,36 +37,48 @@ const NavigationBar = () => {
         </NavigationLink>
       </nav>
 
-      <Menu as='div' className='relative'>
-        <Menu.Button className='m-1 flex cursor-pointer items-center gap-1 rounded-md border-black/10 bg-white p-1 shadow hover:bg-zinc-100'>
-          <div className='h-5 w-5 rounded-full bg-zinc-800' />
-
-          <span className='text-sm font-medium'>
-            {data?.user.name?.split(' ')[0]}
-          </span>
-
-          <IconChevronDown className='h-4 w-4 transform transition-transform ui-open:rotate-180' />
-        </Menu.Button>
-
-        <Menu.Items className='absolute right-1 top-full mt-1 divide-y rounded-md border border-black/10 bg-white shadow'>
-          <Menu.Item
-            as={Link}
-            href='/profile'
-            className='flex w-full items-center gap-1 rounded-t-md px-2 py-1 transition-colors hover:bg-zinc-100'
+      <div className='flex items-center'>
+        <Tooltip content='Vis hjelp'>
+          <Button
+            variant='neutral'
+            className='bg-white px-0.5 py-0.5 text-zinc-800'
+            onClick={onHelp}
           >
-            <IconUser className='h-4 w-4' />
-            <span className='text-sm font-medium'>Profil</span>
-          </Menu.Item>
-          <Menu.Item
-            as='button'
-            onClick={() => signOut()}
-            className='flex w-full items-center gap-1 rounded-b-md px-2 py-1 transition-colors hover:bg-zinc-100 hover:text-red-600'
-          >
-            <IconLogout className='h-4 w-4' />
-            <span className='text-sm font-medium'>Logg ut</span>
-          </Menu.Item>
-        </Menu.Items>
-      </Menu>
+            <IconHelp />
+          </Button>
+        </Tooltip>
+
+        <Menu as='div' className='relative'>
+          <Menu.Button className='m-1 flex cursor-pointer items-center gap-1 rounded-md border-black/10 bg-white p-1 shadow hover:bg-zinc-100'>
+            <div className='h-5 w-5 rounded-full bg-zinc-800' />
+
+            <span className='text-sm font-medium'>
+              {data?.user.name?.split(' ')[0]}
+            </span>
+
+            <IconChevronDown className='h-4 w-4 transform transition-transform ui-open:rotate-180' />
+          </Menu.Button>
+
+          <Menu.Items className='absolute right-1 top-full mt-1 divide-y rounded-md border border-black/10 bg-white shadow'>
+            <Menu.Item
+              as={Link}
+              href='/profile'
+              className='flex w-full items-center gap-1 rounded-t-md px-2 py-1 transition-colors hover:bg-zinc-100'
+            >
+              <IconUser className='h-4 w-4' />
+              <span className='text-sm font-medium'>Profil</span>
+            </Menu.Item>
+            <Menu.Item
+              as='button'
+              onClick={() => signOut()}
+              className='flex w-full items-center gap-1 rounded-b-md px-2 py-1 transition-colors hover:bg-zinc-100 hover:text-red-600'
+            >
+              <IconLogout className='h-4 w-4' />
+              <span className='text-sm font-medium'>Logg ut</span>
+            </Menu.Item>
+          </Menu.Items>
+        </Menu>
+      </div>
     </header>
   );
 };

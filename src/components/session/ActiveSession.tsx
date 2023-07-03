@@ -5,6 +5,7 @@ import Button from '../input/Button';
 import TextField from '../input/TextField';
 import SessionMediaEntry from './SessionMediaEntry';
 import TextArea from '../input/TextArea';
+import dayjs from 'dayjs';
 
 const ActiveSession = () => {
   const { activeSession, clearSession, setSessionName, setSessionNotes } =
@@ -34,7 +35,7 @@ const ActiveSession = () => {
     await save({
       consultationName: activeSession.name,
       tenantId: activeTenantId,
-      startedAt: activeSession.startedAt,
+      startedAt: dayjs(activeSession.startedAt).toISOString(),
       viewedMedias: activeSession.viewedMedias,
       notes: activeSession.notes,
     });

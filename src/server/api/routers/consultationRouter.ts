@@ -8,6 +8,7 @@ import { TRPCError } from '@trpc/server';
 import { and, eq, isNotNull } from 'drizzle-orm';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
+import dayjs from 'dayjs';
 
 export const consultationRouter = createTRPCRouter({
   getConsultation: protectedProcedure
@@ -76,7 +77,7 @@ export const consultationRouter = createTRPCRouter({
           tenantId: input.tenantId,
           userAccountId: ctx.session.user.id,
           notes: input.notes,
-          startedAt: input.startedAt,
+          startedAt: dayjs(input.startedAt).toDate(),
           endedAt: new Date(),
         })
         .returning({

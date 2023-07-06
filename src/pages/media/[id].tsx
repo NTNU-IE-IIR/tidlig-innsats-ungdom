@@ -53,7 +53,7 @@ const MediaView: NextPage = () => {
           <div className='flex justify-end print:hidden'>
             <Button
               variant='neutral'
-              className='self-end bg-white pl-1.5 text-sm'
+              className='self-end bg-white pl-1.5 text-sm max-md:mr-2'
               onClick={openPrinterPrompt}
             >
               <IconPrinter className='h-5 w-5' />

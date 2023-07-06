@@ -33,7 +33,7 @@ spec:
           - name: S3_ENDPOINT
             value: {{ .Values.s3endpoint }}
           - name: S3_PORT
-            value: {{ .Values.s3port }}
+            value: {{ .Values.s3port | quote }}
           - name: S3_BUCKET_NAME
             value: {{ .Values.s3bucket }}
 
@@ -68,6 +68,6 @@ spec:
           - name: S3_ENDPOINT
             value: {{ .Values.s3endpoint }}
           - name: S3_PORT	
-            value: {{ .Values.s3port }}
+            value: {{ .Values.s3port | quote }}
           - name: S3_BUCKET_NAME
             value: {{ .Values.s3bucket }}

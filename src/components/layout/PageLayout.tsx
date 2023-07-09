@@ -3,7 +3,7 @@ import { useTenantStore } from '@/store/tenantStore';
 import { api } from '@/utils/api';
 import { Transition } from '@headlessui/react';
 import { useHotkeys } from '@mantine/hooks';
-import { IconChevronLeft, IconList, IconMenu2 } from '@tabler/icons-react';
+import { IconChevronLeft, IconMenu2 } from '@tabler/icons-react';
 import getConfig from 'next/config';
 import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';

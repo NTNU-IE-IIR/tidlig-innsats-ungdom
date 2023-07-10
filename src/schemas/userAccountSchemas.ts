@@ -21,3 +21,21 @@ export const registerUserAccountSchema = z
 export type RegisterUserAccountInput = z.infer<
   typeof registerUserAccountSchema
 >;
+
+export const updatePasswordSchema = z
+  .object({
+    currentPassword: z.string().nonempty('PASSWORD_CANNOT_BE_EMPTY'),
+    newPassword: z.string().min(10, 'PASSWORD_NEEDS_10_CHARACTERS'),
+    newPasswordConfirmation: z
+      .string()
+      .nonempty('PASSWORD_CONFIRMATION_REQUIRED'),
+  })
+  .refine(
+    (data) => {
+      return data.newPassword === data.newPasswordConfirmation;
+    },
+    {
+      message: 'PASSWORDS_DO_NOT_MATCH',
+      path: ['newPasswordConfirmation'],
+    }
+  );

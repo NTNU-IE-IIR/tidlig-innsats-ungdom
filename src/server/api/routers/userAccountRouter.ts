@@ -1,16 +1,23 @@
-import { registerUserAccountSchema } from '@/schemas/userAccountSchemas';
+import {
+  registerUserAccountSchema,
+  updatePasswordSchema,
+} from '@/schemas/userAccountSchemas';
 import { db } from '@/server/db';
 import {
   UserAccountRole,
   tenantUserAccount,
   userAccount,
 } from '@/server/db/schema';
-import { hasRegisteredUserAccounts } from '@/server/db/services/userAccount';
+import {
+  findByEmail,
+  hasRegisteredUserAccounts,
+} from '@/server/db/services/userAccount';
 import bcrypt from 'bcrypt';
-import { createTRPCRouter, publicProcedure } from '../trpc';
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
 import { isUserRegistrationEnabled } from '@/server/db/services/appSettings';
 import { TRPCError } from '@trpc/server';
 import { findNonExpiredInvitationByCode } from '@/server/db/services/invitation';
+import { eq } from 'drizzle-orm';
 
 export const userAccountRouter = createTRPCRouter({
   register: publicProcedure
@@ -91,5 +98,44 @@ export const userAccountRouter = createTRPCRouter({
       }
 
       return registeredUser;
+    }),
+
+  /**
+   * Updates the password for the currently logged in user.
+   */
+  updatePassword: protectedProcedure
+    .input(updatePasswordSchema)
+    .mutation(async ({ input, ctx }) => {
+      const user = await findByEmail(ctx.session.user.email);
+
+      if (!user) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'USER_NOT_FOUND',
+        });
+      }
+
+      const isPasswordValid = await bcrypt.compare(
+        input.currentPassword,
+        user.password
+      );
+
+      if (!isPasswordValid) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'INVALID_PASSWORD',
+        });
+      }
+
+      const hashedPassword = await bcrypt.hash(input.newPassword, 10);
+
+      await db
+        .update(userAccount)
+        .set({
+          password: hashedPassword,
+        })
+        .where(eq(userAccount.id, user.id));
+
+      return {}
     }),
 });

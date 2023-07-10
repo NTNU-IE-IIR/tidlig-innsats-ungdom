@@ -21,6 +21,9 @@ import {
 import {
   Icon,
   IconAbc,
+  IconAlignCenter,
+  IconAlignLeft,
+  IconAlignRight,
   IconArrowBackUp,
   IconArrowForwardUp,
   IconBlockquote,
@@ -49,6 +52,7 @@ import {
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
   COMMAND_PRIORITY_CRITICAL,
+  FORMAT_ELEMENT_COMMAND,
   FORMAT_TEXT_COMMAND,
   GridSelection,
   NodeSelection,
@@ -120,6 +124,7 @@ const ToolbarPlugin: React.FC<ToolbarPluginProps> = ({ onCanUndo }) => {
   const [isUnderline, setIsUnderline] = useState(false);
   const [isStrikethrough, setIsStrikethrough] = useState(false);
   const [isLink, setIsLink] = useState(false);
+  const [textAlign, setTextAlign] = useState('left');
 
   const [showInsertImageDialog, setShowInsertImageDialog] = useState(false);
 
@@ -163,6 +168,8 @@ const ToolbarPlugin: React.FC<ToolbarPluginProps> = ({ onCanUndo }) => {
     const elementDOM = editor.getElementByKey(elementKey);
 
     if (elementDOM === null) return;
+
+    setTextAlign(elementDOM.style.textAlign);
 
     if ($isListNode(element)) {
       const parentList = $getNearestNodeOfType(anchorNode, ListNode);
@@ -346,6 +353,26 @@ const ToolbarPlugin: React.FC<ToolbarPluginProps> = ({ onCanUndo }) => {
         active={isLink}
         onClick={insertLink}
         icon={IconLink}
+      />
+
+      <VerticalRule />
+
+      <ToolbarToggleButton
+        active={textAlign === 'left'}
+        onClick={() => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'left')}
+        icon={IconAlignLeft}
+      />
+
+      <ToolbarToggleButton
+        active={textAlign === 'center'}
+        onClick={() => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'center')}
+        icon={IconAlignCenter}
+      />
+
+      <ToolbarToggleButton
+        active={textAlign === 'right'}
+        onClick={() => editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'right')}
+        icon={IconAlignRight}
       />
 
       <VerticalRule />

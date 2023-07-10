@@ -1,8 +1,9 @@
 import Card from '@/components/container/Card';
+import Tooltip from '@/components/feedback/Tooltip';
 import PageLayout from '@/components/layout/PageLayout';
 import Breadcrumbs from '@/components/navigation/Breadcrumbs';
 import { useBrowseStore } from '@/store/browseStore';
-import { ContentDiscriminator } from '@/types/content';
+import { ContentDiscriminator, FavoriteType } from '@/types/content';
 import { api } from '@/utils/api';
 import { useDebouncedValue, useHotkeys } from '@mantine/hooks';
 import {
@@ -12,6 +13,7 @@ import {
   IconSearch,
   IconStar,
   IconStarFilled,
+  IconStarHalfFilled,
 } from '@tabler/icons-react';
 import { type NextPage } from 'next';
 import Head from 'next/head';
@@ -57,12 +59,12 @@ const Home: NextPage = () => {
   const toggleContentFavorization = async (
     id: number,
     discriminator: ContentDiscriminator,
-    favorited: boolean
+    favorited: FavoriteType
   ) => {
     await toggleFavorization({
       id,
       discriminator,
-      favorited,
+      favorited: favorited === 'DIRECT',
     });
   };
 
@@ -211,7 +213,7 @@ const Home: NextPage = () => {
 };
 
 interface FavoriteContentButtonProps {
-  favorited: boolean;
+  favorited: FavoriteType;
   onToggle: () => void;
   className?: string;
 }
@@ -226,21 +228,40 @@ const FavoriteContentButton: React.FC<FavoriteContentButtonProps> = ({
     onToggle();
   };
 
+  let tooltipContent = (
+    <p className='text-center'>
+      {favorited === 'DIRECT' && 'Fjern favorisering'}
+      {favorited === 'INDIRECT' && (
+        <>
+          Merk som favoritt
+          <br />
+          <span className='text-xs'>(inneholder favorisert underinnhold)</span>
+        </>
+      )}
+      {favorited === 'NONE' && 'Merk som favoritt'}
+    </p>
+  );
+
   return (
-    <button
-      onClick={onFavoriteClick}
-      className={twMerge(
-        'rounded-full border border-transparent p-0.5 hover:border-zinc-300 hover:bg-zinc-200 focus:border-zinc-300 focus:bg-zinc-200 focus:outline-none',
-        className
-      )}
-    >
-      {favorited ? (
-        <IconStarFilled className='h-5 w-5 text-yellow-600' />
-      ) : (
-        <IconStar className='h-5 w-5 text-zinc-800' />
-      )}
-      <span className='sr-only'>Merk som favoritt</span>
-    </button>
+    <Tooltip content={tooltipContent}>
+      <button
+        type='button'
+        onClick={onFavoriteClick}
+        className={twMerge(
+          'rounded-full border border-transparent p-0.5 hover:border-zinc-300 hover:bg-zinc-200 focus:border-zinc-300 focus:bg-zinc-200 focus:outline-none',
+          className
+        )}
+      >
+        {favorited === 'DIRECT' && (
+          <IconStarFilled className='h-5 w-5 text-yellow-600' />
+        )}
+        {favorited === 'INDIRECT' && (
+          <IconStarHalfFilled className='h-5 w-5 text-yellow-600' />
+        )}
+        {favorited === 'NONE' && <IconStar className='h-5 w-5 text-zinc-800' />}
+        <span className='sr-only'>Merk som favoritt</span>
+      </button>
+    </Tooltip>
   );
 };
 

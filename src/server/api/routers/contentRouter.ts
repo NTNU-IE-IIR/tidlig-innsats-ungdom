@@ -29,7 +29,7 @@ export const contentRouter = createTRPCRouter({
         favoritesOnly: z.boolean(),
       })
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const parentId = input.parentId ?? null;
       const name = input.name ?? '';
 
@@ -54,7 +54,10 @@ export const contentRouter = createTRPCRouter({
         .from(theme)
         .leftJoin(
           userAccountFavoriteTheme,
-          eq(theme.id, userAccountFavoriteTheme.themeId)
+          and(
+            eq(theme.id, userAccountFavoriteTheme.themeId),
+            eq(userAccountFavoriteTheme.userAccountId, ctx.session.user.id)
+          )
         )
         .where(and(...conditions))
         .orderBy(desc(isNotNull(userAccountFavoriteTheme.createdAt)));
@@ -80,7 +83,10 @@ export const contentRouter = createTRPCRouter({
           .innerJoin(media, eq(themeMedia.mediaId, media.id))
           .leftJoin(
             userAccountFavoriteMedia,
-            eq(userAccountFavoriteMedia.mediaId, media.id)
+            and(
+              eq(userAccountFavoriteMedia.mediaId, media.id),
+              eq(userAccountFavoriteMedia.userAccountId, ctx.session.user.id)
+            )
           )
           .where(and(...mediaConditions))
           .orderBy(desc(isNotNull(userAccountFavoriteMedia.createdAt)));

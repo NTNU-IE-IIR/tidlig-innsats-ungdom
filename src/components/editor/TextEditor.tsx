@@ -90,8 +90,8 @@ const TextEditor: React.FC<TextEditorProps> = ({
           <RichTextPlugin
             ErrorBoundary={LexicalErrorBoundary}
             contentEditable={
-              <div>
-                <div ref={(r) => setFloatingAnchorElem(r)}>
+              <div className='h-full w-full'>
+                <div className='h-full w-full' ref={(r) => setFloatingAnchorElem(r)}>
                   <ContentEditable className='h-full w-full border-0 focus:outline-none' />
                 </div>
               </div>

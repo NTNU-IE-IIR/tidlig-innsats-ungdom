@@ -15,7 +15,6 @@ import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { SerializedEditorState, SerializedLexicalNode } from 'lexical';
 import { useMemo } from 'react';
-import Placeholder from './Placeholder';
 import { ImageNode } from './nodes/ImageNode';
 import { theme } from './theme';
 
@@ -25,7 +24,7 @@ interface TextViewerProps {
 }
 
 /**
- * A viewer for the text editor, this variant is not editable and 
+ * A viewer for the text editor, this variant is not editable and
  * is used for displaying the contents of rich text media.
  */
 const TextViewer: React.FC<TextViewerProps> = ({ name, content }) => {
@@ -33,7 +32,9 @@ const TextViewer: React.FC<TextViewerProps> = ({ name, content }) => {
     () => ({
       namespace: name,
       editorState: (editor) => {
-        editor.setEditorState(editor.parseEditorState(content));
+        if (content) {
+          editor.setEditorState(editor.parseEditorState(content));
+        }
       },
       editable: false,
       onError: (err) => console.error(err),
@@ -63,7 +64,7 @@ const TextViewer: React.FC<TextViewerProps> = ({ name, content }) => {
         contentEditable={
           <ContentEditable className='border-0 focus:outline-none' />
         }
-        placeholder={<Placeholder />}
+        placeholder={<></>}
       />
       <ListPlugin />
       <LinkPlugin />

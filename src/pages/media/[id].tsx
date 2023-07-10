@@ -102,7 +102,9 @@ const MediaView: NextPage = () => {
         )}
 
         {media && media.type === MediaType.RICH_TEXT && (
-          <TextViewer name='media' content={media.content as any} />
+          <div className='relative'>
+            <TextViewer name='media' content={media.content as any} />
+          </div>
         )}
       </PageLayout>
     </>

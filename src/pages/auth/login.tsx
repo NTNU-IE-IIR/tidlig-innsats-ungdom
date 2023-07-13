@@ -7,6 +7,7 @@ import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { getCsrfToken } from 'next-auth/react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
@@ -29,6 +30,10 @@ const Login = ({
       onSuccess: () => setHasLoaded(true),
     }
   );
+
+  const {
+    query: { error },
+  } = useRouter();
 
   return (
     <>
@@ -59,7 +64,8 @@ const Login = ({
             />
 
             <Link
-              href='/auth/forgot-password'
+              // href='/auth/forgot-password'
+              href='/auth/contact'
               className='self-end text-xs font-semibold text-emerald-700'
             >
               Glemt passord?
@@ -78,6 +84,16 @@ const Login = ({
               administrator.
             </Alert>
           </Link>
+        )}
+
+        {error && error === 'CredentialsSignin' && (
+          <Alert intent='error' className='mt-2'>
+            Feil e-post eller passord. Vennligst prøv igjen. Dersom problemet
+            vedvarer,{' '}
+            <Link href='/auth/contact' className='font-medium hover:underline'>
+              ta kontakt med en administrator.
+            </Link>
+          </Alert>
         )}
       </main>
     </>

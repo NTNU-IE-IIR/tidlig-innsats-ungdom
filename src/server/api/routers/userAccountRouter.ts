@@ -20,6 +20,18 @@ import { findNonExpiredInvitationByCode } from '@/server/db/services/invitation'
 import { eq } from 'drizzle-orm';
 
 export const userAccountRouter = createTRPCRouter({
+  listContacts: publicProcedure.query(async () => {
+    const results = await db
+      .select({
+        fullName: userAccount.fullName,
+        email: userAccount.email,
+      })
+      .from(userAccount)
+      .where(eq(userAccount.role, UserAccountRole.GLOBAL_ADMIN));
+
+    return results;
+  }),
+
   register: publicProcedure
     .input(registerUserAccountSchema)
     .mutation(async ({ input }) => {
@@ -136,6 +148,6 @@ export const userAccountRouter = createTRPCRouter({
         })
         .where(eq(userAccount.id, user.id));
 
-      return {}
+      return {};
     }),
 });

@@ -154,7 +154,11 @@ const Home: NextPage = () => {
                 onClick={() => appendContent(theme, router)}
                 className='flex h-14 cursor-pointer items-center gap-2 px-2 transition-all hover:scale-[1.01]'
               >
-                <IconFolderFilled className='h-8 w-8 flex-shrink-0 text-zinc-700' />
+                {theme.iconUrl ? (
+                  <img src={theme.iconUrl} className='h-8 w-8 flex-shrink-0' />
+                ) : (
+                  <IconFolderFilled className='h-8 w-8 flex-shrink-0 text-zinc-700' />
+                )}
 
                 <div className='flex h-full flex-1 flex-col justify-center overflow-hidden'>
                   <h3 className='truncate font-semibold'>{theme.name}</h3>

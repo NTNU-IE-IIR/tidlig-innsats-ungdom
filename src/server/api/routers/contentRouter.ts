@@ -48,6 +48,7 @@ export const contentRouter = createTRPCRouter({
           id: theme.id,
           name: theme.name,
           shortDescription: theme.shortDescription,
+          iconUrl: theme.iconUrl,
           discriminator: sql<ContentDiscriminator>`'THEME'`,
           favorited: sql<boolean>`${userAccountFavoriteTheme.createdAt} IS NOT NULL`,
         })
@@ -76,6 +77,7 @@ export const contentRouter = createTRPCRouter({
             id: media.id,
             name: media.name,
             shortDescription: media.shortDescription,
+            iconUrl: sql<string | null>`NULL`,
             discriminator: sql<ContentDiscriminator>`'MEDIA'`,
             favorited: sql<boolean>`${userAccountFavoriteMedia.createdAt} IS NOT NULL`,
           })

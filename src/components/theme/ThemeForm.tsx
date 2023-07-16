@@ -3,12 +3,19 @@ import { ThemeNode } from '@/types/themes';
 import type { RouterOutputs } from '@/utils/api';
 import { api } from '@/utils/api';
 import { useForm, zodResolver } from '@mantine/form';
-import { IconCheck } from '@tabler/icons-react';
+import {
+  IconBaguette,
+  IconCheck,
+  IconHeart,
+  IconHeartFilled,
+} from '@tabler/icons-react';
 import dayjs from 'dayjs';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import Button from '../input/Button';
 import TextField from '../input/TextField';
+import UploadThemeIcon from './UploadThemeIcon';
+import { useTenantStore } from '@/store/tenantStore';
 
 type FormResult =
   | RouterOutputs['theme']['addTheme']
@@ -25,6 +32,7 @@ const ThemeForm: React.FC<ThemeFormProps> = ({
   onSuccess: emitSuccess,
   onCancel,
 }) => {
+  const { activeTenantId } = useTenantStore();
   const shouldUpdate = themeId !== undefined;
   const { data: existingTheme } = api.theme.getThemeById.useQuery(themeId!, {
     enabled: shouldUpdate,
@@ -51,18 +59,37 @@ const ThemeForm: React.FC<ThemeFormProps> = ({
   });
 
   // TODO: Find a way to properly type this
-  const handleSubmit = (values: any) => {
+  const handleSubmit = async (values: any) => {
+    let iconUrl: string | null = null;
+
+    if (fileToUpload) {
+      const formData = new FormData();
+
+      formData.append('file', fileToUpload);
+
+      const response = await fetch(`/api/static/${activeTenantId}/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const { fileId } = await response.json();
+
+      iconUrl = `/api/static/${activeTenantId}/${fileId}`;
+    }
+
     if (shouldUpdate) {
       update({
         id: values.id,
         name: values.name,
         shortDescription: values.shortDescription,
+        iconUrl: iconUrl ?? existingTheme?.iconUrl ?? null,
         parentId: values.parentId,
       });
     } else {
       create({
         name: values.name,
         shortDescription: values.shortDescription,
+        iconUrl,
         parentId: values.parentId,
       });
     }
@@ -72,6 +99,7 @@ const ThemeForm: React.FC<ThemeFormProps> = ({
     id: number | undefined;
     name: string;
     shortDescription: string;
+    iconUrl: string | null;
     parentId: number | null;
   }>({
     validate: zodResolver(shouldUpdate ? updateThemeSchema : createThemeSchema),
@@ -79,6 +107,7 @@ const ThemeForm: React.FC<ThemeFormProps> = ({
       id: undefined,
       name: '',
       shortDescription: '',
+      iconUrl: null,
       parentId: null,
     },
   });
@@ -103,6 +132,8 @@ const ThemeForm: React.FC<ThemeFormProps> = ({
     form.setFieldValue('parentId', theme.id);
   };
 
+  const [fileToUpload, setFileToUpload] = useState<File>();
+
   return (
     <form
       onSubmit={form.onSubmit((values) => handleSubmit(values))}
@@ -123,6 +154,14 @@ const ThemeForm: React.FC<ThemeFormProps> = ({
             Opprettet for {dayjs(existingTheme?.createdAt).fromNow()}
           </p>
         )}
+
+        <h2 className='font-semibold'>Ikon</h2>
+
+        <UploadThemeIcon
+          existingImage={existingTheme?.iconUrl ?? undefined}
+          fileToUpload={fileToUpload}
+          onFileChanged={setFileToUpload}
+        />
 
         <div className='mt-auto flex items-center gap-1 self-end text-sm'>
           <Button type='submit'>Lagre</Button>

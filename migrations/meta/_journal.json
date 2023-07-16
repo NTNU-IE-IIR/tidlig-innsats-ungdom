@@ -68,6 +68,13 @@
       "when": 1688221490930,
       "tag": "0009_sticky_vision",
       "breakpoints": false
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1689529194736,
+      "tag": "0010_dear_chimera",
+      "breakpoints": false
     }
   ]
 }

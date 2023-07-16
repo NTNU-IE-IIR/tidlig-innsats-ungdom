@@ -5,6 +5,17 @@ import { s3 } from '@/server/static';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth';
 
+const FILE_EXTENSION_MIME_TYPES: {
+  [key: string]: string;
+} = {
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.svg': 'image/svg+xml',
+  '.gif': 'image/gif',
+  '.webp': 'image/webp',
+};
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { tenant, object } = req.query;
   const session = await getServerSession(req, res, authOptions);
@@ -23,6 +34,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   s3.getObject(env.S3_BUCKET_NAME, key, (err, data) => {
     if (err) return res.status(404).send('Could not find object');
+
+    const rawExtension = object.split('.').pop();
+    const extension = `.${rawExtension}`;
+
+    if (rawExtension && extension in FILE_EXTENSION_MIME_TYPES) {
+      res.setHeader('Content-Type', FILE_EXTENSION_MIME_TYPES[extension] ?? '');
+    }
 
     data.pipe(res);
     data.on('end', () => res.end());

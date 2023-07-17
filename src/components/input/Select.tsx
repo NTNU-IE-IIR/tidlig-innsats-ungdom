@@ -38,7 +38,7 @@ const Select = <T,>({
               <Listbox.Option
                 key={itemIdx}
                 value={item}
-                className='cursor-pointer hover:bg-zinc-100 ui-selected:bg-zinc-200 ui-selected:font-medium ui-selected:text-emerald-600'
+                className='cursor-pointer hover:bg-zinc-100 ui-selected:bg-emerald-50 ui-selected:font-medium ui-selected:text-emerald-600'
               >
                 {renderer(item)}
               </Listbox.Option>

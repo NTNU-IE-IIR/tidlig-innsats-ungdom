@@ -10,5 +10,9 @@
     "OWNER": "Administrator",
     "SUPER_USER": "Superbruker",
     "USER": "Bruker"
+  },
+  "USER_ROLE": {
+    "GLOBAL_ADMIN": "Global administrator",
+    "USER": "Bruker"
   }
 }

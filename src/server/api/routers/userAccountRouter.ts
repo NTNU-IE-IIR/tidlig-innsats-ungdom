@@ -8,16 +8,21 @@ import {
   tenantUserAccount,
   userAccount,
 } from '@/server/db/schema';
+import { isUserRegistrationEnabled } from '@/server/db/services/appSettings';
+import { findNonExpiredInvitationByCode } from '@/server/db/services/invitation';
 import {
   findByEmail,
   hasRegisteredUserAccounts,
 } from '@/server/db/services/userAccount';
-import bcrypt from 'bcrypt';
-import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
-import { isUserRegistrationEnabled } from '@/server/db/services/appSettings';
 import { TRPCError } from '@trpc/server';
-import { findNonExpiredInvitationByCode } from '@/server/db/services/invitation';
-import { eq } from 'drizzle-orm';
+import bcrypt from 'bcrypt';
+import { eq, sql } from 'drizzle-orm';
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+  roleProtectedProcedure,
+} from '../trpc';
 
 export const userAccountRouter = createTRPCRouter({
   listContacts: publicProcedure.query(async () => {
@@ -31,6 +36,28 @@ export const userAccountRouter = createTRPCRouter({
 
     return results;
   }),
+
+  listUsers: roleProtectedProcedure(UserAccountRole.GLOBAL_ADMIN).query(
+    async () => {
+      const results = await db
+        .select({
+          id: userAccount.id,
+          fullName: userAccount.fullName,
+          email: userAccount.email,
+          role: userAccount.role,
+          createdAt: userAccount.createdAt,
+          tenants: sql<number>`COUNT(DISTINCT ${tenantUserAccount.tenantId})`,
+        })
+        .from(userAccount)
+        .leftJoin(
+          tenantUserAccount,
+          eq(tenantUserAccount.userAccountId, userAccount.id)
+        )
+        .groupBy(userAccount.id);
+
+      return results;
+    }
+  ),
 
   register: publicProcedure
     .input(registerUserAccountSchema)

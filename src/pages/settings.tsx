@@ -5,6 +5,7 @@ import PageLayout from '@/components/layout/PageLayout';
 import Dialog from '@/components/overlay/Dialog';
 import TenantInvites from '@/components/tenant/TenantInvites';
 import TenantMembers from '@/components/tenant/TenantMembers';
+import UserAccountList from '@/components/user/UserAccountsList';
 import { Tab as HeadlessTab } from '@headlessui/react';
 import { NextPage } from 'next';
 import Head from 'next/head';
@@ -36,9 +37,7 @@ const Settings: NextPage = () => {
           <HeadlessTab.Panels as={Fragment}>
             <HeadlessTab.Panel as={TenantMembers} />
             <HeadlessTab.Panel as={TenantMembers} deleted />
-            <HeadlessTab.Panel as={Fragment}>
-              <p>Alle brukere</p>
-            </HeadlessTab.Panel>
+            <HeadlessTab.Panel as={UserAccountList} />
             <HeadlessTab.Panel as={TenantInvites} />
             <HeadlessTab.Panel as={TenantInvites} expired />
           </HeadlessTab.Panels>
@@ -47,7 +46,7 @@ const Settings: NextPage = () => {
         <HeadlessTab.Group
           as={Card}
           pad={false}
-          className='flex flex-col max-md:hidden col-span-2'
+          className='col-span-2 flex flex-col max-md:hidden'
         >
           <HeadlessTab.List className='flex rounded-t-md border-b border-zinc-300 bg-zinc-50 px-1'>
             <Tab>Medlemmer</Tab>
@@ -58,9 +57,7 @@ const Settings: NextPage = () => {
           <HeadlessTab.Panels as={Fragment}>
             <HeadlessTab.Panel as={TenantMembers} />
             <HeadlessTab.Panel as={TenantMembers} deleted />
-            <HeadlessTab.Panel as={Fragment}>
-              <p>Alle brukere</p>
-            </HeadlessTab.Panel>
+            <HeadlessTab.Panel as={UserAccountList} />
           </HeadlessTab.Panels>
         </HeadlessTab.Group>
 

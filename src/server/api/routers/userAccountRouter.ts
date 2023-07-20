@@ -1,6 +1,6 @@
 import {
   registerUserAccountSchema,
-  updatePasswordSchema,
+  updateUserAccountSchema,
 } from '@/schemas/userAccountSchemas';
 import { db } from '@/server/db';
 import {
@@ -11,7 +11,7 @@ import {
 import { isUserRegistrationEnabled } from '@/server/db/services/appSettings';
 import { findNonExpiredInvitationByCode } from '@/server/db/services/invitation';
 import {
-  findByEmail,
+  findById,
   hasRegisteredUserAccounts,
 } from '@/server/db/services/userAccount';
 import { TRPCError } from '@trpc/server';
@@ -140,12 +140,13 @@ export const userAccountRouter = createTRPCRouter({
     }),
 
   /**
-   * Updates the password for the currently logged in user.
+   * Updates a user account.
+   * Users are allowed to update their own account, but administrators are allowed to update other users as well.
    */
-  updatePassword: protectedProcedure
-    .input(updatePasswordSchema)
+  updateUserAccount: protectedProcedure
+    .input(updateUserAccountSchema)
     .mutation(async ({ input, ctx }) => {
-      const user = await findByEmail(ctx.session.user.email);
+      const user = await findById(input.id ?? ctx.session.user.id);
 
       if (!user) {
         throw new TRPCError({
@@ -154,24 +155,43 @@ export const userAccountRouter = createTRPCRouter({
         });
       }
 
-      const isPasswordValid = await bcrypt.compare(
-        input.currentPassword,
-        user.password
-      );
-
-      if (!isPasswordValid) {
+      if (
+        user?.id !== ctx.session.user.id &&
+        ctx.session.user.role !== UserAccountRole.GLOBAL_ADMIN
+      ) {
         throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'INVALID_PASSWORD',
+          code: 'FORBIDDEN',
+          message: 'You do not have permission to update this user account',
         });
       }
 
-      const hashedPassword = await bcrypt.hash(input.newPassword, 10);
+      // if the user is updating themselves - we enforce the presence of a current password
+      if (user?.id === ctx.session.user.id) {
+        const isPasswordValid = await bcrypt.compare(
+          input.currentPassword ?? '',
+          user.password
+        );
+
+        if (!isPasswordValid) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'INVALID_PASSWORD',
+          });
+        }
+      }
+
+      let password: string | undefined;
+
+      if (input.newPassword !== undefined) {
+        password = await bcrypt.hash(input.newPassword, 10);
+      }
 
       await db
         .update(userAccount)
         .set({
-          password: hashedPassword,
+          fullName: input.fullName,
+          email: input.email,
+          password,
         })
         .where(eq(userAccount.id, user.id));
 

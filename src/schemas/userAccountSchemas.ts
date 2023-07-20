@@ -22,6 +22,22 @@ export type RegisterUserAccountInput = z.infer<
   typeof registerUserAccountSchema
 >;
 
+export const updateUserAccountSchema = z
+  .object({
+    id: z.string().uuid('INVALID_UUID').optional(),
+    fullName: z.string().nonempty('FULL_NAME_REQUIRED'),
+    email: z.string().email('INVALID_EMAIL_ADDRESS'),
+    currentPassword: z.string().optional(),
+    newPassword: z.string().min(10, 'PASSWORD_NEEDS_10_CHARACTERS').optional(),
+    newPasswordConfirmation: z
+      .string()
+      .nonempty('PASSWORD_CONFIRMATION_REQUIRED')
+      .optional(),
+  })
+  .refine((data) => {
+    return data.newPassword === data.newPasswordConfirmation;
+  });
+
 export const updatePasswordSchema = z
   .object({
     currentPassword: z.string().nonempty('PASSWORD_CANNOT_BE_EMPTY'),

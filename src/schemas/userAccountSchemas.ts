@@ -24,7 +24,7 @@ export type RegisterUserAccountInput = z.infer<
 
 export const updateUserAccountSchema = z
   .object({
-    id: z.string().uuid('INVALID_UUID').optional(),
+    id: z.string().uuid('INVALID_UUID'),
     fullName: z.string().nonempty('FULL_NAME_REQUIRED'),
     email: z.string().email('INVALID_EMAIL_ADDRESS'),
     currentPassword: z.string().optional(),
@@ -37,6 +37,8 @@ export const updateUserAccountSchema = z
   .refine((data) => {
     return data.newPassword === data.newPasswordConfirmation;
   });
+
+export type UpdateUserAccountInput = z.infer<typeof updateUserAccountSchema>;
 
 export const updatePasswordSchema = z
   .object({

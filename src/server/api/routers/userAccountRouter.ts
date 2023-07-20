@@ -161,7 +161,7 @@ export const userAccountRouter = createTRPCRouter({
       ) {
         throw new TRPCError({
           code: 'FORBIDDEN',
-          message: 'You do not have permission to update this user account',
+          message: 'INSUFFICIENT_PERMISSIONS',
         });
       }
 

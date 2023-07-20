@@ -4,7 +4,9 @@
     "INVALID_EMAIL_ADDRESS": "Ugyldig e-postadresse",
     "PASSWORD_NEEDS_10_CHARACTERS": "Passordet må være minst 10 tegn",
     "PASSWORD_CONFIRMATION_REQUIRED": "Passordbekreftelse er påkrevd",
-    "PASSWORDS_DO_NOT_MATCH": "Passordene er ikke like"
+    "PASSWORDS_DO_NOT_MATCH": "Passordene er ikke like",
+    "INVALID_PASSWORD": "Feil passord, dobbelsjekk at du har skrevet riktig og prøv på nytt.",
+    "INSUFFICIENT_PERMISSIONS": "Du har ikke tilstrekkelige rettigheter til å utføre denne handlingen"
   },
   "TENANT_ROLE": {
     "OWNER": "Administrator",

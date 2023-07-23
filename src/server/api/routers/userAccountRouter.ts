@@ -168,7 +168,7 @@ export const userAccountRouter = createTRPCRouter({
       // if the user is updating themselves - we enforce the presence of a current password
       if (user?.id === ctx.session.user.id) {
         const isPasswordValid = await bcrypt.compare(
-          input.currentPassword ?? '',
+          input.currentPassword,
           user.password
         );
 
@@ -186,15 +186,19 @@ export const userAccountRouter = createTRPCRouter({
         password = await bcrypt.hash(input.newPassword, 10);
       }
 
-      await db
+      const result = await db
         .update(userAccount)
         .set({
           fullName: input.fullName,
           email: input.email,
           password,
         })
-        .where(eq(userAccount.id, user.id));
+        .where(eq(userAccount.id, user.id))
+        .returning({
+          fullName: userAccount.fullName,
+          email: userAccount.email,
+        });
 
-      return {};
+      return result[0]!;
     }),
 });

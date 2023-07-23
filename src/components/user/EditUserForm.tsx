@@ -18,6 +18,7 @@ export interface EditUserFormProps {
   email: string;
   isCurrentUser?: boolean;
   onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
 const EditUserForm: React.FC<EditUserFormProps> = ({
@@ -26,18 +27,24 @@ const EditUserForm: React.FC<EditUserFormProps> = ({
   email,
   isCurrentUser,
   onSuccess,
+  onCancel,
 }) => {
-  const [changePassword, setChangePassword] = useState(false);
+  const [showInfo, setShowInfo] = useState(true);
   const { t } = useTranslation();
 
-  const { getInputProps, onSubmit, errors } = useForm<UpdateUserAccountInput>({
-    validate: zodResolver(updateUserAccountSchema),
-    initialValues: {
-      id,
-      fullName,
-      email,
-    },
-  });
+  const { values, setFieldValue, getInputProps, onSubmit, errors } =
+    useForm<UpdateUserAccountInput>({
+      validate: zodResolver(updateUserAccountSchema),
+      initialValues: {
+        id,
+        fullName,
+        email,
+        changePassword: false,
+        currentPassword: '',
+        newPassword: '',
+        newPasswordConfirmation: '',
+      },
+    });
 
   const utils = api.useContext();
 
@@ -91,15 +98,15 @@ const EditUserForm: React.FC<EditUserFormProps> = ({
 
       <div className='flex items-center gap-2'>
         <Switch
-          checked={changePassword}
-          onChange={setChangePassword}
+          checked={values.changePassword}
+          onChange={(v) => setFieldValue('changePassword', v)}
           label='Endre passord'
         />
 
         <span className='text-sm'>Endre passord</span>
       </div>
 
-      {changePassword && (
+      {values.changePassword && (
         <>
           <TextField
             type='password'
@@ -118,21 +125,36 @@ const EditUserForm: React.FC<EditUserFormProps> = ({
           />
 
           <ErrorLabel translatePrefix={TRANSLATE_PREFIX} translate>
-            {errors.passwordConfirmation}
+            {errors.newPasswordConfirmation}
           </ErrorLabel>
         </>
       )}
 
-      {isCurrentUser && (
-        <Alert intent='info' className='text-sm'>
+      {isCurrentUser && showInfo && (
+        <Alert
+          intent='info'
+          className='text-sm'
+          onCancel={() => setShowInfo(false)}
+        >
           Når du lagrer endringene vil du bli logget ut av din brukerkonto, og
           du må logge inn på nytt.
         </Alert>
       )}
 
-      <Button type='submit' className='text-sm' isLoading={isLoading}>
-        Lagre endringer
-      </Button>
+      <div className='flex justify-end gap-2'>
+        <Button
+          type='reset'
+          onClick={onCancel}
+          className='text-sm'
+          variant='neutral'
+        >
+          Avbryt
+        </Button>
+
+        <Button type='submit' className='text-sm' isLoading={isLoading}>
+          Lagre endringer
+        </Button>
+      </div>
 
       {isError && (
         <Alert intent='error'>

@@ -1,18 +1,25 @@
-import { forwardRef } from 'react';
-import Table from '../table/Table';
-import { api } from '@/utils/api';
-import { twMerge } from 'tailwind-merge';
+import { RouterOutputs, api } from '@/utils/api';
 import dayjs from 'dayjs';
-import Button from '../input/Button';
+import { forwardRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { twMerge } from 'tailwind-merge';
 import Tooltip from '../feedback/Tooltip';
+import Button from '../input/Button';
+import Dialog from '../overlay/Dialog';
+import Table from '../table/Table';
+import EditUserForm from './EditUserForm';
+import { useSession } from 'next-auth/react';
 
 interface UserAccountListProps {}
 
+type UserAccountType = RouterOutputs['userAccount']['listUsers'][number];
+
 const UserAccountList = forwardRef<HTMLDivElement, UserAccountListProps>(
   (_, ref) => {
+    const { data: session } = useSession();
     const { data: users } = api.userAccount.listUsers.useQuery();
     const [t] = useTranslation();
+    const [editingUser, setEditingUser] = useState<UserAccountType>();
 
     return (
       <div ref={ref} className='flex flex-1 flex-col gap-2 p-2'>
@@ -64,11 +71,36 @@ const UserAccountList = forwardRef<HTMLDivElement, UserAccountListProps>(
                 </Tooltip>
               </Table.Cell>
               <Table.Cell className='flex items-center justify-end'>
-                <Button variant='neutral'>Endre passord</Button>
+                <Button
+                  variant='neutral'
+                  onClick={() => setEditingUser(user)}
+                  disabled={user.id === session?.user.id}
+                >
+                  Endre
+                </Button>
               </Table.Cell>
             </Table.Row>
           ))}
         </Table>
+
+        <Dialog
+          open={editingUser !== undefined}
+          onClose={() => setEditingUser(undefined)}
+          className='p-2'
+        >
+          {({ close }) => (
+            <>
+              <h1 className='mb-1 text-lg font-bold'>Endre bruker</h1>
+              <EditUserForm
+                id={editingUser?.id!}
+                email={editingUser?.email!}
+                fullName={editingUser?.fullName!}
+                onSuccess={close}
+                onCancel={close}
+              />
+            </>
+          )}
+        </Dialog>
       </div>
     );
   }

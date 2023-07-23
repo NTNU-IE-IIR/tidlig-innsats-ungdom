@@ -21,9 +21,15 @@ const alert = cva(['border rounded-md px-2 py-1 flex gap-2 items-center'], {
 export interface AlertProps extends VariantProps<typeof alert> {
   children?: React.ReactNode | string;
   className?: string;
+  onCancel?: () => void;
 }
 
-const Alert: React.FC<AlertProps> = ({ intent, children, className }) => {
+const Alert: React.FC<AlertProps> = ({
+  intent,
+  children,
+  className,
+  onCancel,
+}) => {
   return (
     <div className={twMerge(alert({ intent }), className)}>
       {intent === 'info' && (
@@ -35,7 +41,13 @@ const Alert: React.FC<AlertProps> = ({ intent, children, className }) => {
       )}
       {intent === 'error' && <IconX className='h-6 w-6 flex-shrink-0' />}
 
-      <span className='text-sm'>{children}</span>
+      <span className='flex-1 text-sm'>{children}</span>
+
+      {onCancel && (
+        <button className='flex-shrink-0' onClick={onCancel}>
+          <IconX />
+        </button>
+      )}
     </div>
   );
 };

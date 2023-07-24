@@ -16,6 +16,7 @@ import Table from '../table/Table';
 import RegisterMemberForm from './RegisterMemberForm';
 import RestoreTenantMembershipDialog from './RestoreTenantMembershipDialog';
 import RevokeTenantMembershipDialog from './RevokeTenantMembershipDialog';
+import Tooltip from '../feedback/Tooltip';
 
 interface TenantMembersProps {
   deleted?: boolean;
@@ -160,36 +161,48 @@ const TenantMembers = forwardRef<HTMLDivElement, TenantMembersProps>(
               </Table.Cell>
               <Table.Cell className='place-self-end'>
                 {deleted === undefined ? (
-                  <Button
-                    variant='destructive'
-                    className='text-sm'
-                    disabled={
-                      member.id === session?.user.id ||
-                      activeTenantRole !== TenantRole.OWNER
-                    }
-                    onClick={() =>
-                      promptRevoke({
-                        id: member.id,
-                        fullName: member.fullName,
-                      })
+                  <Tooltip
+                    content={
+                      <p className='text-center'>
+                        Opphever brukerens tilgang.
+                        <br />
+                        Brukeren vil ikke bli slettet.
+                      </p>
                     }
                   >
-                    Opphev
-                  </Button>
+                    <Button
+                      variant='destructive'
+                      className='text-sm'
+                      disabled={
+                        member.id === session?.user.id ||
+                        activeTenantRole !== TenantRole.OWNER
+                      }
+                      onClick={() =>
+                        promptRevoke({
+                          id: member.id,
+                          fullName: member.fullName,
+                        })
+                      }
+                    >
+                      Opphev
+                    </Button>
+                  </Tooltip>
                 ) : (
-                  <Button
-                    variant='neutral'
-                    className='text-sm'
-                    disabled={activeTenantRole !== TenantRole.OWNER}
-                    onClick={() =>
-                      promptRestore({
-                        id: member.id,
-                        fullName: member.fullName,
-                      })
-                    }
-                  >
-                    Gjenopprett
-                  </Button>
+                  <Tooltip content={`Gjenoppretter brukerens tilgang`}>
+                    <Button
+                      variant='neutral'
+                      className='text-sm'
+                      disabled={activeTenantRole !== TenantRole.OWNER}
+                      onClick={() =>
+                        promptRestore({
+                          id: member.id,
+                          fullName: member.fullName,
+                        })
+                      }
+                    >
+                      Gjenopprett
+                    </Button>
+                  </Tooltip>
                 )}
               </Table.Cell>
             </Table.Row>

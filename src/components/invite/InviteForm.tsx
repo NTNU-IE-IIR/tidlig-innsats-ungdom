@@ -57,7 +57,7 @@ const InviteForm: React.FC<InviteFormProps> = ({ onSuccess, onCancel }) => {
 
       <p className='mb-2 text-sm text-zinc-600'>
         Invitasjonen kan brukes for å tillate registrering av nye kontoer. Vi
-        gir deg en lenke som du kan sende til andre brukere.
+        gir deg en lenke som du kan sende til nye brukere for registrering.
       </p>
 
       <TextField label='Kommentar' {...form.getInputProps('comment')} />

@@ -1,17 +1,21 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { DRAG_DROP_PASTE } from '@lexical/rich-text';
 import {
-  $getSelection,
-  $isRangeSelection,
-  $isRootNode,
+  $wrapNodeInElement,
+  isMimeType,
+  mediaFileReader,
+  mergeRegister,
+} from '@lexical/utils';
+import {
+  $createParagraphNode,
+  $insertNodes,
   COMMAND_PRIORITY_EDITOR,
   COMMAND_PRIORITY_LOW,
   LexicalEditor,
   createCommand,
 } from 'lexical';
-import { $createImageNode, ImagePayload } from '../nodes/ImageNode';
 import { useEffect } from 'react';
-import { isMimeType, mediaFileReader, mergeRegister } from '@lexical/utils';
-import { DRAG_DROP_PASTE } from '@lexical/rich-text';
+import { $createImageNode, ImagePayload } from '../nodes/ImageNode';
 
 export type InsertImagePayload = Readonly<ImagePayload>;
 
@@ -69,22 +73,11 @@ const ImagePastePlugin = () => {
       editor.registerCommand(
         INSERT_IMAGE_COMMAND,
         (payload: InsertImagePayload) => {
-          const selection = $getSelection();
+          // TODO: Upload the image source from the payload to S3
+          const imageNode = $createImageNode(payload);
 
-          if ($isRangeSelection(selection)) {
-            if ($isRootNode(selection.anchor.getNode())) {
-              selection.insertParagraph();
-            }
-
-            // TODO: Upload the image source to the server and replace the src with the server url
-            const imageNode = $createImageNode({
-              src: payload.src,
-              altText: '',
-            });
-
-            selection.insertNodes([imageNode]);
-            selection.insertParagraph();
-          }
+          $insertNodes([imageNode]);
+          $wrapNodeInElement(imageNode, $createParagraphNode).selectEnd();
 
           return true;
         },

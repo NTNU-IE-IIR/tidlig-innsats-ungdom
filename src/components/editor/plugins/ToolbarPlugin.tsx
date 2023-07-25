@@ -37,6 +37,7 @@ import {
   IconH6,
   IconItalic,
   IconLink,
+  IconLinkOff,
   IconList,
   IconListCheck,
   IconListNumbers,
@@ -189,7 +190,10 @@ const ToolbarPlugin: React.FC<ToolbarPluginProps> = ({ onCanUndo }) => {
 
   const insertLink = useCallback(() => {
     if (!isLink) {
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://');
+      editor.dispatchCommand(TOGGLE_LINK_COMMAND, '');
+      requestAnimationFrame(() => {
+        document.getElementById('editor-link-input')?.focus();
+      });
     } else {
       editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
     }
@@ -353,6 +357,12 @@ const ToolbarPlugin: React.FC<ToolbarPluginProps> = ({ onCanUndo }) => {
         active={isLink}
         onClick={insertLink}
         icon={IconLink}
+      />
+
+      <ToolbarActionButton
+        disabled={!isLink}
+        onClick={() => editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)}
+        icon={IconLinkOff}
       />
 
       <VerticalRule />

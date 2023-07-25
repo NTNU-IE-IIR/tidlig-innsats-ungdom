@@ -1,3 +1,4 @@
+import Tooltip from '@/components/feedback/Tooltip';
 import {
   $isAutoLinkNode,
   $isLinkNode,
@@ -5,30 +6,21 @@ import {
 } from '@lexical/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $findMatchingParent, mergeRegister } from '@lexical/utils';
+import { IconExternalLink } from '@tabler/icons-react';
 import {
   $getSelection,
   $isRangeSelection,
   COMMAND_PRIORITY_CRITICAL,
   COMMAND_PRIORITY_HIGH,
   COMMAND_PRIORITY_LOW,
-  GridSelection,
   KEY_ESCAPE_COMMAND,
   LexicalEditor,
-  NodeSelection,
-  RangeSelection,
   SELECTION_CHANGE_COMMAND,
 } from 'lexical';
 import { Dispatch, useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { getSelectedNode, setLinkEditorFloatingPosition } from './utils';
 import { twMerge } from 'tailwind-merge';
-import {
-  IconCheck,
-  IconEdit,
-  IconExternalLink,
-  IconTrash,
-  IconX,
-} from '@tabler/icons-react';
+import { getSelectedNode, setLinkEditorFloatingPosition } from './utils';
 
 function FloatingLinkEditor({
   editor,
@@ -44,11 +36,7 @@ function FloatingLinkEditor({
   const editorRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [linkUrl, setLinkUrl] = useState('');
-  const [editedLinkUrl, setEditedLinkUrl] = useState('');
-  const [isEditMode, setEditMode] = useState(false);
-  const [lastSelection, setLastSelection] = useState<
-    RangeSelection | GridSelection | NodeSelection | null
-  >(null);
+  const [linkTarget, setLinkTarget] = useState<string | null>(null);
 
   const updateLinkEditor = useCallback(() => {
     const selection = $getSelection();
@@ -57,8 +45,10 @@ function FloatingLinkEditor({
       const parent = node.getParent();
       if ($isLinkNode(parent)) {
         setLinkUrl(parent.getURL());
+        setLinkTarget(parent.getTarget());
       } else if ($isLinkNode(node)) {
         setLinkUrl(node.getURL());
+        setLinkTarget(node.getTarget());
       } else {
         setLinkUrl('');
       }
@@ -86,13 +76,10 @@ function FloatingLinkEditor({
         domRect.y += 40;
         setLinkEditorFloatingPosition(domRect, editorElem, anchorElem);
       }
-      setLastSelection(selection);
     } else if (!activeElement || activeElement.className !== 'link-input') {
       if (rootElement !== null) {
         setLinkEditorFloatingPosition(null, editorElem, anchorElem);
       }
-      setLastSelection(null);
-      setEditMode(false);
       setLinkUrl('');
     }
 
@@ -159,112 +146,66 @@ function FloatingLinkEditor({
     });
   }, [editor, updateLinkEditor]);
 
-  useEffect(() => {
-    if (isEditMode && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isEditMode]);
-
-  const monitorInputInteraction = (
-    event: React.KeyboardEvent<HTMLInputElement>
-  ) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      handleLinkSubmission();
-    } else if (event.key === 'Escape') {
-      event.preventDefault();
-      setEditMode(false);
-    }
-  };
-
-  const handleLinkSubmission = () => {
-    if (lastSelection !== null) {
-      if (linkUrl !== '') {
-        editor.dispatchCommand(TOGGLE_LINK_COMMAND, editedLinkUrl);
-      }
-      setEditMode(false);
-    }
+  const commitLink = (target: string | null) => {
+    editor.dispatchCommand(TOGGLE_LINK_COMMAND, {
+      url: linkUrl,
+      target: target,
+    });
   };
 
   return (
     <div
       ref={editorRef}
       className={twMerge(
-        'absolute left-0 top-0 flex w-72 items-center rounded-md border border-black/20 bg-white shadow transition-opacity',
+        'absolute left-0 top-0 flex w-64 flex-col rounded-md border border-black/20 bg-white shadow transition-opacity',
         isLink ? 'visible' : 'invisible'
       )}
     >
       {isLink && (
         <>
-          {isEditMode ? (
-            <>
-              <input
-                ref={inputRef}
-                className='px-1 flex-1 text-sm focus:outline-none'
-                value={editedLinkUrl}
-                onChange={(event) => {
-                  setEditedLinkUrl(event.target.value);
-                }}
-                onKeyDown={(event) => {
-                  monitorInputInteraction(event);
-                }}
-              />
+          <div className='relative m-1 mt-4 flex flex-1 rounded-md border border-zinc-300'>
+            <label
+              htmlFor='editor-link-input'
+              className='absolute top-0 -translate-y-full text-xs'
+            >
+              Lenke til
+            </label>
 
-              <button
-                type='button'
-                className='border-l border-zinc-300 bg-zinc-50 p-0.5 text-zinc-600 transition-colors hover:text-zinc-800'
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() => setEditMode(false)}
-              >
-                <IconX />
-              </button>
+            <input
+              ref={inputRef}
+              id='editor-link-input'
+              className='flex-1 bg-transparent px-1 text-sm focus:outline-none'
+              value={linkUrl}
+              onChange={(event) => setLinkUrl(event.target.value)}
+              placeholder='https://'
+              onBlur={() => commitLink(linkTarget)}
+            />
 
-              <button
-                type='button'
-                className='rounded-r-md border-l border-zinc-300 bg-zinc-50 p-0.5 text-zinc-600 transition-colors hover:text-zinc-800'
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={handleLinkSubmission}
-              >
-                <IconCheck />
-              </button>
-            </>
-          ) : (
-            <>
-              <IconExternalLink className='ml-1 h-4 w-4 text-cyan-600' />
-
+            <Tooltip content='Åpne lenken i ny fane'>
               <a
                 href={linkUrl}
                 target='_blank'
-                rel='noopener noreferrer'
-                className='flex-1 truncate text-sm text-cyan-600 underline'
+                className='flex items-center rounded-r-md border-l border-zinc-300 bg-zinc-50 p-0.5 text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-800'
               >
-                {linkUrl}
+                <IconExternalLink className='h-5 w-5' />
               </a>
+            </Tooltip>
+          </div>
 
-              <button
-                type='button'
-                className='border-l border-zinc-300 bg-zinc-50 p-0.5 text-zinc-600 transition-colors hover:text-zinc-800'
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() => {
-                  setEditedLinkUrl(linkUrl);
-                  setEditMode(true);
-                }}
-              >
-                <IconEdit />
-              </button>
+          <label className='flex items-center gap-1 px-1 pb-1'>
+            <input
+              type='checkbox'
+              checked={linkTarget === '_blank'}
+              onChange={(event) => {
+                const newTarget = event.target.checked ? '_blank' : null;
+                setLinkTarget(newTarget);
+                commitLink(newTarget);
+              }}
+              className='-mt-0.5 rounded-md border border-zinc-300 bg-zinc-100 text-emerald-600 focus:ring-emerald-600'
+            />
 
-              <button
-                type='button'
-                className='rounded-r-md border-l border-zinc-300 bg-zinc-50 p-0.5 text-zinc-600 transition-colors hover:text-zinc-800'
-                onMouseDown={(event) => event.preventDefault()}
-                onClick={() =>
-                  editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
-                }
-              >
-                <IconTrash />
-              </button>
-            </>
-          )}
+            <span className='text-sm'>Åpne i lenken ny fane</span>
+          </label>
         </>
       )}
     </div>

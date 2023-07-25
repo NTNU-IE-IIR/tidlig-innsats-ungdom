@@ -148,6 +148,10 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
     setShowDeleteThemeDialog(true);
   };
 
+  const handleCancelEdit = () => {
+    router.back();
+  };
+
   return (
     <>
       <form
@@ -254,6 +258,12 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
                 <p className='text-sm font-medium text-zinc-600'>
                   Du har ulagrede endringer.
                 </p>
+              )}
+
+              {existingMedia && (
+                <Button variant='neutral' onClick={handleCancelEdit}>
+                  Avbryt
+                </Button>
               )}
 
               <Button

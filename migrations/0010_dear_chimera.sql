@@ -1,0 +1,1 @@
+ALTER TABLE "theme" ADD COLUMN "icon_url" text;

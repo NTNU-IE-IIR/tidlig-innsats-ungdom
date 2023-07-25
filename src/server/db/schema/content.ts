@@ -21,6 +21,7 @@ export const theme = pgTable('theme', {
   id: bigserial('theme_id', { mode: 'number' }).primaryKey(),
   name: text('name').notNull(),
   shortDescription: text('short_description').notNull().default(''),
+  iconUrl: text('icon_url'),
   parentId: bigint('fk_parent_theme_id', { mode: 'number' }).references(
     (): AnyPgColumn => theme.id
   ),

@@ -34,33 +34,46 @@ export const contentRouter = createTRPCRouter({
       const name = input.name ?? '';
 
       let medias: Content[] = [];
+      let themes: Content[] = [];
 
-      const conditions = [
-        parentId ? eq(theme.parentId, parentId) : isNull(theme.parentId),
-        name && ilike(theme.name, `%${name}%`),
-        input.favoritesOnly
-          ? isNotNull(userAccountFavoriteTheme.createdAt)
-          : null,
-      ].filter(Boolean) as SQL[];
-
-      const themes = await db
-        .select({
-          id: theme.id,
-          name: theme.name,
-          shortDescription: theme.shortDescription,
-          discriminator: sql<ContentDiscriminator>`'THEME'`,
-          favorited: sql<boolean>`${userAccountFavoriteTheme.createdAt} IS NOT NULL`,
-        })
-        .from(theme)
-        .leftJoin(
-          userAccountFavoriteTheme,
-          and(
-            eq(theme.id, userAccountFavoriteTheme.themeId),
-            eq(userAccountFavoriteTheme.userAccountId, ctx.session.user.id)
-          )
+      const result = await db.execute<any>(sql<Content[]>`
+        WITH RECURSIVE theme_hierarchy AS (
+          SELECT theme_id, fk_parent_theme_id, name
+          FROM theme
+          WHERE fk_parent_theme_id IS NULL
+          
+          UNION ALL
+          
+          SELECT t.theme_id, t.fk_parent_theme_id, t.name
+          FROM theme t
+          JOIN theme_hierarchy th ON t.fk_parent_theme_id = th.theme_id
+        ),
+        theme_media_hierarchy AS (
+          SELECT th.theme_id, tm.fk_media_id
+          FROM theme_hierarchy th
+          LEFT JOIN theme_media tm ON th.theme_id = tm.fk_theme_id
+          LEFT JOIN user_account_favorite_media uf 
+            ON tm.fk_media_id = uf.fk_media_id 
+            AND uf.fk_user_account_id = ${ctx.session.user.id}
         )
-        .where(and(...conditions))
-        .orderBy(desc(isNotNull(userAccountFavoriteTheme.createdAt)));
+        SELECT 
+          DISTINCT th.theme_id AS id,
+          th.name,
+          t.short_description AS "shortDescription",
+          t.icon_url AS "iconUrl",
+          'THEME' AS discriminator,
+          (CASE WHEN tmh.fk_media_id IS NOT NULL THEN TRUE ELSE FALSE END) AS favorited
+        FROM theme_hierarchy th
+        INNER JOIN theme t ON th.theme_id = t.theme_id
+        LEFT JOIN theme_media_hierarchy tmh ON th.theme_id = tmh.theme_id
+        WHERE 
+          (th.fk_parent_theme_id = ${parentId}::bigint OR (th.fk_parent_theme_id IS NULL AND ${parentId}::bigint IS NULL)) AND
+          (CASE WHEN ${input.favoritesOnly} THEN tmh.fk_media_id IS NOT NULL ELSE TRUE END) AND
+          (th.name ILIKE '%' || ${name} || '%')
+        ORDER BY favorited DESC
+      `);
+
+      themes = result.rows;
 
       if (parentId) {
         const mediaConditions = [
@@ -76,6 +89,7 @@ export const contentRouter = createTRPCRouter({
             id: media.id,
             name: media.name,
             shortDescription: media.shortDescription,
+            iconUrl: sql<string | null>`NULL`,
             discriminator: sql<ContentDiscriminator>`'MEDIA'`,
             favorited: sql<boolean>`${userAccountFavoriteMedia.createdAt} IS NOT NULL`,
           })

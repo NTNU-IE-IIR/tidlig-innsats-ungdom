@@ -59,7 +59,7 @@ const NavigationBar = () => {
             <IconChevronDown className='h-4 w-4 transform transition-transform ui-open:rotate-180' />
           </Menu.Button>
 
-          <Menu.Items className='absolute right-1 top-full mt-1 divide-y rounded-md border border-black/10 bg-white shadow'>
+          <Menu.Items className='absolute right-1 top-full mt-1 divide-y rounded-md border border-black/10 bg-white shadow z-10'>
             <Menu.Item
               as={Link}
               href='/profile'

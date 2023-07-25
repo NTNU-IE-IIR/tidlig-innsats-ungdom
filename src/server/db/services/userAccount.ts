@@ -2,6 +2,17 @@ import { SQL, and, eq, sql } from 'drizzle-orm';
 import { db } from '..';
 import { UserAccountRole, userAccount } from '../schema';
 
+export const findById = async (id: string) => {
+  const results = await db
+    .select()
+    .from(userAccount)
+    .where(eq(userAccount.id, id));
+
+  if (results.length === 0) return null;
+
+  return results[0];
+};
+
 /**
  * Finds a user account by it's registered email address.
  *

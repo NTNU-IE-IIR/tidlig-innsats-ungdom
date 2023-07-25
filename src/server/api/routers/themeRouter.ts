@@ -6,7 +6,7 @@ import {
   userAccountFavoriteTheme,
 } from '@/server/db/schema';
 import { ThemeNode } from '@/types/themes';
-import { SQL, and, eq, inArray, notInArray, or, sql } from 'drizzle-orm';
+import { SQL, and, eq, notInArray, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
@@ -33,6 +33,7 @@ export const themeRouter = createTRPCRouter({
         .values({
           name: input.name,
           shortDescription: input.shortDescription,
+          iconUrl: input.iconUrl,
           parentId: input.parentId,
           createdBy: ctx.session.user.id,
         })
@@ -53,6 +54,7 @@ export const themeRouter = createTRPCRouter({
           name: input.name,
           shortDescription: input.shortDescription,
           parentId: input.parentId,
+          iconUrl: input.iconUrl,
         })
         .where(eq(theme.id, input.id))
         .returning();

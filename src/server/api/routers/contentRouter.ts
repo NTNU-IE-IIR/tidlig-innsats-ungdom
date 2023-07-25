@@ -67,9 +67,9 @@ export const contentRouter = createTRPCRouter({
         INNER JOIN theme t ON th.theme_id = t.theme_id
         LEFT JOIN theme_media_hierarchy tmh ON th.theme_id = tmh.theme_id
         WHERE 
-          th.fk_parent_theme_id = ${parentId}::bigint OR (th.fk_parent_theme_id IS NULL AND ${parentId}::bigint IS NULL) AND
-          CASE WHEN ${input.favoritesOnly} THEN tmh.fk_media_id IS NOT NULL ELSE TRUE END AND
-          th.name ILIKE '%' || ${name} || '%'
+          (th.fk_parent_theme_id = ${parentId}::bigint OR (th.fk_parent_theme_id IS NULL AND ${parentId}::bigint IS NULL)) AND
+          (CASE WHEN ${input.favoritesOnly} THEN tmh.fk_media_id IS NOT NULL ELSE TRUE END) AND
+          (th.name ILIKE '%' || ${name} || '%')
         ORDER BY favorited DESC
       `);
 

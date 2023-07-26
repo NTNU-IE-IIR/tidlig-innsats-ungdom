@@ -52,13 +52,13 @@ const TextField: React.FC<TextFieldProps> = (props) => {
         className='peer w-full rounded-md border-0 bg-transparent px-3 py-2 text-sm placeholder:invisible placeholder:text-sm focus:outline-none focus:ring-0'
       />
 
-      <legend className='ml-2 h-0 text-sm transition-all peer-placeholder-shown:w-0'>
+      <legend className='ml-2 h-0 text-sm transition-[left,top] peer-placeholder-shown:w-0'>
         <span className='invisible px-1 text-xs'>{label}</span>
       </legend>
 
       <label
         htmlFor={name}
-        className='pointer-events-none absolute left-2 top-0 -translate-y-1/2 px-1 text-xs transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm'
+        className='pointer-events-none absolute left-2 top-0 -translate-y-1/2 px-1 text-xs transition-[left,top] peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm'
       >
         {label}
       </label>

@@ -37,13 +37,23 @@ export const contentRouter = createTRPCRouter({
       let themes: Content[] = [];
 
       const result = await db.execute<any>(sql<Content[]>`
-        WITH RECURSIVE theme_hierarchy AS (
+        WITH RECURSIVE theme_descendants AS (
+          SELECT theme_id, theme_id AS descendant_id
+          FROM theme
+        
+          UNION ALL
+        
+          SELECT td.theme_id, th.theme_id AS descendant_id
+          FROM theme_descendants td
+          JOIN theme th ON td.descendant_id = th.fk_parent_theme_id
+        ),
+        theme_hierarchy AS (
           SELECT theme_id, fk_parent_theme_id, name
           FROM theme
           WHERE fk_parent_theme_id IS NULL
-          
+        
           UNION ALL
-          
+        
           SELECT t.theme_id, t.fk_parent_theme_id, t.name
           FROM theme t
           JOIN theme_hierarchy th ON t.fk_parent_theme_id = th.theme_id
@@ -55,21 +65,27 @@ export const contentRouter = createTRPCRouter({
           INNER JOIN user_account_favorite_media uf 
             ON tm.fk_media_id = uf.fk_media_id 
             AND uf.fk_user_account_id = ${ctx.session.user.id}
+        ),
+        theme_favorited_info AS (
+          SELECT
+            DISTINCT ON (th.theme_id) th.theme_id AS id,
+            th.name,
+            t.short_description AS "shortDescription",
+            t.icon_url AS "iconUrl",
+            'THEME' AS discriminator,
+            (CASE WHEN tmh.fk_media_id IS NOT NULL THEN TRUE ELSE FALSE END) AS favorited
+          FROM theme_hierarchy th
+          INNER JOIN theme t ON th.theme_id = t.theme_id
+          LEFT JOIN theme_descendants td ON th.theme_id = td.theme_id
+          LEFT JOIN theme_media_hierarchy tmh ON td.descendant_id = tmh.theme_id
+          WHERE 
+            (th.fk_parent_theme_id = ${parentId}::bigint OR (th.fk_parent_theme_id IS NULL AND ${parentId}::bigint IS NULL)) AND
+            (CASE WHEN ${input.favoritesOnly} THEN tmh.fk_media_id IS NOT NULL ELSE TRUE END) AND
+            (th.name ILIKE '%' || ${name} || '%')
+          ORDER BY th.theme_id, favorited DESC
         )
-        SELECT 
-          DISTINCT th.theme_id AS id,
-          th.name,
-          t.short_description AS "shortDescription",
-          t.icon_url AS "iconUrl",
-          'THEME' AS discriminator,
-          (CASE WHEN tmh.fk_media_id IS NOT NULL THEN TRUE ELSE FALSE END) AS favorited
-        FROM theme_hierarchy th
-        INNER JOIN theme t ON th.theme_id = t.theme_id
-        LEFT JOIN theme_media_hierarchy tmh ON th.theme_id = tmh.theme_id
-        WHERE 
-          (th.fk_parent_theme_id = ${parentId}::bigint OR (th.fk_parent_theme_id IS NULL AND ${parentId}::bigint IS NULL)) AND
-          (CASE WHEN ${input.favoritesOnly} THEN tmh.fk_media_id IS NOT NULL ELSE TRUE END) AND
-          (th.name ILIKE '%' || ${name} || '%')
+        SELECT id, name, "shortDescription", "iconUrl", discriminator, favorited
+        FROM theme_favorited_info
         ORDER BY favorited DESC
       `);
 

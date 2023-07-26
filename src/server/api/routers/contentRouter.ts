@@ -51,8 +51,8 @@ export const contentRouter = createTRPCRouter({
         theme_media_hierarchy AS (
           SELECT th.theme_id, tm.fk_media_id
           FROM theme_hierarchy th
-          LEFT JOIN theme_media tm ON th.theme_id = tm.fk_theme_id
-          LEFT JOIN user_account_favorite_media uf 
+          INNER JOIN theme_media tm ON th.theme_id = tm.fk_theme_id
+          INNER JOIN user_account_favorite_media uf 
             ON tm.fk_media_id = uf.fk_media_id 
             AND uf.fk_user_account_id = ${ctx.session.user.id}
         )

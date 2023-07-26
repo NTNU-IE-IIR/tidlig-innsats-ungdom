@@ -1,13 +1,12 @@
 import { db } from '@/server/db';
 import {
   media,
-  theme,
   themeMedia,
   userAccountFavoriteMedia,
   userAccountFavoriteTheme,
 } from '@/server/db/schema';
 import { Content, ContentDiscriminator } from '@/types/content';
-import { SQL, and, desc, eq, ilike, isNotNull, isNull, sql } from 'drizzle-orm';
+import { SQL, and, desc, eq, ilike, isNotNull, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 

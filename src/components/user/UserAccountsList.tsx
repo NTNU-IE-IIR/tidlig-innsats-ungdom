@@ -49,7 +49,7 @@ const UserAccountList = forwardRef<HTMLDivElement, UserAccountListProps>(
             >
               <Table.Cell className='flex items-center gap-1'>
                 <div className='h-6 w-6 flex-shrink-0 rounded-full bg-zinc-600' />
-                <div>
+                <div className='truncate'>
                   <p className='-mb-1 font-semibold'>{user.fullName}</p>
                   <a
                     href={`mailto:${user.email}`}

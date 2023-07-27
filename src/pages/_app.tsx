@@ -10,7 +10,6 @@ import '@/i18n';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import duration from 'dayjs/plugin/duration';
-import { Provider as TooltipProvider } from '@radix-ui/react-tooltip';
 
 dayjs.locale('nb');
 dayjs.extend(relativeTime);
@@ -22,9 +21,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <TooltipProvider>
-        <Component {...pageProps} />
-      </TooltipProvider>
+      <Component {...pageProps} />
     </SessionProvider>
   );
 };

@@ -9,6 +9,7 @@ import {
   offset,
   shift,
   size,
+  useDelayGroupContext,
   useDismiss,
   useFloating,
   useFocus,
@@ -52,6 +53,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   const { refs, context, floatingStyles } = useFloating({
     open,
     onOpenChange,
+    whileElementsMounted: autoUpdate,
     placement: side,
     middleware: [
       offset(5),
@@ -62,7 +64,8 @@ const Tooltip: React.FC<TooltipProps> = ({
     ],
   });
 
-  const hover = useHover(context, { move: false, delay: 100 });
+  const { delay, isInstantPhase } = useDelayGroupContext();
+  const hover = useHover(context, { move: false, delay: delay ?? 100 });
   const focus = useFocus(context);
   const dismiss = useDismiss(context);
   const role = useRole(context);
@@ -88,7 +91,7 @@ const Tooltip: React.FC<TooltipProps> = ({
       {open && (
         <FloatingPortal>
           <Transition
-            appear
+            appear={!isInstantPhase}
             show={true}
             enter='duration-100'
             enterFrom='opacity-0 -translate-y-1'

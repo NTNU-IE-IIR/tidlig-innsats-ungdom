@@ -11,6 +11,7 @@ import dayjs from 'dayjs';
 import { twMerge } from 'tailwind-merge';
 import Button from '../input/Button';
 import Tooltip from '../feedback/Tooltip';
+import { FloatingDelayGroup } from '@floating-ui/react';
 
 interface InviteCardProps {
   code: string;
@@ -63,54 +64,56 @@ const InviteCard: React.FC<InviteCardProps> = ({
         </div>
       </div>
 
-      <Tooltip content='Vis anvendelser'>
-        <Button
-          onClick={onShowMembers}
-          variant='neutral'
-          className='aspect-square h-fit self-center p-1'
-        >
-          <IconUsersGroup className='h-5 w-5' />
-        </Button>
-      </Tooltip>
-
-      {dayjs().isBefore(expiresAt) && (
-        <>
-          <Tooltip
-            open={clipboard.copied ? clipboard.copied : undefined}
-            content={
-              clipboard.copied
-                ? 'Kobling kopiert til utklippstavle'
-                : 'Kopier kobling'
-            }
+      <FloatingDelayGroup delay={100}>
+        <Tooltip content='Vis anvendelser'>
+          <Button
+            onClick={onShowMembers}
+            variant='neutral'
+            className='aspect-square h-fit self-center p-1'
           >
-            <Button
-              variant='neutral'
-              onClick={() => copyInviteLink(code)}
-              className={twMerge(
-                'aspect-square h-fit self-center p-1 transition-colors',
-                clipboard.copied &&
-                  'bg-emerald-500 text-zinc-100 hover:bg-emerald-600 focus:bg-emerald-600'
-              )}
-            >
-              {clipboard.copied ? (
-                <IconCheck className='h-5 w-5' />
-              ) : (
-                <IconLink className='h-5 w-5' />
-              )}
-            </Button>
-          </Tooltip>
+            <IconUsersGroup className='h-5 w-5' />
+          </Button>
+        </Tooltip>
 
-          <Tooltip content='Avslutt'>
-            <Button
-              variant='destructive'
-              onClick={onExpire}
-              className='aspect-square h-fit self-center p-1'
+        {dayjs().isBefore(expiresAt) && (
+          <>
+            <Tooltip
+              open={clipboard.copied ? clipboard.copied : undefined}
+              content={
+                clipboard.copied
+                  ? 'Kobling kopiert til utklippstavle'
+                  : 'Kopier kobling'
+              }
             >
-              <IconBan className='h-5 w-5' />
-            </Button>
-          </Tooltip>
-        </>
-      )}
+              <Button
+                variant='neutral'
+                onClick={() => copyInviteLink(code)}
+                className={twMerge(
+                  'aspect-square h-fit self-center p-1 transition-colors',
+                  clipboard.copied &&
+                    'bg-emerald-500 text-zinc-100 hover:bg-emerald-600 focus:bg-emerald-600'
+                )}
+              >
+                {clipboard.copied ? (
+                  <IconCheck className='h-5 w-5' />
+                ) : (
+                  <IconLink className='h-5 w-5' />
+                )}
+              </Button>
+            </Tooltip>
+
+            <Tooltip content='Avslutt'>
+              <Button
+                variant='destructive'
+                onClick={onExpire}
+                className='aspect-square h-fit self-center p-1'
+              >
+                <IconBan className='h-5 w-5' />
+              </Button>
+            </Tooltip>
+          </>
+        )}
+      </FloatingDelayGroup>
     </li>
   );
 };

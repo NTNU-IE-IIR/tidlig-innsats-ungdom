@@ -34,6 +34,8 @@ export const setLinkEditorFloatingPosition = (
   horizontalOffset: number = 5
 ) => {
   const scrollerElem = anchorElem.parentElement;
+  console.log(anchorElem);
+  console.log(targetRect);
 
   if (targetRect === null || !scrollerElem) {
     floatingElem.style.opacity = '0';

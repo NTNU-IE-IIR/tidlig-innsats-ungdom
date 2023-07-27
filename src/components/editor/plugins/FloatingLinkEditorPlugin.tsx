@@ -1,4 +1,5 @@
 import Tooltip from '@/components/feedback/Tooltip';
+import { FloatingArrow, arrow, offset, useFloating } from '@floating-ui/react';
 import {
   $isAutoLinkNode,
   $isLinkNode,
@@ -20,7 +21,7 @@ import {
 import { Dispatch, useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { twMerge } from 'tailwind-merge';
-import { getSelectedNode, setLinkEditorFloatingPosition } from './utils';
+import { getSelectedNode } from './utils';
 
 function FloatingLinkEditor({
   editor,
@@ -35,8 +36,14 @@ function FloatingLinkEditor({
 }): JSX.Element {
   const editorRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const arrowRef = useRef<SVGSVGElement | null>(null);
   const [linkUrl, setLinkUrl] = useState('');
   const [linkTarget, setLinkTarget] = useState<string | null>(null);
+
+  const { refs, floatingStyles, update, context } = useFloating({
+    open: isLink,
+    middleware: [offset(10), arrow({ element: arrowRef })],
+  });
 
   const updateLinkEditor = useCallback(() => {
     const selection = $getSelection();
@@ -46,69 +53,31 @@ function FloatingLinkEditor({
       if ($isLinkNode(parent)) {
         setLinkUrl(parent.getURL());
         setLinkTarget(parent.getTarget());
+        refs.setReference(editor.getElementByKey(parent.getKey()));
       } else if ($isLinkNode(node)) {
         setLinkUrl(node.getURL());
         setLinkTarget(node.getTarget());
+        refs.setReference(editor.getElementByKey(node.getKey()));
       } else {
         setLinkUrl('');
       }
     }
+
+    update();
+
     const editorElem = editorRef.current;
-    const nativeSelection = window.getSelection();
     const activeElement = document.activeElement;
 
     if (editorElem === null) {
       return;
     }
 
-    const rootElement = editor.getRootElement();
-
-    if (
-      selection !== null &&
-      nativeSelection !== null &&
-      rootElement !== null &&
-      rootElement.contains(nativeSelection.anchorNode) &&
-      editor.isEditable()
-    ) {
-      const domRect: DOMRect | undefined =
-        nativeSelection.focusNode?.parentElement?.getBoundingClientRect();
-      if (domRect) {
-        domRect.y += 40;
-        setLinkEditorFloatingPosition(domRect, editorElem, anchorElem);
-      }
-    } else if (!activeElement || activeElement.className !== 'link-input') {
-      if (rootElement !== null) {
-        setLinkEditorFloatingPosition(null, editorElem, anchorElem);
-      }
+    if (!activeElement || activeElement.className !== 'link-input') {
       setLinkUrl('');
     }
 
     return true;
   }, [anchorElem, editor]);
-
-  useEffect(() => {
-    const scrollerElem = anchorElem.parentElement;
-
-    const update = () => {
-      editor.getEditorState().read(() => {
-        updateLinkEditor();
-      });
-    };
-
-    window.addEventListener('resize', update);
-
-    if (scrollerElem) {
-      scrollerElem.addEventListener('scroll', update);
-    }
-
-    return () => {
-      window.removeEventListener('resize', update);
-
-      if (scrollerElem) {
-        scrollerElem.removeEventListener('scroll', update);
-      }
-    };
-  }, [anchorElem.parentElement, editor, updateLinkEditor]);
 
   useEffect(() => {
     return mergeRegister(
@@ -155,7 +124,8 @@ function FloatingLinkEditor({
 
   return (
     <div
-      ref={editorRef}
+      ref={refs.setFloating}
+      style={floatingStyles}
       className={twMerge(
         'absolute left-0 top-0 flex w-64 flex-col rounded-md border border-black/20 bg-white shadow transition-opacity',
         isLink ? 'visible' : 'invisible'
@@ -163,6 +133,11 @@ function FloatingLinkEditor({
     >
       {isLink && (
         <>
+          <FloatingArrow
+            ref={arrowRef}
+            context={context}
+            className='fill-zinc-500'
+          />
           <div className='relative m-1 mt-4 flex flex-1 rounded-md border border-zinc-300'>
             <label
               htmlFor='editor-link-input'

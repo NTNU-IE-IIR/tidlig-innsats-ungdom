@@ -67,7 +67,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(200).send({
       tenantId: tenant,
       // well...
-      fileId: (files[Object.keys(files)[0]!] as any).newFilename,
+      // @ts-ignore
+      fileId: (files[Object.keys(files)[0]!][0]).newFilename,
     });
   });
 };

@@ -168,9 +168,7 @@ const Home: NextPage = () => {
 
                 {theme.favorited && (
                   <Tooltip content='Inneholder favoritter'>
-                    <button type='button'>
-                      <IconStarFilled className='h-5 w-5 text-yellow-600' />
-                    </button>
+                    <IconStarFilled className='h-5 w-5 text-yellow-600' />
                   </Tooltip>
                 )}
               </Card>

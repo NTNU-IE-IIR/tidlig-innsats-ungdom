@@ -1,9 +1,11 @@
-import { IconChevronLeft } from '@tabler/icons-react';
+import { IconChevronLeft, IconTrash } from '@tabler/icons-react';
 import { useState } from 'react';
 import Button from '../input/Button';
 import TextArea from '../input/TextArea';
 import TextField from '../input/TextField';
 import SessionMediaEntry from './SessionMediaEntry';
+import Dialog from '../overlay/Dialog';
+import DeleteSessionDialog from './DeleteSessionDialog';
 
 interface EndedSessionMediaEntry {
   mediaId: number;
@@ -38,6 +40,8 @@ const EndedSession: React.FC<EndedSessionProps> = ({
 
   const hasChanged = sessionName !== name;
 
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
   return (
     <>
       <h1 className='text-xl font-semibold'>Øktsammendrag</h1>
@@ -68,6 +72,21 @@ const EndedSession: React.FC<EndedSessionProps> = ({
         <IconChevronLeft />
         <span>Tilbake</span>
       </Button>
+
+      <Button variant='destructive' onClick={() => setShowDeleteDialog(true)}>
+        <IconTrash className='h-5 w-5' />
+        <span>Slett økt</span>
+      </Button>
+
+      <DeleteSessionDialog
+        sessionId={id}
+        show={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onDelete={() => {
+          setShowDeleteDialog(false);
+          onClose();
+        }}
+      />
     </>
   );
 };

@@ -109,4 +109,31 @@ export const consultationRouter = createTRPCRouter({
         status: 'OK',
       };
     }),
+
+  deleteConsultation: protectedProcedure
+    .input(z.string().uuid())
+    .mutation(async ({ input }) => {
+      const existing = await db
+        .select({ id: consultationSession.id })
+        .from(consultationSession)
+        .where(eq(consultationSession.id, input));
+
+      if (existing.length === 0) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'CONSULTATION_NOT_FOUND',
+        });
+      }
+
+      await db
+        .delete(consultationSessionMedia)
+        .where(eq(consultationSessionMedia.consultationSessionId, input));
+      await db
+        .delete(consultationSession)
+        .where(eq(consultationSession.id, input));
+
+      return {
+        status: 'OK',
+      };
+    }),
 });

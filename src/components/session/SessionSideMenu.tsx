@@ -5,7 +5,6 @@ import Button from '../input/Button';
 import ActiveSession from './ActiveSession';
 import EndedSession from './EndedSession';
 import SessionCard from './SessionCard';
-import { useEffect } from 'react';
 
 const SessionSideMenu = () => {
   const {
@@ -24,12 +23,6 @@ const SessionSideMenu = () => {
     api.consultation.getConsultation.useQuery(viewedConsultationId!, {
       enabled: viewedConsultationId !== undefined,
     });
-
-  useEffect(() => {
-    if (viewedConsultation !== undefined) {
-      console.log(viewedConsultation);
-    }
-  }, [viewedConsultation]);
 
   return (
     <div className='relative h-full w-full overflow-x-hidden border-l border-black/10 bg-white'>

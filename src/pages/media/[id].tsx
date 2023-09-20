@@ -22,7 +22,8 @@ const MediaView: NextPage = () => {
   const router = useRouter();
   const { id } = router.query;
   const { activeTenantId } = useTenantStore();
-  const { incrementMediaViewDuration: incrementMedia } = useSessionStore();
+  const { incrementMediaViewDuration: incrementMedia, activeSession } =
+    useSessionStore();
 
   const { data: media, isError } = api.media.getById.useQuery(Number(id), {
     enabled: !Number.isNaN(id),
@@ -94,15 +95,17 @@ const MediaView: NextPage = () => {
               <span className='font-medium'>Åpne fil i ny fane</span>
             </a>
 
-            <Alert intent='info'>
-              Forbli på denne siden om du ønsker å spore tiden du bruker på å se
-              på filen i økten din.
-            </Alert>
+            {activeSession && (
+              <Alert intent='info'>
+                Forbli på denne siden om du ønsker å spore tiden du bruker på å
+                se på filen i økten din.
+              </Alert>
+            )}
           </div>
         )}
 
         {media && media.type === MediaType.RICH_TEXT && (
-          <div className='relative'>
+          <div className='relative p-2'>
             <TextViewer name='media' content={media.content as any} />
           </div>
         )}

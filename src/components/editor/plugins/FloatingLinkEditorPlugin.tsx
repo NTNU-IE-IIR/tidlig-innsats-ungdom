@@ -149,7 +149,7 @@ function FloatingLinkEditor({
             <input
               ref={inputRef}
               id='editor-link-input'
-              className='flex-1 bg-transparent px-1 text-sm focus:outline-none'
+              className='flex-1 bg-transparent px-1 text-sm focus:outline-none py-0 border-0 focus:ring-0'
               value={linkUrl}
               onChange={(event) => setLinkUrl(event.target.value)}
               placeholder='https://'

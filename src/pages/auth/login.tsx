@@ -66,7 +66,7 @@ const Login = ({
             <Link
               // href='/auth/forgot-password'
               href='/auth/contact'
-              className='self-end text-xs font-semibold text-emerald-700'
+              className='self-end text-xs font-semibold text-primary-700'
             >
               Glemt passord?
             </Link>

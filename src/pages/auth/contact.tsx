@@ -23,7 +23,7 @@ const ContactPage: NextPage = () => {
 
         <Card className='mt-1 space-y-1 p-2'>
           {(contacts === undefined || contacts.length === 0) && (
-            <p className='my-8 text-sm text-zinc-700'>
+            <p className='my-8 text-sm text-gray-700'>
               Fant ingen registrerte kontakter.
             </p>
           )}
@@ -32,14 +32,14 @@ const ContactPage: NextPage = () => {
             <Fragment key={contact.email}>
               <a
                 href={`mailto:${contact.email}`}
-                className='flex rounded-md border border-transparent px-2 py-1 hover:border-zinc-200 hover:bg-zinc-50'
+                className='flex rounded-md border border-transparent px-2 py-1 hover:border-gray-200 hover:bg-gray-50'
               >
                 <div>
                   <p className='-mb-1 font-semibold'>{contact.fullName}</p>
                   <p className='text-sm text-cyan-500'>{contact.email}</p>
                 </div>
 
-                <IconMail className='ml-auto self-center text-zinc-600' />
+                <IconMail className='ml-auto self-center text-gray-600' />
               </a>
 
               {i !== arr.length - 1 && <hr />}

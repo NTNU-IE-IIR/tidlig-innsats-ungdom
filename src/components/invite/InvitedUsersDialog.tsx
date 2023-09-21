@@ -38,9 +38,9 @@ const InvitedUsersDialog: React.FC<InvitedUsersProps> = ({
             <Table.Cell className='flex items-center justify-center'>
               <span className='sr-only'>{user.active}</span>
               {user.active ? (
-                <IconCheck className='h-4 w-4 text-emerald-500' />
+                <IconCheck className='h-4 w-4 text-primary-500' />
               ) : (
-                <IconX className='h-4 w-4 text-red-500' />
+                <IconX className='h-4 w-4 text-error-500' />
               )}
             </Table.Cell>
             <Table.Cell>
@@ -49,7 +49,7 @@ const InvitedUsersDialog: React.FC<InvitedUsersProps> = ({
           </Table.Row>
         ))}
         {invitedUsers?.length === 0 && (
-          <p className='col-span-4 py-2 text-center text-sm text-zinc-500'>
+          <p className='col-span-4 py-2 text-center text-sm text-gray-500'>
             Ingen brukere har brukt denne invitasjonen ennå.
           </p>
         )}

@@ -31,11 +31,11 @@ const DeleteSessionDialog: React.FC<DeleteSessionDialogProps> = ({
         <>
           <h2 className='text-lg font-bold'>Slett konsultasjonsøkt</h2>
 
-          <p className='text-sm text-zinc-700'>
+          <p className='text-sm text-gray-700'>
             Er du sikker på at du vil slette konsultasjonsøkten?
           </p>
 
-          <p className='text-sm text-zinc-700'>
+          <p className='text-sm text-gray-700'>
             Dette kan ikke angres og oversikten over brukt innhold vil bli
             borte.
           </p>

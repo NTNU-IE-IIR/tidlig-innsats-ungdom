@@ -36,8 +36,8 @@ const TextField: React.FC<TextFieldProps> = (props) => {
       className={twMerge(
         'group relative rounded-md border transition-colors',
         error
-          ? 'border-red-500'
-          : 'border-zinc-300 focus-within:border-emerald-600',
+          ? 'border-error-500'
+          : 'border-gray-300 focus-within:border-primary-600',
         className
       )}
     >
@@ -65,8 +65,8 @@ const TextField: React.FC<TextFieldProps> = (props) => {
 
       <div className='pointer-events-none absolute -left-px -top-px h-[calc(100%+2px)] w-[calc(100%+2px)] overflow-hidden rounded-md border border-transparent'>
         {loading && (
-          <div className='absolute bottom-0 h-0.5 w-full bg-zinc-300'>
-            <div className='animate-horizontal-track absolute left-0 h-full w-16 bg-emerald-600'></div>
+          <div className='absolute bottom-0 h-0.5 w-full bg-gray-300'>
+            <div className='animate-horizontal-track absolute left-0 h-full w-16 bg-primary-600'></div>
           </div>
         )}
       </div>

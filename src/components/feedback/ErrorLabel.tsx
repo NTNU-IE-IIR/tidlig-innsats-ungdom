@@ -41,7 +41,7 @@ const ErrorLabel: React.FC<ErrorLabelProps> = ({
   if (content === undefined) content = text ?? children;
 
   return (
-    <strong className='text-sm font-normal text-red-500'>{content}</strong>
+    <strong className='text-sm font-normal text-error-500'>{content}</strong>
   );
 };
 

@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 html {
-  @apply bg-zinc-200 text-zinc-900;
+  @apply bg-gray-200 text-gray-900;
 }
 
 @keyframes horizontal-track {

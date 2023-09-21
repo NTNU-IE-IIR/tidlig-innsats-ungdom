@@ -7,7 +7,7 @@ export const theme: Theme = {
   rtl: 'rtl',
   placeholder: 'pl',
   paragraph: 'pa',
-  quote: 'ml-4 border-l-2 border-zinc-400',
+  quote: 'ml-4 border-l-2 border-gray-400',
   heading: {
     h1: 'text-2xl font-bold mt-4',
     h2: 'text-xl font-bold mt-2',
@@ -34,5 +34,5 @@ export const theme: Theme = {
     strikethrough: 'line-through',
     underlineStrikethrough: 'unerline line-through',
   },
-  code: 'bg-zinc-100 p-2',
+  code: 'bg-gray-100 p-2',
 };

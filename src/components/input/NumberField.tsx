@@ -41,8 +41,8 @@ const NumberField: React.FC<NumberFieldProps> = (props) => {
       className={twMerge(
         'number-input-wrapper group relative rounded-md border transition-colors',
         error
-          ? 'border-red-500'
-          : 'border-zinc-300 focus-within:border-emerald-600',
+          ? 'border-error-500'
+          : 'border-gray-300 focus-within:border-primary-600',
         className
       )}
     >
@@ -71,11 +71,11 @@ const NumberField: React.FC<NumberFieldProps> = (props) => {
         {label}
       </label>
 
-      <div className='absolute right-0 top-0 flex h-full flex-col items-center justify-center border-l border-zinc-300'>
+      <div className='absolute right-0 top-0 flex h-full flex-col items-center justify-center border-l border-gray-300'>
         <button
           type='button'
           onClick={increment}
-          className='h-1/2 rounded-tr-md border-b border-b-zinc-300 px-1 hover:bg-zinc-200 focus:bg-zinc-200 focus:outline-none'
+          className='h-1/2 rounded-tr-md border-b border-b-gray-300 px-1 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none'
         >
           <span className='sr-only'>Increment {label}</span>
           <IconChevronUp className='h-4 w-4' />
@@ -83,7 +83,7 @@ const NumberField: React.FC<NumberFieldProps> = (props) => {
         <button
           type='button'
           onClick={decrement}
-          className='h-1/2 rounded-br-md px-1 hover:bg-zinc-200 focus:bg-zinc-200 focus:outline-none'
+          className='h-1/2 rounded-br-md px-1 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none'
         >
           <span className='sr-only'>Decrement {label}</span>
           <IconChevronDown className='h-4 w-4' />

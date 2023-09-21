@@ -26,7 +26,7 @@ const Settings: NextPage = () => {
           pad={false}
           className='flex flex-col md:hidden'
         >
-          <HeadlessTab.List className='flex overflow-x-auto overflow-y-clip rounded-t-md border-b border-zinc-300 bg-zinc-50 px-1'>
+          <HeadlessTab.List className='flex overflow-x-auto overflow-y-clip rounded-t-md border-b border-gray-300 bg-gray-50 px-1'>
             <Tab>Medlemmer</Tab>
             <Tab>Tidligere medlemmer</Tab>
             <Tab>Alle brukere</Tab>
@@ -48,7 +48,7 @@ const Settings: NextPage = () => {
           pad={false}
           className='col-span-2 flex flex-col max-md:hidden'
         >
-          <HeadlessTab.List className='flex rounded-t-md border-b border-zinc-300 bg-zinc-50 px-1'>
+          <HeadlessTab.List className='flex rounded-t-md border-b border-gray-300 bg-gray-50 px-1'>
             <Tab>Medlemmer</Tab>
             <Tab>Tidligere medlemmer</Tab>
             <Tab>Alle brukere</Tab>
@@ -66,7 +66,7 @@ const Settings: NextPage = () => {
           pad={false}
           className='col-span-1 flex flex-col max-md:hidden'
         >
-          <HeadlessTab.List className='flex rounded-t-md border-b border-zinc-300 bg-zinc-50 px-1'>
+          <HeadlessTab.List className='flex rounded-t-md border-b border-gray-300 bg-gray-50 px-1'>
             <Tab>Åpne invitasjoner</Tab>
             <Tab>Utgåtte invitasjoner</Tab>
           </HeadlessTab.List>
@@ -100,7 +100,7 @@ const Tab: React.FC<TabProps> = ({ children, className }) => {
   return (
     <HeadlessTab
       className={twMerge(
-        '-mb-px border-b-2 border-zinc-300 px-2 py-1 font-medium outline-none ui-selected:border-emerald-500',
+        '-mb-px border-b-2 border-gray-300 px-2 py-1 font-medium outline-none ui-selected:border-primary-500',
         className
       )}
     >

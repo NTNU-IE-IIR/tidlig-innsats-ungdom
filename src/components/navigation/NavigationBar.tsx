@@ -23,7 +23,7 @@ const NavigationBar = () => {
   };
 
   return (
-    <header className='flex items-center justify-between border-b-2 border-zinc-400 print:hidden max-md:hidden'>
+    <header className='flex items-center justify-between border-b-2 border-gray-400 print:hidden max-md:hidden'>
       <nav className='-mb-0.5 flex items-center self-end'>
         <NavigationLink href='/'>Temautforsker</NavigationLink>
         <NavigationLink
@@ -41,7 +41,7 @@ const NavigationBar = () => {
         <Tooltip content='Vis hjelp'>
           <Button
             variant='neutral'
-            className='bg-white px-0.5 py-0.5 text-zinc-800'
+            className='bg-white px-0.5 py-0.5 text-gray-800'
             onClick={onHelp}
           >
             <IconHelp />
@@ -49,8 +49,8 @@ const NavigationBar = () => {
         </Tooltip>
 
         <Menu as='div' className='relative'>
-          <Menu.Button className='m-1 flex cursor-pointer items-center gap-1 rounded-md border-black/10 bg-white p-1 shadow hover:bg-zinc-100'>
-            <div className='h-5 w-5 rounded-full bg-zinc-800' />
+          <Menu.Button className='m-1 flex cursor-pointer items-center gap-1 rounded-md border-black/10 bg-white p-1 shadow hover:bg-gray-100'>
+            <div className='h-5 w-5 rounded-full bg-gray-800' />
 
             <span className='text-sm font-medium'>
               {data?.user.name?.split(' ')[0]}
@@ -63,7 +63,7 @@ const NavigationBar = () => {
             <Menu.Item
               as={Link}
               href='/profile'
-              className='flex w-full items-center gap-1 rounded-t-md px-2 py-1 transition-colors hover:bg-zinc-100'
+              className='flex w-full items-center gap-1 rounded-t-md px-2 py-1 transition-colors hover:bg-gray-100'
             >
               <IconUser className='h-4 w-4' />
               <span className='text-sm font-medium'>Profil</span>
@@ -71,7 +71,7 @@ const NavigationBar = () => {
             <Menu.Item
               as='button'
               onClick={() => signOut()}
-              className='flex w-full items-center gap-1 rounded-b-md px-2 py-1 transition-colors hover:bg-zinc-100 hover:text-red-600'
+              className='flex w-full items-center gap-1 rounded-b-md px-2 py-1 transition-colors hover:bg-gray-100 hover:text-error-600'
             >
               <IconLogout className='h-4 w-4' />
               <span className='text-sm font-medium'>Logg ut</span>
@@ -102,7 +102,7 @@ const NavigationLink: React.FC<{
       <li
         className={twMerge(
           'border-b-2 px-2 font-semibold',
-          router.pathname === href ? 'border-emerald-500' : 'border-transparent'
+          router.pathname === href ? 'border-primary-500' : 'border-transparent'
         )}
       >
         <Link href={href}>{children}</Link>

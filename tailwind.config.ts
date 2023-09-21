@@ -12,6 +12,14 @@ export default {
       fontFamily: {
         sans: ['Inter var', ...defaultTheme.fontFamily.sans],
       },
+      colors: (utils) => ({
+        gray: utils.colors.zinc,
+        primary: utils.colors.amber,
+        info: utils.colors.sky,
+        ok: utils.colors.green,
+        warn: utils.colors.yellow,
+        error: utils.colors.red,
+      }),
     },
   },
   plugins: [

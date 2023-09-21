@@ -35,7 +35,7 @@ const UserAccountList = forwardRef<HTMLDivElement, UserAccountListProps>(
           </Table.Header>
 
           {users?.length === 0 && (
-            <p className='col-span-5 py-8 text-center text-sm font-medium text-zinc-700'>
+            <p className='col-span-5 py-8 text-center text-sm font-medium text-gray-700'>
               Fant ingen brukere.
             </p>
           )}
@@ -48,7 +48,7 @@ const UserAccountList = forwardRef<HTMLDivElement, UserAccountListProps>(
               )}
             >
               <Table.Cell className='flex items-center gap-1'>
-                <div className='h-6 w-6 flex-shrink-0 rounded-full bg-zinc-600' />
+                <div className='h-6 w-6 flex-shrink-0 rounded-full bg-gray-600' />
                 <div className='truncate'>
                   <p className='-mb-1 font-semibold'>{user.fullName}</p>
                   <a

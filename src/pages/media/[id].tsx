@@ -72,7 +72,7 @@ const MediaView: NextPage = () => {
 
             <Link
               href='/'
-              className='flex items-center gap-1 rounded-md border border-zinc-300 bg-white py-1 pl-1 pr-2 transition-colors hover:bg-zinc-50'
+              className='flex items-center gap-1 rounded-md border border-gray-300 bg-white py-1 pl-1 pr-2 transition-colors hover:bg-gray-50'
             >
               <IconChevronLeft className='h-5 w-5' />
               <span className='text-sm font-medium'>
@@ -89,7 +89,7 @@ const MediaView: NextPage = () => {
                 (media.content as FileMedia).fileId
               }`}
               target='_blank'
-              className='flex items-center gap-1 rounded-md border border-zinc-300 bg-white px-2 py-1 transition-colors hover:bg-zinc-50'
+              className='flex items-center gap-1 rounded-md border border-gray-300 bg-white px-2 py-1 transition-colors hover:bg-gray-50'
             >
               <IconExternalLink className='h-5 w-5' />
               <span className='font-medium'>Åpne fil i ny fane</span>

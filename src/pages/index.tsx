@@ -85,7 +85,7 @@ const Home: NextPage = () => {
               type='button'
               className={twMerge(
                 'rounded-l-md px-2 py-0.5 font-medium',
-                !showFavoritesOnly && 'bg-emerald-50 text-emerald-900'
+                !showFavoritesOnly && 'bg-primary-50 text-primary-900'
               )}
               onClick={() => setShowFavoritesOnly(false)}
             >
@@ -95,7 +95,7 @@ const Home: NextPage = () => {
               type='button'
               className={twMerge(
                 'rounded-r-md px-2 py-0.5 font-medium',
-                showFavoritesOnly && 'bg-emerald-50 text-emerald-900'
+                showFavoritesOnly && 'bg-primary-50 text-primary-900'
               )}
               onClick={() => setShowFavoritesOnly(true)}
             >
@@ -112,17 +112,17 @@ const Home: NextPage = () => {
               ref={searchBarRef}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className='w-80 rounded-md border border-black/20 bg-zinc-50 py-1 pl-6 pr-16 shadow outline-none transition-colors placeholder:text-zinc-950 focus:border-zinc-600 focus:ring-0'
+              className='w-80 rounded-md border border-black/20 bg-gray-50 py-1 pl-6 pr-16 shadow outline-none transition-colors placeholder:text-gray-950 focus:border-gray-600 focus:ring-0'
               placeholder='Søk...'
             />
 
             {/* Key combination pills */}
             <div className='pointer-events-none absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-px text-[10px] font-semibold'>
-              <span className='rounded-md border border-zinc-400 bg-zinc-200 px-1'>
+              <span className='rounded-md border border-gray-400 bg-gray-200 px-1'>
                 CTRL
               </span>
               <span>+</span>
-              <span className='rounded-md border border-zinc-400 bg-zinc-200 px-1'>
+              <span className='rounded-md border border-gray-400 bg-gray-200 px-1'>
                 K
               </span>
             </div>
@@ -134,7 +134,7 @@ const Home: NextPage = () => {
             (content.themes.length === 0 && content.medias.length === 0 && (
               <Link
                 href='/media/new'
-                className='mx-auto my-32 flex max-w-xs flex-col items-center text-center text-zinc-500 transition-colors hover:text-zinc-600'
+                className='mx-auto my-32 flex max-w-xs flex-col items-center text-center text-gray-500 transition-colors hover:text-gray-600'
               >
                 <IconCloudPlus className='h-24 w-24' />
                 <p className='text-sm font-semibold'>
@@ -158,7 +158,7 @@ const Home: NextPage = () => {
                 {theme.iconUrl ? (
                   <img src={theme.iconUrl} className='h-8 w-8 flex-shrink-0' />
                 ) : (
-                  <IconFolderFilled className='h-8 w-8 flex-shrink-0 text-zinc-700' />
+                  <IconFolderFilled className='h-8 w-8 flex-shrink-0 text-gray-700' />
                 )}
 
                 <div className='flex h-full flex-1 flex-col justify-center overflow-hidden'>
@@ -168,7 +168,7 @@ const Home: NextPage = () => {
 
                 {theme.favorited && (
                   <Tooltip content='Inneholder favoritter'>
-                    <IconStarFilled className='h-5 w-5 text-yellow-600' />
+                    <IconStarFilled className='h-5 w-5 text-warn-600' />
                   </Tooltip>
                 )}
               </Card>
@@ -183,7 +183,7 @@ const Home: NextPage = () => {
                 key={'MEDIA' + media.id}
                 className='relative flex aspect-[1.5/1] cursor-pointer flex-col items-center justify-center text-center transition-all hover:scale-[1.01]'
               >
-                <IconListDetails className='h-10 w-10 text-zinc-700' />
+                <IconListDetails className='h-10 w-10 text-gray-700' />
 
                 <h3 className='truncate text-xl font-bold'>{media.name}</h3>
                 <p className='line-clamp-2 text-sm font-medium'>
@@ -233,14 +233,14 @@ const FavoriteContentButton: React.FC<FavoriteContentButtonProps> = ({
       disabled={disabled}
       onClick={onFavoriteClick}
       className={twMerge(
-        'rounded-full border border-transparent p-0.5 hover:border-zinc-300 hover:bg-zinc-200 focus:border-zinc-300 focus:bg-zinc-200 focus:outline-none',
+        'rounded-full border border-transparent p-0.5 hover:border-gray-300 hover:bg-gray-200 focus:border-gray-300 focus:bg-gray-200 focus:outline-none',
         className
       )}
     >
       {favorited ? (
-        <IconStarFilled className='h-5 w-5 text-yellow-600' />
+        <IconStarFilled className='h-5 w-5 text-warn-600' />
       ) : (
-        <IconStar className='h-5 w-5 text-zinc-800' />
+        <IconStar className='h-5 w-5 text-gray-800' />
       )}
       <span className='sr-only'>Merk som favoritt</span>
     </button>

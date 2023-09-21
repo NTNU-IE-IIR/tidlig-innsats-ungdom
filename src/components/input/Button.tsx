@@ -10,11 +10,11 @@ const button = cva(
     variants: {
       variant: {
         primary:
-          'border-emerald-700 bg-emerald-500 hover:bg-emerald-600 focus:ring-emerald-700',
+          'border-primary-700 bg-primary-500 hover:bg-primary-600 focus:ring-primary-700',
         destructive:
-          'border-red-700 bg-red-500 hover:bg-red-600 focus:ring-red-700',
+          'border-error-700 bg-error-500 hover:bg-error-600 focus:ring-error-700',
         neutral:
-          'text-zinc-950 border border-zinc-300 hover:bg-zinc-100 focus:ring-zinc-200',
+          'text-gray-950 border border-gray-300 hover:bg-gray-100 focus:ring-gray-200',
       },
       disabled: {
         true: 'bg-opacity-50 hover:bg-opacity-70 cursor-not-allowed',

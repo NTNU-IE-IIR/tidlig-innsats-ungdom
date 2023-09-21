@@ -109,7 +109,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
         leave='transition-all duration-300 ease-out'
         leaveFrom='transform w-96 opacity-100'
         leaveTo='transform w-0 opacity-0'
-        className='w-96 overflow-hidden print:hidden'
+        className='overflow-hidden print:hidden'
       >
         <SessionSideMenu />
       </Transition>

@@ -13,7 +13,7 @@ const Switch: React.FC<SwitchProps> = ({ checked, onChange, label }) => {
     <HeadlessSwitch
       checked={checked}
       onChange={onChange}
-      className='h-3 w-10 rounded-full bg-zinc-300 outline-none'
+      className='h-3 w-10 rounded-full bg-gray-300 outline-none'
     >
       {({ checked }) => (
         <>
@@ -21,8 +21,8 @@ const Switch: React.FC<SwitchProps> = ({ checked, onChange, label }) => {
           <span
             aria-hidden
             className={twMerge(
-              '-mt-1 flex h-5 w-5 transform items-center justify-center rounded-full bg-zinc-500 text-zinc-50 transition translate-x-0',
-              checked && 'translate-x-5 bg-emerald-500'
+              '-mt-1 flex h-5 w-5 transform items-center justify-center rounded-full bg-gray-500 text-gray-50 transition translate-x-0',
+              checked && 'translate-x-5 bg-primary-500'
             )}
           >
             <IconCheck className={twMerge('h-4 w-4', !checked && 'hidden')} />

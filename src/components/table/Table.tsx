@@ -34,7 +34,7 @@ Table.Header = ({ children, className }: TableHeaderProps) => {
     <div
       role='row'
       className={twMerge(
-        'grid rounded-t-md border-b border-zinc-300 bg-zinc-50 px-1 shadow',
+        'grid rounded-t-md border-b border-gray-300 bg-gray-50 px-1 shadow',
         className
       )}
       style={{

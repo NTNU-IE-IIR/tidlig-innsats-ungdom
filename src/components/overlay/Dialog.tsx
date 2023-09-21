@@ -57,7 +57,7 @@ const Dialog: React.FC<DialogProps> = ({
             >
               <HeadlessDialog.Panel
                 className={twMerge(
-                  'w-full max-w-md transform overflow-hidden rounded-lg bg-zinc-50 p-1 shadow-lg transition-all',
+                  'w-full max-w-md transform overflow-hidden rounded-lg bg-gray-50 p-1 shadow-lg transition-all',
                   className
                 )}
               >

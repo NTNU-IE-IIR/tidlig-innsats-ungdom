@@ -24,7 +24,7 @@ const SessionMediaEntry: React.FC<SessionMediaEntryProps> = ({
 }) => {
   return (
     <Link
-      className='relative mb-8 flex items-center gap-2 rounded-md border border-transparent p-1 hover:border-zinc-200 hover:bg-zinc-100'
+      className='relative mb-8 flex items-center gap-2 rounded-md border border-transparent p-1 hover:border-gray-200 hover:bg-gray-100'
       href={`/media/${mediaId}`}
     >
       <div className='z-10 h-8 w-8 rounded-full bg-blue-500' />
@@ -40,7 +40,7 @@ const SessionMediaEntry: React.FC<SessionMediaEntryProps> = ({
           {mediaThemes.map(({ theme }) => (
             <div
               key={theme?.id}
-              className='rounded-full border border-red-900 bg-red-100 px-1 text-xs font-medium text-red-900'
+              className='rounded-full border border-error-900 bg-error-100 px-1 text-xs font-medium text-error-900'
             >
               {theme?.name}
             </div>
@@ -51,7 +51,7 @@ const SessionMediaEntry: React.FC<SessionMediaEntryProps> = ({
       <IconChevronRight className='h-5 w-5' />
 
       {!isFirst && (
-        <div className='absolute bottom-full left-5 h-full w-0.5 -translate-x-1/2 translate-y-1 bg-zinc-400' />
+        <div className='absolute bottom-full left-5 h-full w-0.5 -translate-x-1/2 translate-y-1 bg-gray-400' />
       )}
     </Link>
   );

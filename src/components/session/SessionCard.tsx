@@ -22,7 +22,7 @@ const SessionCard: React.FC<SessionCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className='flex cursor-pointer items-center justify-between rounded-md border border-zinc-300 bg-zinc-100 p-2 shadow transition-colors hover:bg-zinc-200'
+      className='flex cursor-pointer items-center justify-between rounded-md border border-gray-300 bg-gray-100 p-2 shadow transition-colors hover:bg-gray-200'
     >
       <div>
         <h2 className='text-lg font-bold'>{title}</h2>

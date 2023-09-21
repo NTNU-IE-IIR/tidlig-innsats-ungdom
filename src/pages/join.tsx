@@ -56,7 +56,7 @@ const JoinPage: NextPage = () => {
                 <strong className='font-semibold'>{invite.tenantName}</strong>
               </h1>
 
-              <p className='mb-2 text-center text-sm font-medium text-zinc-700'>
+              <p className='mb-2 text-center text-sm font-medium text-gray-700'>
                 For å fortsette må du registrere en konto.
               </p>
 
@@ -76,9 +76,9 @@ interface ErrorCardProps {
 
 const ErrorCard: React.FC<ErrorCardProps> = ({ title, description }) => (
   <Card className='flex flex-col items-center p-2'>
-    <IconAlertTriangleFilled className='h-12 w-12 text-yellow-500' />
+    <IconAlertTriangleFilled className='h-12 w-12 text-warn-500' />
     <h1 className='text-lg font-bold'>{title}</h1>
-    <p className='text-center text-sm text-zinc-600'>{description}</p>
+    <p className='text-center text-sm text-gray-600'>{description}</p>
   </Card>
 );
 

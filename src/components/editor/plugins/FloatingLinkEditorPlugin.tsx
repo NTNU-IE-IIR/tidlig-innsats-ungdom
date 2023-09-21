@@ -1,9 +1,8 @@
 import Tooltip from '@/components/feedback/Tooltip';
 import { FloatingArrow, arrow, offset, useFloating } from '@floating-ui/react';
 import {
-  $isAutoLinkNode,
   $isLinkNode,
-  TOGGLE_LINK_COMMAND,
+  TOGGLE_LINK_COMMAND
 } from '@lexical/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $findMatchingParent, mergeRegister } from '@lexical/utils';
@@ -136,9 +135,9 @@ function FloatingLinkEditor({
           <FloatingArrow
             ref={arrowRef}
             context={context}
-            className='fill-zinc-500'
+            className='fill-gray-500'
           />
-          <div className='relative m-1 mt-4 flex flex-1 rounded-md border border-zinc-300'>
+          <div className='relative m-1 mt-4 flex flex-1 rounded-md border border-gray-300'>
             <label
               htmlFor='editor-link-input'
               className='absolute top-0 -translate-y-full text-xs'
@@ -160,7 +159,7 @@ function FloatingLinkEditor({
               <a
                 href={linkUrl}
                 target='_blank'
-                className='flex items-center rounded-r-md border-l border-zinc-300 bg-zinc-50 p-0.5 text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-800'
+                className='flex items-center rounded-r-md border-l border-gray-300 bg-gray-50 p-0.5 text-sm font-medium text-gray-600 transition-colors hover:text-gray-800'
               >
                 <IconExternalLink className='h-5 w-5' />
               </a>
@@ -176,7 +175,7 @@ function FloatingLinkEditor({
                 setLinkTarget(newTarget);
                 commitLink(newTarget);
               }}
-              className='-mt-0.5 rounded-md border border-zinc-300 bg-zinc-100 text-emerald-600 focus:ring-emerald-600'
+              className='-mt-0.5 rounded-md border border-gray-300 bg-gray-100 text-primary-600 focus:ring-primary-600'
             />
 
             <span className='text-sm'>Åpne i lenken ny fane</span>
@@ -199,14 +198,7 @@ function useFloatingLinkEditorToolbar(
     if ($isRangeSelection(selection)) {
       const node = getSelectedNode(selection);
       const linkParent = $findMatchingParent(node, $isLinkNode);
-      const autoLinkParent = $findMatchingParent(node, $isAutoLinkNode);
-
-      // We don't want this menu to open for auto links.
-      if (linkParent != null && autoLinkParent == null) {
-        setIsLink(true);
-      } else {
-        setIsLink(false);
-      }
+      setIsLink(linkParent != null);
     }
   }, []);
 

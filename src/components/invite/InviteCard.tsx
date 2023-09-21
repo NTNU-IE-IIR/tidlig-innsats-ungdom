@@ -47,7 +47,7 @@ const InviteCard: React.FC<InviteCardProps> = ({
     <li className='m-1 flex gap-1 rounded-md border p-1 shadow'>
       <div className='flex-1'>
         <p
-          className={twMerge('font-medium', !comment && 'italic text-zinc-400')}
+          className={twMerge('font-medium', !comment && 'italic text-gray-400')}
         >
           {!comment || comment?.length === 0 ? '(ingen kommentar)' : comment}
         </p>
@@ -91,7 +91,7 @@ const InviteCard: React.FC<InviteCardProps> = ({
                 className={twMerge(
                   'aspect-square h-fit self-center p-1 transition-colors',
                   clipboard.copied &&
-                    'bg-emerald-500 text-zinc-100 hover:bg-emerald-600 focus:bg-emerald-600'
+                    'bg-primary-500 text-gray-100 hover:bg-primary-600 focus:bg-primary-600'
                 )}
               >
                 {clipboard.copied ? (

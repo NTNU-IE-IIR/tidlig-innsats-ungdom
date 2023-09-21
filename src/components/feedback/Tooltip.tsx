@@ -104,12 +104,12 @@ const Tooltip: React.FC<TooltipProps> = ({
               {...getFloatingProps()}
               ref={refs.setFloating}
               style={floatingStyles}
-              className='rounded-md bg-zinc-950/75 px-1.5 py-0.5 text-sm text-zinc-100'
+              className='rounded-md bg-gray-950/75 px-1.5 py-0.5 text-sm text-gray-100'
             >
               <FloatingArrow
                 ref={arrowRef}
                 context={context}
-                className='fill-zinc-950/75'
+                className='fill-gray-950/75'
               />
               {content}
             </div>

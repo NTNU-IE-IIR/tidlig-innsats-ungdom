@@ -58,7 +58,7 @@ const RegisterMemberForm: React.FC<RegisterMemberFormProps> = ({
     >
       <h1 className='text-lg font-bold'>Opprett nytt medlem</h1>
 
-      <p className='font-zinc-600 text-sm'>
+      <p className='font-gray-600 text-sm'>
         Du kan også benytte invitasjoner for å la de selv velge et passord.
       </p>
 

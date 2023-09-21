@@ -50,7 +50,7 @@ const EndedSession: React.FC<EndedSessionProps> = ({
 
       <h2 className='-mb-2 font-semibold'>Tidslinje</h2>
 
-      <hr className='border-zinc-300' />
+      <hr className='border-gray-300' />
 
       {entries?.map((entry, i) => (
         <SessionMediaEntry

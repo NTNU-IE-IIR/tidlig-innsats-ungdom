@@ -40,14 +40,14 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ onNavigate }) => {
       </ul>
 
       <div className='flex items-center gap-2 rounded-md border p-1'>
-        <div className='h-7 w-7 rounded-full bg-zinc-800' />
+        <div className='h-7 w-7 rounded-full bg-gray-800' />
 
         <div className='flex-1'>
           <span className='block text-sm font-semibold'>{session?.user.name}</span>
           <span className='-mt-1 block text-xs'>{session?.user.email}</span>
         </div>
 
-        <IconLogout className='text-zinc-600' />
+        <IconLogout className='text-gray-600' />
       </div>
     </nav>
   );
@@ -70,7 +70,7 @@ const NavigationItem: React.FC<NavigationItemProps> = ({
     <Link
       href={href}
       onClick={onNavigate}
-      className='border-zinc-3001 flex items-center gap-1 rounded-md border p-1'
+      className='border-gray-3001 flex items-center gap-1 rounded-md border p-1'
     >
       <Icon className='h-6 w-6' />
       <span className='text-lg font-medium'>{name}</span>

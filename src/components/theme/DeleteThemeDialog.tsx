@@ -37,15 +37,15 @@ const DeleteThemeDialog: React.FC<DeleteThemeDialogProps> = ({
   return (
     <div className='flex flex-col gap-2 p-4'>
       <h2 className='text-lg font-bold'>Slett tema</h2>
-      <p className='text-sm text-zinc-700'>
+      <p className='text-sm text-gray-700'>
         Er du sikker på at du vil slette temaet?
       </p>
 
-      <p className='text-sm text-zinc-700'>
+      <p className='text-sm text-gray-700'>
         Dette kan ikke angres og eventuelle tilknytninger vil også slettes.
       </p>
 
-      <p className='text-sm text-zinc-700'>
+      <p className='text-sm text-gray-700'>
         Innhold vil derimot <span className='font-semibold'>ikke</span> slettes.
       </p>
 
@@ -53,7 +53,7 @@ const DeleteThemeDialog: React.FC<DeleteThemeDialogProps> = ({
         <label className='flex items-center gap-1'>
           <input
             type='checkbox'
-            className='rounded-md text-emerald-500 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1'
+            className='rounded-md text-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-1'
             checked={deleteChildren}
             onChange={(e) => setDeleteChildren(e.target.checked)}
           />

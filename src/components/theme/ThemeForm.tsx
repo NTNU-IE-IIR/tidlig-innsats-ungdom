@@ -150,7 +150,7 @@ const ThemeForm: React.FC<ThemeFormProps> = ({
         />
 
         {existingTheme && (
-          <p className='text-sm text-zinc-600'>
+          <p className='text-sm text-gray-600'>
             Opprettet for {dayjs(existingTheme?.createdAt).fromNow()}
           </p>
         )}
@@ -171,7 +171,7 @@ const ThemeForm: React.FC<ThemeFormProps> = ({
         </div>
       </section>
 
-      <section className='flex w-1/2 flex-col overflow-hidden border-l border-zinc-300 px-2'>
+      <section className='flex w-1/2 flex-col overflow-hidden border-l border-gray-300 px-2'>
         <h2 className='font-semibold'>Overordnet tema</h2>
 
         <button
@@ -179,9 +179,9 @@ const ThemeForm: React.FC<ThemeFormProps> = ({
           onClick={() => form.setFieldValue('parentId', null)}
           className={twMerge(
             'mb-2 flex items-center justify-center gap-1 rounded-md border py-0.5',
-            form.values.parentId !== null && 'border-zinc-400 text-zinc-400',
+            form.values.parentId !== null && 'border-gray-400 text-gray-400',
             form.values.parentId === null &&
-              'border-emerald-500 bg-emerald-50 text-emerald-600'
+              'border-primary-500 bg-primary-50 text-primary-600'
           )}
         >
           <IconCheck className='h-5 w-5' />
@@ -226,7 +226,7 @@ const ThemeListNodeFlat: React.FC<ThemeListNodeFlatProps> = ({
           className={twMerge(
             'flex cursor-pointer items-center gap-1 overflow-hidden border py-0.5 pr-2 text-sm font-medium',
             selected &&
-              'rounded-md border-emerald-500 bg-emerald-50 text-emerald-500',
+              'rounded-md border-primary-500 bg-primary-50 text-primary-500',
             !selected && 'border-transparent'
           )}
           style={{
@@ -236,8 +236,8 @@ const ThemeListNodeFlat: React.FC<ThemeListNodeFlatProps> = ({
           <div
             className={twMerge(
               'h-2 w-2 rounded-full border',
-              selected && 'border-emerald-500 bg-emerald-300',
-              !selected && 'border-zinc-400 bg-zinc-200'
+              selected && 'border-primary-500 bg-primary-300',
+              !selected && 'border-gray-400 bg-gray-200'
             )}
           />
           <span className='truncate'>{theme.name}</span>

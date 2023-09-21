@@ -30,11 +30,11 @@ const DeleteInviteDialog: React.FC<DeleteInviteDialogProps> = ({
   return (
     <div className='flex flex-col gap-2 p-4'>
       <h2 className='text-lg font-bold'>Avslutt invitasjon</h2>
-      <p className='text-sm text-zinc-700'>
+      <p className='text-sm text-gray-700'>
         Er du sikker på at du vil avslutte invitasjonen?
       </p>
 
-      <p className='text-sm text-zinc-700'>
+      <p className='text-sm text-gray-700'>
         Dette kan ikke angres og invitasjonen kan ikke lenger brukes til å registere kontoer.
       </p>
 

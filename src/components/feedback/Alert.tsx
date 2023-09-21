@@ -10,10 +10,10 @@ import { twMerge } from 'tailwind-merge';
 const alert = cva(['border rounded-md px-2 py-1 flex gap-2 items-center'], {
   variants: {
     intent: {
-      info: ['bg-sky-100', 'border-sky-500', 'text-sky-800'],
-      success: ['bg-emerald-100', 'border-emerald-500', 'text-emerald-800'],
-      warning: ['bg-yellow-50', 'border-yellow-600', 'text-yellow-800'],
-      error: ['bg-red-100', 'border-red-500', 'text-red-800'],
+      info: ['bg-info-100', 'border-info-500', 'text-info-800'],
+      success: ['bg-ok-100', 'border-ok-500', 'text-ok-800'],
+      warning: ['bg-warn-50', 'border-warn-600', 'text-warn-800'],
+      error: ['bg-error-100', 'border-error-500', 'text-error-800'],
     },
   },
 });

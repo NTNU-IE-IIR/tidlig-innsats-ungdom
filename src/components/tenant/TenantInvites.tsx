@@ -21,7 +21,7 @@ const TenantInvites = forwardRef<HTMLDivElement, TenantInvitesProps>(
     return (
       <div ref={ref}>
         {invites?.length === 0 && (
-          <p className='my-8 text-center text-sm text-zinc-600'>
+          <p className='my-8 text-center text-sm text-gray-600'>
             Fant ingen invitasjoner
           </p>
         )}

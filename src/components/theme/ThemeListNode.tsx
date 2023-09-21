@@ -35,7 +35,7 @@ const ThemeListNode: React.FC<ThemeListNodeProps> = ({
           checked={isSelected(theme.id)}
           onChange={() => toggleTheme(theme.id)}
           className={twMerge(
-            'h-3.5 w-3.5 rounded-full text-emerald-500 focus:ring-1 focus:ring-emerald-700 focus:ring-offset-1',
+            'h-3.5 w-3.5 rounded-full text-primary-500 focus:ring-1 focus:ring-primary-700 focus:ring-offset-1',
             !selectable && 'hidden'
           )}
         />
@@ -51,7 +51,7 @@ const ThemeListNode: React.FC<ThemeListNodeProps> = ({
           <button
             type='button'
             onClick={() => onChange?.(theme)}
-            className='rounded-md border border-zinc-300 p-0.5 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-700'
+            className='rounded-md border border-gray-300 p-0.5 text-gray-600 hover:bg-gray-100 hover:text-gray-700'
           >
             <IconPencil className='h-4 w-4' />
             <span className='sr-only'>Rediger tema</span>
@@ -60,7 +60,7 @@ const ThemeListNode: React.FC<ThemeListNodeProps> = ({
           <button
             type='button'
             onClick={() => onDelete?.(theme)}
-            className='rounded-md border border-zinc-300 p-0.5 text-zinc-600 hover:bg-zinc-100 hover:text-red-600'
+            className='rounded-md border border-gray-300 p-0.5 text-gray-600 hover:bg-gray-100 hover:text-error-600'
           >
             <IconTrash className='h-4 w-4' />
             <span className='sr-only'>Slett tema</span>

@@ -19,7 +19,7 @@ const Profile: NextPage = () => {
       <PageLayout className='flex gap-8 py-2'>
         <div className='flex flex-col items-center'>
           <h1 className='invisible text-lg font-bold'>Detaljer</h1>
-          <div className='h-48 w-48 rounded-full bg-zinc-600' />
+          <div className='h-48 w-48 rounded-full bg-gray-600' />
 
           <Button
             variant='neutral'
@@ -55,7 +55,7 @@ const Profile: NextPage = () => {
           </Card>
           <h1 className='mt-4 text-lg font-bold'>Innhold</h1>
           <Card className='py-4'>
-            <p className='text-center text-sm font-medium text-zinc-600'>
+            <p className='text-center text-sm font-medium text-gray-600'>
               Her var det tomt.
             </p>
           </Card>

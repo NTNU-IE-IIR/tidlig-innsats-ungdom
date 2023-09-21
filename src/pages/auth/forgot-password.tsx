@@ -16,13 +16,13 @@ const ForgotPassword: NextPage = () => {
           Send gjenopprettingslenke
         </Button>
 
-        <p className='mt-4 text-center text-sm text-zinc-600'>
+        <p className='mt-4 text-center text-sm text-gray-600'>
           Husket du passordet ditt likevel?
         </p>
 
         <Link
           href='/auth/login'
-          className='block text-center text-sm font-semibold text-emerald-500 hover:underline'
+          className='block text-center text-sm font-semibold text-primary-500 hover:underline'
         >
           Logg inn
         </Link>

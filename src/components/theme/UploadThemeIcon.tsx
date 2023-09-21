@@ -41,14 +41,14 @@ const UploadThemeIcon: React.FC<UploadThemeIconProps> = ({
     <label
       {...getRootProps()}
       className={twMerge(
-        'flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-zinc-400 text-zinc-600 transition-all hover:bg-zinc-50',
-        isDragActive && 'border-emerald-500',
+        'flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-gray-400 text-gray-600 transition-all hover:bg-gray-50',
+        isDragActive && 'border-primary-500',
         imageSrc && 'border-transparent'
       )}
     >
       {imageSrc ? (
         <>
-          <img src={imageSrc} className='h-24 w-24 rounded-md bg-zinc-200 border border-zinc-300' />
+          <img src={imageSrc} className='h-24 w-24 rounded-md bg-gray-200 border border-gray-300' />
           <span className='text-sm'></span>
           <Button variant='neutral' className='text-sm' onClick={open}>
             <IconUpload className='w-4 h-4' />

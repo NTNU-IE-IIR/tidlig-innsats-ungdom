@@ -293,7 +293,7 @@ const ToolbarPlugin: React.FC<ToolbarPluginProps> = ({ onCanUndo }) => {
   }, [editor]);
 
   return (
-    <div className='flex gap-1 rounded-t-md border-b border-zinc-200 bg-zinc-50 p-1 shadow'>
+    <div className='flex gap-1 rounded-t-md border-b border-gray-200 bg-gray-50 p-1 shadow'>
       <ToolbarActionButton
         disabled={!canUndo}
         onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}
@@ -428,9 +428,9 @@ const ToolbarActionButton: React.FC<ToolbarActionButtonProps> = ({
       onClick={onClick}
       disabled={disabled}
       className={twMerge(
-        'flex items-center gap-1 rounded-md border border-zinc-300 p-1 transition-colors',
-        disabled && 'text-zinc-500',
-        !disabled && 'hover:border-zinc-400 hover:bg-zinc-200'
+        'flex items-center gap-1 rounded-md border border-gray-300 p-1 transition-colors',
+        disabled && 'text-gray-500',
+        !disabled && 'hover:border-gray-400 hover:bg-gray-200'
       )}
     >
       <Icon className='h-5 w-5' />
@@ -455,8 +455,8 @@ const ToolbarToggleButton: React.FC<ToolbarToggleButtonProps> = ({
       type='button'
       onClick={onClick}
       className={twMerge(
-        'rounded-md border border-zinc-300 p-1 transition-colors',
-        active && 'border-zinc-400 bg-zinc-200'
+        'rounded-md border border-gray-300 p-1 transition-colors',
+        active && 'border-gray-400 bg-gray-200'
       )}
     >
       <Icon className='h-5 w-5' />
@@ -465,7 +465,7 @@ const ToolbarToggleButton: React.FC<ToolbarToggleButtonProps> = ({
 };
 
 const VerticalRule: React.FC = () => (
-  <div className='mx-1 border-r border-zinc-300' />
+  <div className='mx-1 border-r border-gray-300' />
 );
 
 interface InsertImageDialogProps {
@@ -515,7 +515,7 @@ const InsertImageDialog: React.FC<InsertImageDialogProps> = ({
         {src === '' && (
           <label
             htmlFor='fileupload'
-            className='flex flex-col items-center justify-center rounded-md border-2 border-dashed border-zinc-300 py-4 text-zinc-600'
+            className='flex flex-col items-center justify-center rounded-md border-2 border-dashed border-gray-300 py-4 text-gray-600'
           >
             <IconUpload className='h-12 w-12' />
             <span className='text-sm font-medium'>Last opp bilde</span>

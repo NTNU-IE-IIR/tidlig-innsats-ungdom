@@ -81,7 +81,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
     <LexicalComposer initialConfig={initialConfig}>
       <div
         className={twMerge(
-          'flex flex-col rounded-md border border-zinc-200',
+          'flex flex-col rounded-md border border-gray-200',
           className
         )}
       >

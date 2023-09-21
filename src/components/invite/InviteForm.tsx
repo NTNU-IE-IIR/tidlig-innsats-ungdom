@@ -55,7 +55,7 @@ const InviteForm: React.FC<InviteFormProps> = ({ onSuccess, onCancel }) => {
     >
       <h1 className='text-lg font-bold'>Opprett invitasjon</h1>
 
-      <p className='mb-2 text-sm text-zinc-600'>
+      <p className='mb-2 text-sm text-gray-600'>
         Invitasjonen kan brukes for å tillate registrering av nye kontoer. Vi
         gir deg en lenke som du kan sende til nye brukere for registrering.
         Invitasjonen varer i 7 dager.

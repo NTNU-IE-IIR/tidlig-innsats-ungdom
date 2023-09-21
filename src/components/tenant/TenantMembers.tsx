@@ -107,7 +107,7 @@ const TenantMembers = forwardRef<HTMLDivElement, TenantMembersProps>(
             </Table.ColumnHeader>
           </Table.Header>
           {members?.length === 0 && (
-            <p className='col-span-4 py-8 text-center text-sm font-medium text-zinc-700'>
+            <p className='col-span-4 py-8 text-center text-sm font-medium text-gray-700'>
               Fant ingen medlemmer.
             </p>
           )}

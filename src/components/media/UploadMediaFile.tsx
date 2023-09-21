@@ -27,8 +27,8 @@ const UploadMediaFile: React.FC<UploadMediaFileProps> = ({
     <label
       {...getRootProps()}
       className={twMerge(
-        'flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-zinc-400 text-zinc-600 transition-all hover:bg-zinc-50',
-        isDragActive && 'border-emerald-500',
+        'flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-gray-400 text-gray-600 transition-all hover:bg-gray-50',
+        isDragActive && 'border-primary-500',
         className
       )}
     >
@@ -43,7 +43,7 @@ const UploadMediaFile: React.FC<UploadMediaFileProps> = ({
             ) : (
               <>
                 Dra og slipp filen du vil laste opp, <br /> eller{' '}
-                <span className='font-semibold text-emerald-600'>
+                <span className='font-semibold text-primary-600'>
                   trykk for å velge
                 </span>
               </>

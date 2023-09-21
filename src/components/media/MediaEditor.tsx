@@ -170,7 +170,7 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
 
             {mediaType === undefined && (
               <div className='flex flex-1 flex-col items-center justify-center'>
-                <p className='pb-4 text-lg font-medium text-zinc-700'>
+                <p className='pb-4 text-lg font-medium text-gray-700'>
                   Velg type innhold du vil opprette
                 </p>
 
@@ -249,13 +249,13 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
 
               <label className='font-medium'>
                 Lagre som utkast{' '}
-                <span className='text-sm text-zinc-600'>(kun du kan se)</span>
+                <span className='text-sm text-gray-600'>(kun du kan se)</span>
               </label>
             </div>
 
             <div className='flex items-center justify-end gap-2'>
               {isChanged && (
-                <p className='text-sm font-medium text-zinc-600'>
+                <p className='text-sm font-medium text-gray-600'>
                   Du har ulagrede endringer.
                 </p>
               )}
@@ -282,7 +282,7 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
           <h2 className='text-lg font-bold'>Knytt til en/flere tema</h2>
           <Card className='flex flex-1 flex-col'>
             {themes?.length === 0 && (
-              <p className='py-8 text-center text-sm font-medium text-zinc-500'>
+              <p className='py-8 text-center text-sm font-medium text-gray-500'>
                 Fant ingen temaer.
               </p>
             )}

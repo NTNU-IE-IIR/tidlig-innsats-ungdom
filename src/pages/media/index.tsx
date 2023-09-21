@@ -92,7 +92,7 @@ const MediaIndexPage: NextPage = () => {
             <div role='table' className='grid grid-cols-6 rounded-md border'>
               <div
                 role='row'
-                className='col-span-6 grid grid-cols-[inherit] rounded-t-md border-b border-zinc-200 bg-zinc-50 px-1 shadow'
+                className='col-span-6 grid grid-cols-[inherit] rounded-t-md border-b border-gray-200 bg-gray-50 px-1 shadow'
               >
                 <ColumnHeader>Navn</ColumnHeader>
                 <ColumnHeader center>Tilknytninger</ColumnHeader>
@@ -126,19 +126,19 @@ const MediaIndexPage: NextPage = () => {
                   )}
                 >
                   <div className='text-sm font-medium'>{media.name}</div>
-                  <div className='text-center text-sm font-semibold text-sky-500 hover:underline'>
+                  <div className='text-center text-sm font-semibold text-primary-500 hover:underline'>
                     {media.associations}
                   </div>
                   <div className='flex items-center justify-center'>
                     {media.published ? (
                       <>
                         <span className='sr-only'>Publisert</span>
-                        <IconCheck className='text-emerald-500' />
+                        <IconCheck className='text-ok-500' />
                       </>
                     ) : (
                       <>
                         <span className='sr-only'>Ikke publisert</span>
-                        <IconX className='text-red-500' />
+                        <IconX className='text-error-500' />
                       </>
                     )}
                   </div>
@@ -174,7 +174,7 @@ const MediaIndexPage: NextPage = () => {
 
           <Card className='flex flex-1 flex-col'>
             {themes?.length === 0 && (
-              <p className='py-8 text-center text-sm font-medium text-zinc-500'>
+              <p className='py-8 text-center text-sm font-medium text-gray-500'>
                 Fant ingen temaer.
               </p>
             )}

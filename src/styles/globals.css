@@ -18,6 +18,10 @@ html {
   }
 }
 
+.header-grid-columns {
+  grid-template-columns: 1fr minmax(0, 1280px) 1fr;
+}
+
 .animate-horizontal-track {
   animation: horizontal-track 1s linear infinite;
 }

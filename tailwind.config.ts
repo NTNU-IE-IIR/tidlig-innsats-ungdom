@@ -14,7 +14,7 @@ export default {
       },
       colors: (utils) => ({
         gray: utils.colors.zinc,
-        primary: utils.colors.amber,
+        primary: utils.colors.sky,
         info: utils.colors.sky,
         ok: utils.colors.green,
         warn: utils.colors.yellow,

@@ -3,15 +3,13 @@ import { useTenantStore } from '@/store/tenantStore';
 import { api } from '@/utils/api';
 import { Transition } from '@headlessui/react';
 import { useHotkeys } from '@mantine/hooks';
-import { IconChevronLeft, IconMenu2 } from '@tabler/icons-react';
 import getConfig from 'next/config';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import NavigationBar from '../navigation/NavigationBar';
 import NavigationMenu from '../navigation/NavigationMenu';
 import SlideOverPanel from '../overlay/SlideOverPanel';
 import SessionSideMenu from '../session/SessionSideMenu';
-import Button from '../input/Button';
 
 interface PageLayoutProps {
   children: React.ReactNode;
@@ -28,6 +26,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
   const { data: tenants } = api.tenant.listMyTenants.useQuery();
   const { setActiveTenant } = useTenantStore();
   const { showSideMenu, toggleSideMenu, closeSideMenu } = useSessionStore();
+  const sideMenuRef = useRef<HTMLElement>();
 
   /**
    * Hydrate the session store from local storage, resulting in the side menu opening (or staying closed)
@@ -35,6 +34,7 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
    */
   useEffect(() => {
     useSessionStore.persist.rehydrate();
+    sideMenuRef.current?.classList.add('w-96'); // has to be done to retain the size of the side menu when navigating between pages
   }, []);
 
   const [showMobileNav, setShowMobileNav] = useState(false);
@@ -53,18 +53,10 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
 
   return (
     <div className='relative flex h-screen w-screen overflow-hidden'>
-      <div className='relative flex-1 overflow-y-auto'>
-        <div className='mx-auto flex h-fit min-h-screen max-w-screen-xl flex-col gap-2 py-5'>
-          <NavigationBar />
+      <div className='relative flex min-h-screen flex-1 flex-col overflow-y-auto'>
+        <NavigationBar onShowMobileNavigation={() => setShowMobileNav(true)} />
 
-          <Button
-            className='mt-1 w-fit self-end bg-white md:hidden print:hidden mr-2'
-            variant='neutral'
-            onClick={() => setShowMobileNav(true)}
-          >
-            <IconMenu2 />
-          </Button>
-
+        <div className='mx-auto flex h-fit w-full max-w-screen-xl flex-1 flex-col gap-2 py-2 pb-5'>
           <SlideOverPanel
             open={showMobileNav}
             onClose={() => setShowMobileNav(false)}
@@ -83,33 +75,19 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
             </span>
           </footer>
         </div>
-
-        <button
-          type='button'
-          className='absolute right-0 top-0 mt-0.5 flex items-center self-start print:hidden max-md:hidden'
-          onClick={toggleSideMenu}
-        >
-          <IconChevronLeft
-            className={twMerge(
-              'h-5 w-5 transform transition-transform',
-              showSideMenu && 'rotate-180'
-            )}
-          />
-          <span className='pr-2 text-sm font-semibold'>
-            {!showSideMenu ? 'Åpne øktoversikt' : 'Lukk øktoversikt'}
-          </span>
-        </button>
       </div>
 
       <Transition
         show={showSideMenu}
+        // @ts-ignore
+        ref={sideMenuRef}
         enter='transition-all duration-300 ease-out'
         enterFrom='transform w-0 opacity-0'
         enterTo='transform w-96 opacity-100'
         leave='transition-all duration-300 ease-out'
         leaveFrom='transform w-96 opacity-100'
         leaveTo='transform w-0 opacity-0'
-        className='overflow-hidden print:hidden'
+        className='flex-shrink-0 overflow-hidden print:hidden'
       >
         <SessionSideMenu />
       </Transition>

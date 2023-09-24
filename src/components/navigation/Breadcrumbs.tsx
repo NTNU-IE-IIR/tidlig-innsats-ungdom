@@ -17,7 +17,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = () => {
       {drill.map((theme, i) => (
         <Fragment key={theme.discriminator.concat('' + theme.id)}>
           <span>/</span>
-          <button onClick={() => navigateBackTo(theme, i, router)}>
+          <button onClick={() => navigateBackTo(theme, i, router)} className='line-clamp-1 truncate'>
             {theme.name}
           </button>
         </Fragment>

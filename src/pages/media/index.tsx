@@ -60,7 +60,7 @@ const MediaIndexPage: NextPage = () => {
       <Head>
         <title>Tidlig innsats ungdom</title>
       </Head>
-      <PageLayout className='grid grid-cols-3 gap-2 px-1'>
+      <PageLayout className='grid grid-cols-3 gap-2'>
         <div className='col-span-2 flex flex-col'>
           <h1 className='text-lg font-bold'>Innhold</h1>
 

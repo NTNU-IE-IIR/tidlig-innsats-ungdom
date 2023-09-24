@@ -1,4 +1,10 @@
-import { IconListDetails, IconLogout, IconSettings } from '@tabler/icons-react';
+import {
+  IconFiles,
+  IconLayoutDashboard,
+  IconListDetails,
+  IconLogout,
+  IconSettings,
+} from '@tabler/icons-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 
@@ -9,13 +15,13 @@ interface NavigationMenuProps {
 const NavigationMenu: React.FC<NavigationMenuProps> = ({ onNavigate }) => {
   const { data: session } = useSession();
   return (
-    <nav className='mt-2 flex flex-col h-full'>
+    <nav className='mt-2 flex h-full flex-col'>
       <h1 className='text-lg font-bold'>Navigasjon</h1>
 
       <ul className='flex flex-1 flex-col gap-2'>
         <li>
           <NavigationItem
-            icon={IconListDetails}
+            icon={IconLayoutDashboard}
             href='/'
             name='Temautforsker'
             onNavigate={onNavigate}
@@ -23,7 +29,7 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ onNavigate }) => {
         </li>
         <li>
           <NavigationItem
-            icon={IconSettings}
+            icon={IconFiles}
             href='/media'
             name='Innholdsadministrasjon'
             onNavigate={onNavigate}
@@ -43,7 +49,9 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ onNavigate }) => {
         <div className='h-7 w-7 rounded-full bg-gray-800' />
 
         <div className='flex-1'>
-          <span className='block text-sm font-semibold'>{session?.user.name}</span>
+          <span className='block text-sm font-semibold'>
+            {session?.user.name}
+          </span>
           <span className='-mt-1 block text-xs'>{session?.user.email}</span>
         </div>
 

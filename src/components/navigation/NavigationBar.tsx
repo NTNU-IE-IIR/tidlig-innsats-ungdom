@@ -1,84 +1,149 @@
 import { TenantRole, UserAccountRole } from '@/server/db/schema';
+import { useSessionStore } from '@/store/sessionStore';
 import { useTenantStore } from '@/store/tenantStore';
 import { Menu } from '@headlessui/react';
 import {
+  IconArrowBarLeft,
   IconChevronDown,
+  IconDashboard,
+  IconFiles,
   IconHelp,
+  IconLayoutDashboard,
   IconLogout,
+  IconMenu2,
+  IconSettings,
   IconUser,
 } from '@tabler/icons-react';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { twMerge } from 'tailwind-merge';
-import Button from '../input/Button';
 import Tooltip from '../feedback/Tooltip';
+import Button from '../input/Button';
 
-const NavigationBar = () => {
+export interface NavigationBarProps {
+  onShowMobileNavigation?: () => void;
+}
+
+const NavigationBar: React.FC<NavigationBarProps> = ({
+  onShowMobileNavigation,
+}) => {
   const { data } = useSession();
   const router = useRouter();
+  const { showSideMenu, toggleSideMenu } = useSessionStore();
 
   const onHelp = () => {
     router.push('/about');
   };
 
   return (
-    <header className='flex items-center justify-between border-b-2 border-gray-400 print:hidden max-md:hidden'>
-      <nav className='-mb-0.5 flex items-center self-end'>
-        <NavigationLink href='/'>Temautforsker</NavigationLink>
-        <NavigationLink
-          tenantRoles={[TenantRole.OWNER, TenantRole.SUPER_USER]}
-          href='/media'
-        >
-          Innholdsadministrasjon
-        </NavigationLink>
-        <NavigationLink tenantRoles={[TenantRole.OWNER]} href='/settings'>
-          Innstillinger
-        </NavigationLink>
-      </nav>
+    <header className='header-grid-columns grid gap-1 border-b border-primary-600 bg-primary-500 print:hidden'>
+      <div className='flex-1 basis-0'>
+        <span className='sr-only'>Tidlig innsats ungdom</span>
+      </div>
 
-      <div className='flex items-center'>
-        <Tooltip content='Vis hjelp'>
+      <div className='my-1 flex items-center justify-between @container max-md:invisible'>
+        <nav>
+          <ul className='flex items-center gap-1'>
+            <NavigationLink icon={IconLayoutDashboard} href='/'>
+              Temautforsker
+            </NavigationLink>
+            <NavigationLink
+              icon={IconFiles}
+              tenantRoles={[TenantRole.OWNER, TenantRole.SUPER_USER]}
+              href='/media'
+            >
+              Innholdsadministrasjon
+            </NavigationLink>
+            <NavigationLink
+              icon={IconSettings}
+              tenantRoles={[TenantRole.OWNER]}
+              href='/settings'
+            >
+              Innstillinger
+            </NavigationLink>
+          </ul>
+        </nav>
+
+        <div className='flex items-center gap-1'>
+          <Tooltip content='Vis hjelp'>
+            <Button
+              variant='neutral'
+              className='border-primary-700 bg-primary-600 px-0.5 py-0.5 text-primary-50 hover:bg-primary-700 focus:ring-primary-700'
+              onClick={onHelp}
+            >
+              <IconHelp />
+              <span className='sr-only'>Vis hjelp</span>
+            </Button>
+          </Tooltip>
+
+          <Menu as='div' className='relative'>
+            <Menu.Button className='flex cursor-pointer items-center gap-1 rounded-md border border-primary-700 bg-primary-600 p-1 text-primary-50 hover:bg-primary-700 focus:outline-none focus:ring-1 focus:ring-primary-700'>
+              <div className='h-5 w-5 rounded-full bg-primary-950' />
+
+              <span className='hidden text-sm @xl:block'>
+                {data?.user.name?.split(' ')[0]}
+              </span>
+
+              <IconChevronDown className='h-4 w-4 transform transition-transform ui-open:rotate-180' />
+            </Menu.Button>
+
+            <Menu.Items className='absolute right-1 top-full z-[999] mt-1 divide-y rounded-md border border-black/10 bg-white shadow'>
+              <Menu.Item
+                as={Link}
+                href='/profile'
+                className='flex w-full items-center gap-1 rounded-t-md px-2 py-1 transition-colors hover:bg-gray-100'
+              >
+                <IconUser className='h-4 w-4' />
+                <span className='whitespace-nowrap text-sm font-medium'>
+                  Profil
+                </span>
+              </Menu.Item>
+              <Menu.Item
+                as='button'
+                onClick={() => signOut()}
+                className='flex w-full items-center gap-1 rounded-b-md px-2 py-1 transition-colors hover:bg-gray-100 hover:text-error-600'
+              >
+                <IconLogout className='h-4 w-4' />
+                <span className='whitespace-nowrap text-sm font-medium'>
+                  Logg ut
+                </span>
+              </Menu.Item>
+            </Menu.Items>
+          </Menu>
+        </div>
+      </div>
+
+      <div className='flex flex-1 basis-0 items-center justify-end pr-1'>
+        <Tooltip
+          content={!showSideMenu ? 'Åpne øktoversikt' : 'Lukk øktoversikt'}
+        >
           <Button
             variant='neutral'
-            className='bg-white px-0.5 py-0.5 text-gray-800'
-            onClick={onHelp}
+            className='h-fit border-primary-700 bg-primary-600 px-0.5 py-0.5 text-primary-50 hover:bg-primary-700 focus:ring-primary-700 max-md:hidden'
+            onClick={toggleSideMenu}
           >
-            <IconHelp />
+            <IconArrowBarLeft
+              className={twMerge(
+                'transition-all',
+                showSideMenu && 'rotate-180'
+              )}
+            />
+            <span className='sr-only'>
+              {!showSideMenu ? 'Åpne øktoversikt' : 'Lukk øktoversikt'}
+            </span>
           </Button>
         </Tooltip>
-
-        <Menu as='div' className='relative'>
-          <Menu.Button className='m-1 flex cursor-pointer items-center gap-1 rounded-md border-black/10 bg-white p-1 shadow hover:bg-gray-100'>
-            <div className='h-5 w-5 rounded-full bg-gray-800' />
-
-            <span className='text-sm font-medium'>
-              {data?.user.name?.split(' ')[0]}
-            </span>
-
-            <IconChevronDown className='h-4 w-4 transform transition-transform ui-open:rotate-180' />
-          </Menu.Button>
-
-          <Menu.Items className='absolute right-1 top-full mt-1 divide-y rounded-md border border-black/10 bg-white shadow z-10'>
-            <Menu.Item
-              as={Link}
-              href='/profile'
-              className='flex w-full items-center gap-1 rounded-t-md px-2 py-1 transition-colors hover:bg-gray-100'
-            >
-              <IconUser className='h-4 w-4' />
-              <span className='text-sm font-medium'>Profil</span>
-            </Menu.Item>
-            <Menu.Item
-              as='button'
-              onClick={() => signOut()}
-              className='flex w-full items-center gap-1 rounded-b-md px-2 py-1 transition-colors hover:bg-gray-100 hover:text-error-600'
-            >
-              <IconLogout className='h-4 w-4' />
-              <span className='text-sm font-medium'>Logg ut</span>
-            </Menu.Item>
-          </Menu.Items>
-        </Menu>
       </div>
+
+      <Button
+        variant='neutral'
+        className='absolute right-2 top-1.5 h-fit self-center border-primary-700 bg-primary-600 px-0.5 py-0.5 text-primary-50 hover:bg-primary-700 focus:ring-primary-700 md:hidden'
+        onClick={onShowMobileNavigation}
+      >
+        <IconMenu2 />
+        <span className='sr-only'>Vis navigasjonsmeny</span>
+      </Button>
     </header>
   );
 };
@@ -86,9 +151,10 @@ const NavigationBar = () => {
 const NavigationLink: React.FC<{
   href: string;
   children: string;
+  icon: typeof IconMenu2;
   tenantRoles?: TenantRole[];
   userRoles?: UserAccountRole[];
-}> = ({ href, children, tenantRoles, userRoles }) => {
+}> = ({ href, icon: Icon, children, tenantRoles, userRoles }) => {
   const router = useRouter();
 
   const { activeTenantRole } = useTenantStore();
@@ -98,16 +164,19 @@ const NavigationLink: React.FC<{
   if (userRoles && !userRoles.includes(session?.user.role!)) return null;
 
   return (
-    <ul>
-      <li
+    <li>
+      <Link
+        href={href}
         className={twMerge(
-          'border-b-2 px-2 font-semibold',
-          router.pathname === href ? 'border-primary-500' : 'border-transparent'
+          'flex items-center gap-1 rounded-md py-1.5 pl-1 pr-2 text-sm text-primary-50 transition-colors hover:bg-primary-600 focus:bg-primary-600 focus:outline-none',
+          router.pathname === href &&
+            'bg-primary-700 text-primary-50 hover:bg-primary-700 focus:bg-primary-700'
         )}
       >
-        <Link href={href}>{children}</Link>
-      </li>
-    </ul>
+        <Icon />
+        <span className='hidden @xl:block'>{children}</span>
+      </Link>
+    </li>
   );
 };
 

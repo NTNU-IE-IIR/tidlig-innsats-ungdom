@@ -112,7 +112,7 @@ const Home: NextPage = () => {
               ref={searchBarRef}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className='w-80 rounded-md border border-black/20 bg-gray-50 py-1 pl-6 pr-16 shadow outline-none transition-colors placeholder:text-gray-950 focus:border-gray-600 focus:ring-0'
+              className='w-80 rounded-md border border-black/20 bg-gray-50 py-1 pl-6 pr-16 shadow outline-none transition-colors placeholder:text-gray-950 focus:border-primary-600 focus:ring-0'
               placeholder='Søk...'
             />
 
@@ -185,7 +185,9 @@ const Home: NextPage = () => {
               >
                 <IconListDetails className='h-10 w-10 text-gray-700' />
 
-                <h3 className='truncate text-xl font-bold'>{media.name}</h3>
+                <h3 className='max-w-full truncate text-xl font-bold'>
+                  {media.name}
+                </h3>
                 <p className='line-clamp-2 text-sm font-medium'>
                   {media.shortDescription}
                 </p>

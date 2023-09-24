@@ -4,10 +4,15 @@
  */
 await import('./src/env.mjs');
 
-import pkg from './package.json' assert { type: "json" };
+import withPWAInit from '@ducanh2912/next-pwa';
+import pkg from './package.json' assert { type: 'json' };
+
+const withPWA = withPWAInit({
+  dest: 'public',
+});
 
 /** @type {import("next").NextConfig} */
-const config = {
+const config = withPWA({
   reactStrictMode: true,
   output: 'standalone',
   eslint: {
@@ -16,5 +21,6 @@ const config = {
   publicRuntimeConfig: {
     version: pkg.version,
   },
-};
+});
+
 export default config;

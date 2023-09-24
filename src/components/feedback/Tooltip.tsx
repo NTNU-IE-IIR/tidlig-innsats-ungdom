@@ -57,10 +57,10 @@ const Tooltip: React.FC<TooltipProps> = ({
     placement: side,
     middleware: [
       offset(5),
-      arrow({ element: arrowRef }),
       flip(),
       shift(),
       size(),
+      arrow({ element: arrowRef }),
     ],
   });
 

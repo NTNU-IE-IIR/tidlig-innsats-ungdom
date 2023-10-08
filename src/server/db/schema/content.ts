@@ -1,7 +1,6 @@
 /**
  * The content part of the schema, oriented around themes and media defined by users.
  */
-import { InferModel } from 'drizzle-orm';
 import {
   AnyPgColumn,
   bigint,
@@ -33,7 +32,7 @@ export const theme = pgTable('theme', {
     .references(() => userAccount.id),
 });
 
-export type Theme = InferModel<typeof theme>;
+export type Theme = typeof theme.$inferSelect;
 
 export enum MediaType {
   FORM = 'FORM',
@@ -80,7 +79,7 @@ export const media = pgTable('media', {
   type: mediaType('media_type').notNull(),
 });
 
-export type Media = InferModel<typeof media>;
+export type Media = typeof media.$inferSelect;
 
 export const themeMedia = pgTable(
   'theme_media',
@@ -97,7 +96,7 @@ export const themeMedia = pgTable(
   })
 );
 
-export type ThemeMedia = InferModel<typeof themeMedia>;
+export type ThemeMedia = typeof themeMedia.$inferSelect;
 
 export const userAccountFavoriteTheme = pgTable('user_account_favorite_theme', {
   userAccountId: uuid('fk_user_account_id').references(() => userAccount.id),
@@ -107,9 +106,8 @@ export const userAccountFavoriteTheme = pgTable('user_account_favorite_theme', {
     .defaultNow(),
 });
 
-export type UserAccountFavoriteTheme = InferModel<
-  typeof userAccountFavoriteTheme
->;
+export type UserAccountFavoriteTheme =
+  typeof userAccountFavoriteTheme.$inferSelect;
 
 export const userAccountFavoriteMedia = pgTable('user_account_favorite_media', {
   userAccountId: uuid('fk_user_account_id').references(() => userAccount.id),
@@ -119,6 +117,5 @@ export const userAccountFavoriteMedia = pgTable('user_account_favorite_media', {
     .defaultNow(),
 });
 
-export type UserAccountFavoriteMedia = InferModel<
-  typeof userAccountFavoriteMedia
->;
+export type UserAccountFavoriteMedia =
+  typeof userAccountFavoriteMedia.$inferSelect;

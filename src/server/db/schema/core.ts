@@ -1,7 +1,6 @@
 /**
  * The core portion of the database schema, including authentication and tenancy.
  */
-import { InferModel } from 'drizzle-orm';
 import {
   AnyPgColumn,
   bigint,
@@ -28,7 +27,7 @@ export const applicationSettings = pgTable('global_application_settings', {
 /**
  * The type of the application settings table.
  */
-export type ApplicationSettings = InferModel<typeof applicationSettings>;
+export type ApplicationSettings = typeof applicationSettings.$inferSelect;
 
 /**
  * Global user account roles.
@@ -94,7 +93,7 @@ export const userAccountSession = pgTable(
   })
 );
 
-export type UserAccountSession = InferModel<typeof userAccountSession>;
+export type UserAccountSession = typeof userAccountSession.$inferSelect;
 
 /**
  * Table for user account providers.
@@ -125,7 +124,7 @@ export const providerAccount = pgTable(
   })
 );
 
-export type ProviderAccount = InferModel<typeof providerAccount>;
+export type ProviderAccount = typeof providerAccount.$inferSelect;
 
 export const tenant = pgTable('tenant', {
   id: uuid('tenant_id').primaryKey().defaultRandom(),
@@ -134,7 +133,7 @@ export const tenant = pgTable('tenant', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });
 
-export type Tenant = InferModel<typeof tenant>;
+export type Tenant = typeof tenant.$inferSelect;
 
 export enum TenantRole {
   OWNER = 'OWNER',

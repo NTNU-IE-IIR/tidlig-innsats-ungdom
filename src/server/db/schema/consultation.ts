@@ -1,4 +1,3 @@
-import { InferModel } from 'drizzle-orm';
 import {
   bigint,
   integer,
@@ -29,7 +28,7 @@ export const consultationSession = pgTable('consultation_session', {
     .references(() => tenant.id),
 });
 
-export type ConsultationSession = InferModel<typeof consultationSession>;
+export type ConsultationSession = typeof consultationSession.$inferSelect;
 
 export const consultationSessionMedia = pgTable('consultation_session_media', {
   consultationSessionId: uuid('fk_consultation_session_id')
@@ -44,9 +43,8 @@ export const consultationSessionMedia = pgTable('consultation_session_media', {
   duration: integer('duration_seconds'),
 });
 
-export type ConsultationSessionMedia = InferModel<
-  typeof consultationSessionMedia
->;
+export type ConsultationSessionMedia =
+  typeof consultationSessionMedia.$inferSelect;
 
 export const consultationPatient = pgTable('consultation_patient', {
   id: uuid('consultation_patient_id').primaryKey().defaultRandom(),

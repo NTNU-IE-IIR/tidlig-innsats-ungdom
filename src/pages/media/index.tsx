@@ -5,6 +5,7 @@ import TextField from '@/components/input/TextField';
 import PageLayout from '@/components/layout/PageLayout';
 import DeleteMediaDialog from '@/components/media/DeleteMediaDialog';
 import Dialog from '@/components/overlay/Dialog';
+import Table from '@/components/table/Table';
 import DeleteThemeDialog from '@/components/theme/DeleteThemeDialog';
 import ThemeForm from '@/components/theme/ThemeForm';
 import ThemeListNode from '@/components/theme/ThemeListNode';
@@ -89,20 +90,18 @@ const MediaIndexPage: NextPage = () => {
 
             <hr />
 
-            <div role='table' className='grid grid-cols-6 rounded-md border'>
-              <div
-                role='row'
-                className='col-span-6 grid grid-cols-[inherit] rounded-t-md border-b border-gray-200 bg-gray-50 px-1 shadow'
-              >
+            <Table columns={7}>
+              <Table.Header>
                 <ColumnHeader>Navn</ColumnHeader>
                 <ColumnHeader center>Tilknytninger</ColumnHeader>
+                <ColumnHeader center>Visninger</ColumnHeader>
                 <ColumnHeader center>Publisert</ColumnHeader>
                 <ColumnHeader>Opprettet av</ColumnHeader>
                 <ColumnHeader>Sist endret</ColumnHeader>
                 <ColumnHeader>
                   <span className='sr-only'>Handlinger</span>
                 </ColumnHeader>
-              </div>
+              </Table.Header>
 
               {medias?.length === 0 && (
                 <p className='col-span-6 py-8 text-center text-sm'>
@@ -116,20 +115,19 @@ const MediaIndexPage: NextPage = () => {
                 </p>
               )}
 
-              {medias?.map((media, idx, array) => (
-                <div
+              {medias?.map((media) => (
+                <Table.Row
                   key={media.id}
-                  role='row'
-                  className={twMerge(
-                    'col-span-6 grid grid-cols-[inherit] items-center px-1 py-1',
-                    idx !== array.length - 1 && 'border-b'
-                  )}
+                  className='items-center border-b py-2 text-sm last:border-b-0'
                 >
-                  <div className='text-sm font-medium'>{media.name}</div>
-                  <div className='text-center text-sm font-semibold text-primary-500 hover:underline'>
+                  <Table.Cell>{media.name}</Table.Cell>
+                  <Table.Cell className='text-center text-sm font-semibold text-primary-500 hover:underline'>
                     {media.associations}
-                  </div>
-                  <div className='flex items-center justify-center'>
+                  </Table.Cell>
+                  <Table.Cell className='text-center text-sm font-semibold text-primary-500 hover:underline'>
+                    {media.views}
+                  </Table.Cell>
+                  <Table.Cell className='flex items-center justify-center'>
                     {media.published ? (
                       <>
                         <span className='sr-only'>Publisert</span>
@@ -141,14 +139,14 @@ const MediaIndexPage: NextPage = () => {
                         <IconX className='text-error-500' />
                       </>
                     )}
-                  </div>
-                  <div className='text-sm font-medium'>
+                  </Table.Cell>
+                  <Table.Cell className='text-sm font-medium'>
                     {media.createdByName}
-                  </div>
-                  <div className='text-sm font-medium'>
+                  </Table.Cell>
+                  <Table.Cell className='text-sm font-medium'>
                     {dayjs(media.updatedAt).fromNow()}
-                  </div>
-                  <div className='flex items-center justify-end gap-1'>
+                  </Table.Cell>
+                  <Table.Cell className='flex items-center justify-end gap-1'>
                     <Link href={'/media/' + media.id + '/edit'}>
                       <Button className='text-sm' variant='neutral'>
                         Rediger
@@ -162,10 +160,10 @@ const MediaIndexPage: NextPage = () => {
                     >
                       Slett
                     </Button>
-                  </div>
-                </div>
+                  </Table.Cell>
+                </Table.Row>
               ))}
-            </div>
+            </Table>
           </Card>
         </div>
 

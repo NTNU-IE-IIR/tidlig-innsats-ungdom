@@ -10,12 +10,12 @@ import {
   tenantUserAccount,
   userAccount,
 } from '@/server/db/schema';
+import { userHasTenantRole } from '@/server/db/services/tenant';
 import { TRPCError } from '@trpc/server';
+import bcrypt from 'bcrypt';
 import { and, eq, ilike, isNotNull, isNull } from 'drizzle-orm';
 import { z } from 'zod';
-import bcrypt from 'bcrypt';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
-import { userHasTenantRole } from '@/server/db/services/tenant';
 
 export const tenantRouter = createTRPCRouter({
   /**
@@ -44,7 +44,20 @@ export const tenantRouter = createTRPCRouter({
         deleted: z.boolean().optional(),
       })
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      const isPermitted = await userHasTenantRole(
+        input.tenantId,
+        ctx.session.user.id,
+        TenantRole.OWNER
+      );
+
+      if (!isPermitted) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'NOT_PERMITTED',
+        });
+      }
+
       return await db
         .select({
           id: userAccount.id,
@@ -162,6 +175,19 @@ export const tenantRouter = createTRPCRouter({
         });
       }
 
+      const isPermitted = await userHasTenantRole(
+        input.tenantId,
+        ctx.session.user.id,
+        TenantRole.OWNER
+      );
+
+      if (!isPermitted) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'NOT_PERMITTED',
+        });
+      }
+
       await db
         .update(tenantUserAccount)
         .set({
@@ -180,7 +206,20 @@ export const tenantRouter = createTRPCRouter({
    */
   restoreAccess: protectedProcedure
     .input(modifyTenantMembershipSchema)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      const isPermitted = await userHasTenantRole(
+        input.tenantId,
+        ctx.session.user.id,
+        TenantRole.OWNER
+      );
+
+      if (!isPermitted) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'NOT_PERMITTED',
+        });
+      }
+
       await db
         .update(tenantUserAccount)
         .set({

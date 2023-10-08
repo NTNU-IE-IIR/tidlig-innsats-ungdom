@@ -6,6 +6,8 @@ import Dialog from '@/components/overlay/Dialog';
 import TenantInvites from '@/components/tenant/TenantInvites';
 import TenantMembers from '@/components/tenant/TenantMembers';
 import UserAccountList from '@/components/user/UserAccountsList';
+import { useTenantAuthorization } from '@/hooks/useTenantAuthorization';
+import { TenantRole } from '@/server/db/schema';
 import { Tab as HeadlessTab } from '@headlessui/react';
 import { NextPage } from 'next';
 import Head from 'next/head';
@@ -14,6 +16,8 @@ import { twMerge } from 'tailwind-merge';
 
 const Settings: NextPage = () => {
   const [showInviteForm, setShowInviteForm] = useState(false);
+
+  useTenantAuthorization([TenantRole.OWNER]);
 
   return (
     <>

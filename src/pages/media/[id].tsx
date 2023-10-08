@@ -51,16 +51,14 @@ const MediaView: NextPage = () => {
       </Head>
       <PageLayout>
         {media && media.type !== MediaType.FILE && (
-          <div className='flex justify-end print:hidden'>
-            <Button
-              variant='neutral'
-              className='self-end bg-white pl-1.5 text-sm max-md:mr-2'
-              onClick={openPrinterPrompt}
-            >
-              <IconPrinter className='h-5 w-5' />
-              <span className='font-semibold'>Skriv ut</span>
-            </Button>
-          </div>
+          <Button
+            variant='neutral'
+            className='ml-auto bg-white pl-1.5 text-sm print:hidden max-md:mr-2'
+            onClick={openPrinterPrompt}
+          >
+            <IconPrinter className='h-5 w-5' />
+            <span className='font-semibold'>Skriv ut</span>
+          </Button>
         )}
 
         <Breadcrumbs />

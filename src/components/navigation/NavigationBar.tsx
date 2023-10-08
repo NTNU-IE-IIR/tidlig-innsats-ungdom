@@ -37,7 +37,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
   };
 
   return (
-    <header className='header-grid-columns grid gap-1 border-b border-primary-600 bg-primary-500 print:hidden'>
+    <header className='header-grid-columns grid gap-1 border-b border-primary-600 bg-primary-500 print:hidden z-10'>
       <div className='flex-1 basis-0'>
         <span className='sr-only'>Tidlig innsats ungdom</span>
       </div>

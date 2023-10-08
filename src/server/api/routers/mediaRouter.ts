@@ -2,11 +2,13 @@ import { createMediaSchema, updateMediaSchema } from '@/schemas/mediaSchemas';
 import { db } from '@/server/db';
 import {
   media,
+  mediaView,
   theme,
   themeMedia,
   userAccount,
   userAccountFavoriteMedia,
 } from '@/server/db/schema';
+import { incrementMediaViewCount } from '@/server/db/services/media';
 import { TRPCError } from '@trpc/server';
 import { SQL, and, eq, ilike, inArray, notInArray, sql } from 'drizzle-orm';
 import { z } from 'zod';
@@ -36,6 +38,7 @@ export const mediaRouter = createTRPCRouter({
           shortDescription: media.shortDescription,
           createdByName: userAccount.fullName,
           associations: sql<number>`COUNT(DISTINCT ${themeMedia.themeId})`,
+          views: sql<number>`COUNT(DISTINCT ${mediaView.id})`,
           createdAt: media.createdAt,
           updatedAt: media.updatedAt,
           type: media.type,
@@ -43,6 +46,7 @@ export const mediaRouter = createTRPCRouter({
         .from(media)
         .leftJoin(userAccount, eq(userAccount.id, media.createdBy))
         .leftJoin(themeMedia, eq(themeMedia.mediaId, media.id))
+        .leftJoin(mediaView, eq(mediaView.mediaId, media.id))
         .where(and(...conditions))
         .groupBy(media.id, userAccount.id);
     }),
@@ -52,7 +56,7 @@ export const mediaRouter = createTRPCRouter({
    */
   getById: protectedProcedure
     .input(z.number().positive())
-    .query(async ({ input: id }) => {
+    .query(async ({ input: id, ctx }) => {
       const results = await db
         .select({
           id: media.id,
@@ -82,6 +86,8 @@ export const mediaRouter = createTRPCRouter({
         throw new TRPCError({
           code: 'NOT_FOUND',
         });
+
+      incrementMediaViewCount(id, ctx.session.user.id);
 
       const first = results[0]!;
       const result = {
@@ -211,6 +217,7 @@ export const mediaRouter = createTRPCRouter({
     .input(z.number().positive())
     .mutation(async ({ input }) => {
       await db.delete(themeMedia).where(eq(themeMedia.mediaId, input));
+      await db.delete(mediaView).where(eq(mediaView.mediaId, input));
       await db
         .delete(userAccountFavoriteMedia)
         .where(eq(userAccountFavoriteMedia.mediaId, input));

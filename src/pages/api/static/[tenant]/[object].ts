@@ -14,6 +14,7 @@ const FILE_EXTENSION_MIME_TYPES: {
   '.svg': 'image/svg+xml',
   '.gif': 'image/gif',
   '.webp': 'image/webp',
+  '.pdf': 'application/pdf',
 };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {

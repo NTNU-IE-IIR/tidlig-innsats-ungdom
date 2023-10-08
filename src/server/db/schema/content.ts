@@ -6,6 +6,7 @@ import {
   bigint,
   bigserial,
   boolean,
+  index,
   jsonb,
   pgEnum,
   pgTable,
@@ -119,3 +120,21 @@ export const userAccountFavoriteMedia = pgTable('user_account_favorite_media', {
 
 export type UserAccountFavoriteMedia =
   typeof userAccountFavoriteMedia.$inferSelect;
+
+export const mediaView = pgTable(
+  'media_view',
+  {
+    id: bigserial('media_view_id', { mode: 'number' }).primaryKey(),
+    mediaId: bigint('fk_media_id', { mode: 'number' }).references(
+      () => media.id
+    ),
+    userAccountId: uuid('fk_user_account_id').references(() => userAccount.id),
+    viewedAt: timestamp('viewed_at', { withTimezone: true }).defaultNow(),
+  },
+  (mediaView) => ({
+    mediaIdIdx: index('fk_media_id_idx').on(mediaView.mediaId),
+    userAccountIdIdx: index('fk_user_account_id_idx').on(
+      mediaView.userAccountId
+    ),
+  })
+);

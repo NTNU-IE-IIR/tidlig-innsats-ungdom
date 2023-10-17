@@ -1,4 +1,5 @@
 import Card from '@/components/container/Card';
+import Tooltip from '@/components/feedback/Tooltip';
 import Button from '@/components/input/Button';
 import Switch from '@/components/input/Switch';
 import TextField from '@/components/input/TextField';
@@ -11,8 +12,9 @@ import ThemeForm from '@/components/theme/ThemeForm';
 import ThemeListNode from '@/components/theme/ThemeListNode';
 import { ThemeNode } from '@/types/themes';
 import { api } from '@/utils/api';
+import { exportCsv } from '@/utils/exports';
 import { useDebouncedValue } from '@mantine/hooks';
-import { IconCheck, IconX } from '@tabler/icons-react';
+import { IconCheck, IconFileExport, IconX } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { NextPage } from 'next';
 import Head from 'next/head';
@@ -56,6 +58,28 @@ const MediaIndexPage: NextPage = () => {
     setShowDeleteThemeDialog(true);
   };
 
+  const handleExport = () => {
+    if (medias) {
+      exportCsv({
+        data: medias,
+        headers: {
+          id: 'id',
+          name: 'navn',
+          associations: 'tilknytninger',
+          views: 'visninger',
+          createdAt: 'opprettet',
+          createdByName: 'opprettet av',
+          published: 'publisert',
+          shortDescription: 'kort beskrivelse',
+          type: 'type',
+          updatedAt: 'oppdatert',
+        },
+        skip: [],
+        fileName: `innhold-${dayjs().format('DDMMYYYY')}.csv`,
+      });
+    }
+  };
+
   return (
     <>
       <Head>
@@ -89,6 +113,16 @@ const MediaIndexPage: NextPage = () => {
             </div>
 
             <hr />
+
+            <Tooltip content='Eksporter til CSV'>
+              <Button
+                variant='neutral'
+                className='ml-auto'
+                onClick={handleExport}
+              >
+                <IconFileExport className='text-zinc-500' />
+              </Button>
+            </Tooltip>
 
             <Table columns={7}>
               <Table.Header>

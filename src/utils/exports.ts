@@ -17,7 +17,7 @@ export const exportCsv = <T>(props: CsvExportOptions<T>) => {
     .map(([_fieldName, displayName]) => displayName)
     .join(delimiter);
 
-  const csvContent = ['data:text/csv;charset=utf-8', headerRow];
+  const csvContent = [headerRow];
 
   props.data.forEach((row) => {
     const out: string[] = [];
@@ -35,7 +35,7 @@ export const exportCsv = <T>(props: CsvExportOptions<T>) => {
     csvContent.push(out.join(delimiter));
   });
 
-  const encodedUri = encodeURI(csvContent.join('\n'));
+  const encodedUri = encodeURI('data:text/csv;charset=utf-8,' + csvContent.join('\n'));
   const link = document.createElement('a');
   link.setAttribute('href', encodedUri);
   link.setAttribute('download', props.fileName);

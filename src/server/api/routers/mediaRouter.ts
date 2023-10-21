@@ -1,6 +1,7 @@
 import { createMediaSchema, updateMediaSchema } from '@/schemas/mediaSchemas';
 import { db } from '@/server/db';
 import {
+  TenantRole,
   media,
   mediaView,
   theme,
@@ -13,6 +14,7 @@ import { TRPCError } from '@trpc/server';
 import { SQL, and, eq, ilike, inArray, notInArray, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
+import { userHasAnyOfTenantRoles } from '@/server/db/services/tenant';
 
 export const mediaRouter = createTRPCRouter({
   list: protectedProcedure
@@ -208,6 +210,32 @@ export const mediaRouter = createTRPCRouter({
         .returning();
 
       return result[0];
+    }),
+
+  /**
+   * Resets the views of all registered media.
+   */
+  resetViews: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ input: tenantId, ctx }) => {
+      const permitted = await userHasAnyOfTenantRoles(
+        tenantId,
+        ctx.session.user.id,
+        [TenantRole.OWNER, TenantRole.SUPER_USER]
+      );
+
+      if (!permitted) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'You are not allowed to reset the views of all media.',
+        });
+      }
+
+      await db.execute(sql`DELETE FROM ${mediaView} WHERE 1=1`);
+
+      return {
+        message: 'Views reset successfully.',
+      };
     }),
 
   /**

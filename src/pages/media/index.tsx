@@ -5,6 +5,7 @@ import Switch from '@/components/input/Switch';
 import TextField from '@/components/input/TextField';
 import PageLayout from '@/components/layout/PageLayout';
 import DeleteMediaDialog from '@/components/media/DeleteMediaDialog';
+import ResetViewsDialog from '@/components/media/ResetViewsDialog';
 import Dialog from '@/components/overlay/Dialog';
 import Table from '@/components/table/Table';
 import DeleteThemeDialog from '@/components/theme/DeleteThemeDialog';
@@ -14,7 +15,12 @@ import { ThemeNode } from '@/types/themes';
 import { api } from '@/utils/api';
 import { exportCsv } from '@/utils/exports';
 import { useDebouncedValue } from '@mantine/hooks';
-import { IconCheck, IconFileExport, IconX } from '@tabler/icons-react';
+import {
+  IconCheck,
+  IconFileExport,
+  IconRefresh,
+  IconX,
+} from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { NextPage } from 'next';
 import Head from 'next/head';
@@ -39,6 +45,7 @@ const MediaIndexPage: NextPage = () => {
 
   const [showThemeDialog, setShowThemeDialog] = useState(false);
   const [showDeleteThemeDialog, setShowDeleteThemeDialog] = useState(false);
+  const [showResetViewsDialog, setShowResetViewsDialog] = useState(false);
   const [editingThemeId, setEditingThemeId] = useState<number>();
 
   const [deletingMediaId, setDeletingMediaId] = useState<number>();
@@ -114,15 +121,22 @@ const MediaIndexPage: NextPage = () => {
 
             <hr />
 
-            <Tooltip content='Eksporter til CSV'>
-              <Button
-                variant='neutral'
-                className='ml-auto'
-                onClick={handleExport}
-              >
-                <IconFileExport className='text-zinc-500' />
-              </Button>
-            </Tooltip>
+            <div className='flex items-center justify-end gap-2'>
+              <Tooltip content='Eksporter til CSV'>
+                <Button variant='neutral' onClick={handleExport}>
+                  <IconFileExport className='text-zinc-500' />
+                </Button>
+              </Tooltip>
+
+              <Tooltip content='Nullstill visninger'>
+                <Button
+                  variant='destructive'
+                  onClick={() => setShowResetViewsDialog(true)}
+                >
+                  <IconRefresh />
+                </Button>
+              </Tooltip>
+            </div>
 
             <Table columns={7}>
               <Table.Header>
@@ -260,6 +274,13 @@ const MediaIndexPage: NextPage = () => {
         {({ close }) => (
           <DeleteMediaDialog mediaId={deletingMediaId} onClose={close} />
         )}
+      </Dialog>
+
+      <Dialog
+        open={showResetViewsDialog}
+        onClose={() => setShowResetViewsDialog(false)}
+      >
+        {({ close }) => <ResetViewsDialog onClose={close} />}
       </Dialog>
     </>
   );

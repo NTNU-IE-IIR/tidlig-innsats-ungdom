@@ -52,8 +52,8 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, className }) => {
   ]);
 
   return (
-    <div className='relative flex h-screen w-screen overflow-hidden'>
-      <div className='relative flex min-h-screen flex-1 flex-col overflow-y-auto'>
+    <div className='relative flex h-screen w-screen overflow-hidden print:overflow-visible'>
+      <div className='relative flex min-h-screen flex-1 flex-col overflow-y-auto print:overflow-visible'>
         <NavigationBar onShowMobileNavigation={() => setShowMobileNav(true)} />
 
         <div className='mx-auto flex h-fit w-full max-w-screen-xl flex-1 flex-col gap-2 py-2 pb-5'>

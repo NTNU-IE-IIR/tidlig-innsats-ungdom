@@ -7,3 +7,9 @@ export const saveConsultationSchema = z.object({
   viewedMedias: z.record(z.string().regex(/\d+/), z.number()),
   notes: z.string(),
 });
+
+export const updateConsultationSchema = z.object({
+  consultationId: z.string(),
+  consultationName: z.string(),
+  notes: z.string(),
+});

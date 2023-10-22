@@ -1,11 +1,11 @@
+import { api } from '@/utils/api';
 import { IconChevronLeft, IconTrash } from '@tabler/icons-react';
 import { useState } from 'react';
 import Button from '../input/Button';
 import TextArea from '../input/TextArea';
 import TextField from '../input/TextField';
-import SessionMediaEntry from './SessionMediaEntry';
-import Dialog from '../overlay/Dialog';
 import DeleteSessionDialog from './DeleteSessionDialog';
+import SessionMediaEntry from './SessionMediaEntry';
 
 interface EndedSessionMediaEntry {
   mediaId: number;
@@ -36,11 +36,31 @@ const EndedSession: React.FC<EndedSessionProps> = ({
   entries,
   onClose,
 }) => {
-  const [sessionName, setSessionName] = useState(name);
+  const utils = api.useContext();
+  const { isLoading, mutateAsync } =
+    api.consultation.updateConsultation.useMutation({
+      onSuccess: async () => {
+        await utils.consultation.listConsultations.invalidate();
+      },
+    });
 
-  const hasChanged = sessionName !== name;
+  const [sessionName, setSessionName] = useState(name);
+  const [sessionNotes, setSessionNotes] = useState(notes);
+
+  const hasChanged = sessionName !== name || sessionNotes !== notes;
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  const handleSubmit = async () => {
+    try {
+      await mutateAsync({
+        consultationId: id,
+        consultationName: sessionName,
+        notes: sessionNotes,
+      });
+      onClose();
+    } catch (error) {}
+  };
 
   return (
     <>
@@ -64,9 +84,16 @@ const EndedSession: React.FC<EndedSessionProps> = ({
       ))}
 
       <h2 className='-mb-2 mt-auto font-semibold'>Notater</h2>
-      <TextArea value={notes} readOnly />
+      <TextArea
+        value={sessionNotes}
+        onChange={(e) => setSessionNotes(e.target.value)}
+      />
 
-      {hasChanged && <Button variant='primary'>Lagre endringer</Button>}
+      {hasChanged && (
+        <Button variant='primary' onClick={handleSubmit} isLoading={isLoading}>
+          Lagre endringer
+        </Button>
+      )}
 
       <Button variant='neutral' onClick={onClose}>
         <IconChevronLeft />

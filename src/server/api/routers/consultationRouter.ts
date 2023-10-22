@@ -1,14 +1,17 @@
-import { saveConsultationSchema } from '@/schemas/consultationSchemas';
+import {
+  saveConsultationSchema,
+  updateConsultationSchema,
+} from '@/schemas/consultationSchemas';
 import { db } from '@/server/db';
 import {
   consultationSession,
   consultationSessionMedia,
 } from '@/server/db/schema';
 import { TRPCError } from '@trpc/server';
+import dayjs from 'dayjs';
 import { and, eq, isNotNull } from 'drizzle-orm';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
-import dayjs from 'dayjs';
 
 export const consultationRouter = createTRPCRouter({
   getConsultation: protectedProcedure
@@ -64,7 +67,8 @@ export const consultationRouter = createTRPCRouter({
             eq(consultationSession.userAccountId, ctx.session.user.id),
             isNotNull(consultationSession.endedAt)
           )
-        );
+        )
+        .orderBy(consultationSession.startedAt);
     }),
 
   saveConsultation: protectedProcedure
@@ -104,6 +108,27 @@ export const consultationRouter = createTRPCRouter({
       if (sessionMedias.length !== 0) {
         await db.insert(consultationSessionMedia).values(sessionMedias);
       }
+
+      return {
+        status: 'OK',
+      };
+    }),
+
+  updateConsultation: protectedProcedure
+    .input(updateConsultationSchema)
+    .mutation(async ({ input, ctx }) => {
+      await db
+        .update(consultationSession)
+        .set({
+          name: input.consultationName,
+          notes: input.notes,
+        })
+        .where(
+          and(
+            eq(consultationSession.id, input.consultationId),
+            eq(consultationSession.userAccountId, ctx.session.user.id)
+          )
+        );
 
       return {
         status: 'OK',

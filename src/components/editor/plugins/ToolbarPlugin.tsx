@@ -1,7 +1,9 @@
 import Button from '@/components/input/Button';
+import NumberField from '@/components/input/NumberField';
 import Select from '@/components/input/Select';
 import TextField from '@/components/input/TextField';
 import Dialog from '@/components/overlay/Dialog';
+import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import {
   $isListNode,
   INSERT_CHECK_LIST_COMMAND,
@@ -13,6 +15,10 @@ import {
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $createHeadingNode, $isHeadingNode } from '@lexical/rich-text';
 import { $setBlocksType } from '@lexical/selection';
+import {
+  INSERT_TABLE_COMMAND,
+  InsertTableCommandPayload,
+} from '@lexical/table';
 import {
   $findMatchingParent,
   $getNearestNodeOfType,
@@ -42,6 +48,7 @@ import {
   IconListCheck,
   IconListNumbers,
   IconStrikethrough,
+  IconTablePlus,
   IconUnderline,
   IconUpload,
 } from '@tabler/icons-react';
@@ -64,7 +71,6 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { INSERT_IMAGE_COMMAND, InsertImagePayload } from './ImagePastePlugin';
-import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { getSelectedNode } from './utils';
 
 const BLOCK_TYPE_NAME_MAP = {
@@ -128,6 +134,7 @@ const ToolbarPlugin: React.FC<ToolbarPluginProps> = ({ onCanUndo }) => {
   const [textAlign, setTextAlign] = useState('left');
 
   const [showInsertImageDialog, setShowInsertImageDialog] = useState(false);
+  const [showInsertTableDialog, setShowInsertTableDialog] = useState(false);
 
   /**
    * Updates the toolbar.
@@ -262,7 +269,7 @@ const ToolbarPlugin: React.FC<ToolbarPluginProps> = ({ onCanUndo }) => {
   }, [blockType]);
 
   useEffect(() => {
-    mergeRegister(
+    return mergeRegister(
       // whenever the state of the editor changes, we update the toolbar
       // this makes the toolbar UI reflect changes in the editor. (e.g. selection changed, formatting changed etc.)
       editor.registerUpdateListener(({ editorState }) => {
@@ -293,7 +300,7 @@ const ToolbarPlugin: React.FC<ToolbarPluginProps> = ({ onCanUndo }) => {
   }, [editor]);
 
   return (
-    <div className='flex gap-1 rounded-t-md border-b border-gray-200 bg-gray-50 p-1 shadow'>
+    <div className='flex gap-1 rounded-t-md border-b border-gray-200 bg-gray-50 p-1 shadow @container'>
       <ToolbarActionButton
         disabled={!canUndo}
         onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}
@@ -394,6 +401,13 @@ const ToolbarPlugin: React.FC<ToolbarPluginProps> = ({ onCanUndo }) => {
         text='Sett inn bilde'
       />
 
+      <ToolbarActionButton
+        disabled={false}
+        icon={IconTablePlus}
+        onClick={() => setShowInsertTableDialog(true)}
+        text='Sett inn tabell'
+      />
+
       <Dialog
         open={showInsertImageDialog}
         onClose={() => setShowInsertImageDialog(false)}
@@ -404,6 +418,20 @@ const ToolbarPlugin: React.FC<ToolbarPluginProps> = ({ onCanUndo }) => {
             editor.dispatchCommand(INSERT_IMAGE_COMMAND, payload)
           }
         />
+      </Dialog>
+
+      <Dialog
+        open={showInsertTableDialog}
+        onClose={() => setShowInsertTableDialog(false)}
+      >
+        {({ close }) => (
+          <InsertTableDialog
+            onClose={close}
+            onInsert={(payload) =>
+              editor.dispatchCommand(INSERT_TABLE_COMMAND, payload)
+            }
+          />
+        )}
       </Dialog>
     </div>
   );
@@ -434,7 +462,11 @@ const ToolbarActionButton: React.FC<ToolbarActionButtonProps> = ({
       )}
     >
       <Icon className='h-5 w-5' />
-      {text && <span className='pr-0.5 text-sm font-medium'>{text}</span>}
+      {text && (
+        <span className='hidden truncate pr-0.5 text-sm font-medium @3xl:block'>
+          {text}
+        </span>
+      )}
     </button>
   );
 };
@@ -545,6 +577,56 @@ const InsertImageDialog: React.FC<InsertImageDialogProps> = ({
             Sett inn
           </Button>
         </div>
+      </div>
+    </div>
+  );
+};
+
+interface InsertTableDialogProps {
+  onInsert: (payload: InsertTableCommandPayload) => void;
+  onClose: () => void;
+}
+
+const InsertTableDialog: React.FC<InsertTableDialogProps> = ({
+  onClose,
+  onInsert,
+}) => {
+  const [rows, setRows] = useState(3);
+  const [columns, setColumns] = useState(3);
+
+  const handleInsert = () => {
+    onInsert({
+      columns: columns.toString(),
+      rows: rows.toString(),
+      includeHeaders: {
+        columns: false,
+        rows: false,
+      },
+    });
+
+    onClose();
+  };
+
+  return (
+    <div className='flex flex-col gap-2 p-4'>
+      <h2 className='text-lg font-bold'>Sett inn tabell</h2>
+
+      <div className='flex flex-col gap-2'>
+        <NumberField value={rows} onChange={setRows} label='Antall rader' />
+        <NumberField
+          value={columns}
+          onChange={setColumns}
+          label='Antall kolonner'
+        />
+      </div>
+
+      <div className='flex items-center justify-end gap-2'>
+        <Button onClick={onClose} variant='neutral' className='text-sm'>
+          Avbryt
+        </Button>
+        <Button onClick={handleInsert} className='text-sm'>
+          Sett inn
+        </Button>
       </div>
     </div>
   );

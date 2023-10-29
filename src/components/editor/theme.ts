@@ -35,4 +35,9 @@ export const theme: Theme = {
     underlineStrikethrough: 'unerline line-through',
   },
   code: 'bg-gray-100 p-2',
+  table:
+    'border focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-500',
+  tableCell: 'border border-gray-300 p-0.5 min-w-[75px]',
+  tableCellHeader: 'text-left bg-gray-100 font-semibold',
+  tableSelection: 'selection:bg-transparent',
 };

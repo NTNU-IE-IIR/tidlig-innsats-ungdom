@@ -28,6 +28,7 @@ import { ImageNode } from './nodes/ImageNode';
 import AutoLinkPlugin from './plugins/AutoLinkPlugin';
 import FloatingLinkEditorPlugin from './plugins/FloatingLinkEditorPlugin';
 import ImagePastePlugin from './plugins/ImagePastePlugin';
+import TablePlugin from './plugins/TablePlugin';
 import ToolbarPlugin from './plugins/ToolbarPlugin';
 import { theme } from './theme';
 
@@ -91,7 +92,10 @@ const TextEditor: React.FC<TextEditorProps> = ({
             ErrorBoundary={LexicalErrorBoundary}
             contentEditable={
               <div className='h-full w-full'>
-                <div className='h-full w-full' ref={(r) => setFloatingAnchorElem(r)}>
+                <div
+                  className='h-full w-full'
+                  ref={(r) => setFloatingAnchorElem(r)}
+                >
                   <ContentEditable className='h-full w-full border-0 focus:outline-none' />
                 </div>
               </div>
@@ -108,6 +112,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
             <FloatingLinkEditorPlugin anchorElem={floatingAnchorElement} />
           )}
           <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
+          <TablePlugin />
         </div>
       </div>
     </LexicalComposer>

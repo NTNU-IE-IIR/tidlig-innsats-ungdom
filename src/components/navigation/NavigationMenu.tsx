@@ -1,5 +1,6 @@
 import {
   IconFiles,
+  IconHelpCircle,
   IconLayoutDashboard,
   IconListDetails,
   IconLogout,
@@ -40,6 +41,14 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ onNavigate }) => {
             icon={IconSettings}
             href='/settings'
             name='Innstillinger'
+            onNavigate={onNavigate}
+          />
+        </li>
+        <li>
+          <NavigationItem
+            icon={IconHelpCircle}
+            href='/about'
+            name='Hjelp'
             onNavigate={onNavigate}
           />
         </li>

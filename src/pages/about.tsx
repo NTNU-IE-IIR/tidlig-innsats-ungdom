@@ -43,7 +43,7 @@ const AboutPage = () => {
       <Head>
         <title>Hjelp - Tidlig innsats ungdom</title>
       </Head>
-      <PageLayout className='flex flex-col'>
+      <PageLayout className='flex flex-col px-2'>
         {!isEditing && (
           <>
             {session?.user.role === UserAccountRole.GLOBAL_ADMIN && (

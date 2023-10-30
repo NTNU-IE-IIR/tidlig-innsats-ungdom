@@ -4,17 +4,17 @@ import { twMerge } from 'tailwind-merge';
 
 const button = cva(
   [
-    'relative flex items-center justify-center gap-2 rounded-md  px-2 py-1 text-white outline-none transition-colors focus:ring-2',
+    'relative flex items-center justify-center gap-2 rounded-md border border-transparent px-2 py-1 text-white outline-none transition-colors focus:ring-2',
   ],
   {
     variants: {
       variant: {
         primary:
-          'border-primary-700 bg-primary-500 hover:bg-primary-600 focus:ring-primary-700',
+          'bg-primary-500 hover:bg-primary-600 focus:ring-primary-700',
         destructive:
-          'border-error-700 bg-error-500 hover:bg-error-600 focus:ring-error-700',
+          'bg-error-500 hover:bg-error-600 focus:ring-error-700',
         neutral:
-          'text-gray-950 border border-gray-300 hover:bg-gray-100 focus:ring-gray-200',
+          'text-gray-950 border-gray-300 hover:bg-gray-100 focus:ring-gray-200',
       },
       disabled: {
         true: 'bg-opacity-50 hover:bg-opacity-70 cursor-not-allowed',

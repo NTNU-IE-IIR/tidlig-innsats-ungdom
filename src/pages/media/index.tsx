@@ -18,6 +18,8 @@ import { useDebouncedValue } from '@mantine/hooks';
 import {
   IconCheck,
   IconFileExport,
+  IconFilePlus,
+  IconCategoryPlus,
   IconRefresh,
   IconX,
 } from '@tabler/icons-react';
@@ -114,8 +116,11 @@ const MediaIndexPage: NextPage = () => {
                 <span className='text-sm font-medium'>Vis kun publiserte</span>
               </div>
 
-              <Link href='/media/new' className='ml-auto text-sm'>
-                <Button>Nytt innhold</Button>
+              <Link href='/media/new' className='ml-auto'>
+                <Button className='text-sm'>
+                  <IconFilePlus className='-ml-1 h-6 w-6' />
+                  <span>Nytt innhold</span>
+                </Button>
               </Link>
             </div>
 
@@ -219,6 +224,11 @@ const MediaIndexPage: NextPage = () => {
           <h1 className='text-lg font-bold'>Tema</h1>
 
           <Card className='flex flex-1 flex-col'>
+            <Button className='my-1 ml-auto text-sm' onClick={handleNewTheme}>
+              <IconCategoryPlus className='-ml-1 h-6 w-6' />
+              <span>Nytt tema</span>
+            </Button>
+
             {themes?.length === 0 && (
               <p className='py-8 text-center text-sm font-medium text-gray-500'>
                 Fant ingen temaer.
@@ -236,10 +246,6 @@ const MediaIndexPage: NextPage = () => {
                 />
               ))}
             </ul>
-
-            <Button className='mb-1 text-sm' onClick={handleNewTheme}>
-              Nytt tema
-            </Button>
           </Card>
         </div>
       </PageLayout>

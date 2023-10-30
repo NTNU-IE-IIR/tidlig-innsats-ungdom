@@ -13,14 +13,16 @@ import {
   createMediaSchema,
   updateMediaSchema,
 } from '@/schemas/mediaSchemas';
-import { MediaType } from '@/server/db/schema';
+import { FileMedia, MediaType } from '@/server/db/schema';
 import { useTenantStore } from '@/store/tenantStore';
 import { useThemeStore } from '@/store/themeStore';
 import { ThemeNode } from '@/types/themes';
 import { RouterOutputs, api } from '@/utils/api';
 import { useForm, zodResolver } from '@mantine/form';
 import {
+  IconCategoryPlus,
   IconChevronLeft,
+  IconExternalLink,
   IconFile,
   IconFileText,
   IconListCheck,
@@ -81,7 +83,10 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
   });
 
   const isChanged =
-    !isEqual(initialThemeIds) || contentChanged || form.isDirty();
+    !isEqual(initialThemeIds) ||
+    contentChanged ||
+    form.isDirty() ||
+    fileToUpload !== undefined;
 
   const router = useRouter();
 
@@ -223,11 +228,29 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
             )}
 
             {mediaType === MediaType.FILE && (
-              <UploadMediaFile
-                className='flex-1'
-                fileToUpload={fileToUpload}
-                onFileChanged={setFileToUpload}
-              />
+              <>
+                {existingMedia?.content &&
+                  existingMedia.type === MediaType.FILE && (
+                    <a
+                      href={`/api/static/${activeTenantId}/${
+                        (existingMedia.content as FileMedia).fileId
+                      }`}
+                      target='_blank'
+                      className='flex items-center justify-center gap-1 rounded-md border border-gray-300 bg-white px-2 py-1 transition-colors hover:bg-gray-50'
+                    >
+                      <IconExternalLink className='h-5 w-5' />
+                      <span className='font-medium'>
+                        Åpne eksisterende fil i ny fane
+                      </span>
+                    </a>
+                  )}
+
+                <UploadMediaFile
+                  className='flex-1'
+                  fileToUpload={fileToUpload}
+                  onFileChanged={setFileToUpload}
+                />
+              </>
             )}
 
             {mediaType === MediaType.RICH_TEXT && (
@@ -260,15 +283,13 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
                 </p>
               )}
 
-              {existingMedia && (
-                <Button variant='neutral' onClick={handleCancelEdit}>
-                  Avbryt
-                </Button>
-              )}
+              <Button className='text-sm' variant='neutral' onClick={handleCancelEdit}>
+                Avbryt
+              </Button>
 
               <Button
                 type='submit'
-                className='self-end'
+                className='text-sm'
                 isLoading={isCreating || isUpdating}
                 disabled={!isChanged}
               >
@@ -281,6 +302,14 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
         <aside className='flex flex-col'>
           <h2 className='text-lg font-bold'>Knytt til en/flere tema</h2>
           <Card className='flex flex-1 flex-col'>
+            <Button
+              className='mb-1 ml-auto mt-0.5 text-sm'
+              onClick={handleNewTheme}
+            >
+              <IconCategoryPlus className='-ml-1 h-6 w-6' />
+              <span>Nytt tema</span>
+            </Button>
+
             {themes?.length === 0 && (
               <p className='py-8 text-center text-sm font-medium text-gray-500'>
                 Fant ingen temaer.
@@ -297,10 +326,6 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
                 />
               ))}
             </ul>
-
-            <Button className='mb-1' onClick={handleNewTheme}>
-              Nytt tema
-            </Button>
           </Card>
         </aside>
       </form>

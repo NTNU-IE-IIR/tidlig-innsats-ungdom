@@ -1,5 +1,5 @@
 import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
-import { ComponentProps, useRef } from 'react';
+import { ComponentProps, useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 export type BaseInputProps = Omit<
@@ -19,12 +19,30 @@ interface NumberFieldProps extends BaseInputProps {
 const NumberField: React.FC<NumberFieldProps> = (props) => {
   const { id, error, label, name, className, value, onChange } = props;
   const inputRef = useRef<HTMLInputElement>(null);
+  const [inputValue, setInputValue] = useState<string>(
+    value?.toString() ?? '0'
+  );
+
+  const handleChange = (target: EventTarget & HTMLInputElement) => {
+    setInputValue(target.value);
+    if (!Number.isNaN(target.valueAsNumber)) {
+      onChange?.(target.valueAsNumber);
+    }
+  };
+
+  const handleBlur = () => {
+    if (inputValue.trim().length === 0) {
+      setInputValue('0');
+      onChange?.(0);
+    }
+  };
 
   const increment = () => {
     const currentValue = inputRef.current?.valueAsNumber ?? 0;
     const newValue = currentValue + 1;
 
     if (inputRef.current) inputRef.current.valueAsNumber = newValue;
+    setInputValue(newValue.toString());
     onChange?.(newValue);
   };
 
@@ -33,6 +51,7 @@ const NumberField: React.FC<NumberFieldProps> = (props) => {
     const newValue = currentValue - 1;
 
     if (inputRef.current) inputRef.current.valueAsNumber = newValue;
+    setInputValue(newValue.toString());
     onChange?.(newValue);
   };
 
@@ -51,12 +70,14 @@ const NumberField: React.FC<NumberFieldProps> = (props) => {
         id={id}
         type='number'
         name={name}
-        value={value ?? 0}
+        value={inputValue}
+        defaultValue={value ?? 0}
         placeholder={label}
         min={props.min}
         max={props.max}
         ref={inputRef}
-        onChange={(e) => onChange?.(e.target.valueAsNumber)}
+        onChange={(e) => handleChange(e.target)}
+        onBlur={handleBlur}
         className='peer w-full rounded-md border-0 bg-transparent px-3 py-2 text-sm placeholder:invisible placeholder:text-sm focus:outline-none focus:ring-0'
       />
 

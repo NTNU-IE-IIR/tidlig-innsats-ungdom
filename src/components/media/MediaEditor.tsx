@@ -77,8 +77,8 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
       name: existingMedia?.name ?? '',
       shortDescription: existingMedia?.shortDescription ?? '',
       themeIds: initialThemeIds ?? [],
-      type: MediaType.RICH_TEXT,
-      published: !existingMedia?.published ?? false,
+      type: mediaType ?? MediaType.RICH_TEXT,
+      published: !(existingMedia?.published ?? true),
     },
   });
 
@@ -119,6 +119,7 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
         id: existingMedia.id,
         themeIds: Array.from(selectedThemeIds),
         content,
+        type: mediaType ?? values.type,
         published: !values.published,
       });
 
@@ -132,7 +133,7 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
       themeIds: Array.from(selectedThemeIds),
       content,
       published: !values.published,
-      type: mediaType ?? MediaType.RICH_TEXT,
+      type: mediaType ?? values.type,
     });
 
     router.push('/media');
@@ -283,13 +284,12 @@ const MediaEditor: React.FC<MediaEditorProps> = ({ existingMedia }) => {
                 </p>
               )}
 
-              <Button className='text-sm' variant='neutral' onClick={handleCancelEdit}>
+              <Button variant='neutral' onClick={handleCancelEdit}>
                 Avbryt
               </Button>
 
               <Button
                 type='submit'
-                className='text-sm'
                 isLoading={isCreating || isUpdating}
                 disabled={!isChanged}
               >

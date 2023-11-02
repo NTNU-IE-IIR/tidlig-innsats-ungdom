@@ -71,7 +71,6 @@ const NumberField: React.FC<NumberFieldProps> = (props) => {
         type='number'
         name={name}
         value={inputValue}
-        defaultValue={value ?? 0}
         placeholder={label}
         min={props.min}
         max={props.max}

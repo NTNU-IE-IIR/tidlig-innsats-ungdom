@@ -1,3 +1,4 @@
+import Tooltip from '@/components/feedback/Tooltip';
 import Button from '@/components/input/Button';
 import NumberField from '@/components/input/NumberField';
 import Select from '@/components/input/Select';
@@ -47,6 +48,8 @@ import {
   IconList,
   IconListCheck,
   IconListNumbers,
+  IconPhotoPlus,
+  IconPhotoUp,
   IconStrikethrough,
   IconTablePlus,
   IconUnderline,
@@ -68,7 +71,7 @@ import {
   RangeSelection,
   UNDO_COMMAND,
 } from 'lexical';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { INSERT_IMAGE_COMMAND, InsertImagePayload } from './ImagePastePlugin';
 import { getSelectedNode } from './utils';
@@ -300,7 +303,7 @@ const ToolbarPlugin: React.FC<ToolbarPluginProps> = ({ onCanUndo }) => {
   }, [editor]);
 
   return (
-    <div className='flex gap-1 rounded-t-md border-b border-gray-200 bg-gray-50 p-1 shadow @container'>
+    <div className='flex gap-1 rounded-t-md border-b border-gray-200 bg-gray-50 p-1 shadow'>
       <ToolbarActionButton
         disabled={!canUndo}
         onClick={() => editor.dispatchCommand(UNDO_COMMAND, undefined)}
@@ -394,19 +397,21 @@ const ToolbarPlugin: React.FC<ToolbarPluginProps> = ({ onCanUndo }) => {
 
       <VerticalRule />
 
-      <ToolbarActionButton
-        disabled={false}
-        icon={IconUpload}
-        onClick={() => setShowInsertImageDialog(true)}
-        text='Sett inn bilde'
-      />
+      <Tooltip content='Sett inn bilde'>
+        <ToolbarActionButton
+          disabled={false}
+          icon={IconPhotoPlus}
+          onClick={() => setShowInsertImageDialog(true)}
+        />
+      </Tooltip>
 
-      <ToolbarActionButton
-        disabled={false}
-        icon={IconTablePlus}
-        onClick={() => setShowInsertTableDialog(true)}
-        text='Sett inn tabell'
-      />
+      <Tooltip content='Sett inn tabell'>
+        <ToolbarActionButton
+          disabled={false}
+          icon={IconTablePlus}
+          onClick={() => setShowInsertTableDialog(true)}
+        />
+      </Tooltip>
 
       <Dialog
         open={showInsertImageDialog}
@@ -444,14 +449,15 @@ interface ToolbarActionButtonProps {
   text?: string;
 }
 
-const ToolbarActionButton: React.FC<ToolbarActionButtonProps> = ({
-  disabled,
-  onClick,
-  icon: Icon,
-  text,
-}) => {
+const ToolbarActionButton = forwardRef<
+  HTMLButtonElement,
+  ToolbarActionButtonProps
+>((props, ref) => {
+  const { disabled, onClick, icon: Icon, text } = props;
+
   return (
     <button
+      ref={ref}
       type='button'
       onClick={onClick}
       disabled={disabled}
@@ -463,13 +469,13 @@ const ToolbarActionButton: React.FC<ToolbarActionButtonProps> = ({
     >
       <Icon className='h-5 w-5' />
       {text && (
-        <span className='hidden truncate pr-0.5 text-sm font-medium @3xl:block'>
+        <span className='hidden truncate pr-0.5 text-sm font-medium'>
           {text}
         </span>
       )}
     </button>
   );
-};
+});
 
 interface ToolbarToggleButtonProps {
   active: boolean;

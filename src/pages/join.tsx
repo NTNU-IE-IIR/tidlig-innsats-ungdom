@@ -1,13 +1,17 @@
 import RegisterForm from '@/components/auth/RegisterForm';
 import Card from '@/components/container/Card';
+import Alert from '@/components/feedback/Alert';
 import { api } from '@/utils/api';
 import { IconAlertTriangleFilled, IconLoader2 } from '@tabler/icons-react';
 import { NextPage } from 'next';
+import { useSession } from 'next-auth/react';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 const JoinPage: NextPage = () => {
   const router = useRouter();
+  const { data: session } = useSession();
   const { code } = router.query;
   const parsedCode =
     code !== undefined && typeof code !== 'string' ? code[0] : code;
@@ -47,23 +51,40 @@ const JoinPage: NextPage = () => {
           <IconLoader2 className='h-12 w-12 animate-spin' />
         )}
 
-        <div>
-          {invite && (
-            <>
-              <h1 className='text-center text-lg font-medium'>
-                <strong className='font-semibold'>{invite.inviteeName}</strong>{' '}
-                inviterer deg til å bli med i{' '}
-                <strong className='font-semibold'>{invite.tenantName}</strong>
-              </h1>
+        {invite && (
+          <div>
+            <h1 className='text-center text-lg font-medium'>
+              <strong className='font-semibold'>{invite.inviteeName}</strong>{' '}
+              inviterer deg til å bli med i{' '}
+              <strong className='font-semibold'>{invite.tenantName}</strong>
+            </h1>
 
-              <p className='mb-2 text-center text-sm font-medium text-gray-700'>
-                For å fortsette må du registrere en konto.
-              </p>
+            <p className='mb-2 text-center text-sm font-medium text-gray-700'>
+              For å fortsette må du registrere en konto.
+            </p>
 
-              <RegisterForm inviteCode={parsedCode} />
-            </>
-          )}
-        </div>
+            <RegisterForm inviteCode={parsedCode} />
+          </div>
+        )}
+
+        {session !== null ? (
+          <Link href='/'>
+            <Alert intent='info' className='mt-2'>
+              Du er allerede registrert med en konto, klikk{' '}
+              <span className='underline'>her</span> for å gå til portalen.
+            </Alert>
+          </Link>
+        ) : (
+          <Link
+            href='/'
+            className='mt-2 flex flex-col items-center text-sm text-zinc-700 transition-colors'
+          >
+            <span>Allerede registrert?</span>
+            <span className='font-medium underline text-primary-600'>
+              Klikk her for å logge inn
+            </span>
+          </Link>
+        )}
       </main>
     </>
   );
